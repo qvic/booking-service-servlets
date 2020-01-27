@@ -1,9 +1,9 @@
 package com.epam.app.service.impl;
 
 import com.epam.app.domain.User;
-import com.epam.app.repository.Page;
-import com.epam.app.repository.PageProperties;
-import com.epam.app.repository.UserRepository;
+import com.epam.app.dao.Page;
+import com.epam.app.dao.PageProperties;
+import com.epam.app.dao.UserDao;
 import com.epam.app.service.PasswordEncryptor;
 import com.epam.app.service.UserService;
 import com.epam.app.service.exception.UserAlreadyExistsException;
@@ -14,11 +14,11 @@ import java.util.Optional;
 
 public class UserServiceImpl implements UserService {
 
-    private final UserRepository userRepository;
+    private final UserDao userRepository;
     private final Validator<User> userValidator;
     private final PasswordEncryptor passwordEncryptor;
 
-    public UserServiceImpl(UserRepository userRepository, Validator<User> userValidator, PasswordEncryptor passwordEncryptor) {
+    public UserServiceImpl(UserDao userRepository, Validator<User> userValidator, PasswordEncryptor passwordEncryptor) {
         this.userRepository = userRepository;
         this.userValidator = userValidator;
         this.passwordEncryptor = passwordEncryptor;

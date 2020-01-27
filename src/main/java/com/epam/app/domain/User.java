@@ -1,9 +1,7 @@
 package com.epam.app.domain;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
-
-import static com.epam.app.utility.CollectionUtility.nullSafeListInitialize;
 
 public class User {
 
@@ -47,8 +45,24 @@ public class User {
         return role;
     }
 
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", email='" + email + '\'' +
+                ", password='" + password + '\'' +
+                ", appointments=" + appointments +
+                ", role=" + role +
+                '}';
+    }
+
     public static Builder builder() {
         return new Builder();
+    }
+
+    public static Builder builder(User from) {
+        return new Builder(from);
     }
 
     public static final class Builder {
@@ -56,10 +70,19 @@ public class User {
         private String name;
         private String email;
         private String password;
-        private List<Appointment> appointments;
+        private List<Appointment> appointments = new ArrayList<>();
         private Role role;
 
         private Builder() {
+        }
+
+        private Builder(User copy) {
+            this.id = copy.getId();
+            this.name = copy.getName();
+            this.email = copy.getEmail();
+            this.password = copy.getPassword();
+            this.appointments = copy.getAppointments();
+            this.role = copy.getRole();
         }
 
         public Builder setId(Integer id) {

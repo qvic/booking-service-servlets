@@ -1,10 +1,10 @@
-package com.epam.app.repository;
+package com.epam.app.dao;
 
 import com.epam.app.domain.User;
 
 import java.util.Optional;
 
-public interface UserRepository extends PagingRepository<User> {
+public interface UserDao extends CrudPagingDao<User> {
 
     Optional<User> findByEmail(String email);
 }

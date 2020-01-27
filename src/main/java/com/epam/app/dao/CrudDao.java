@@ -1,9 +1,9 @@
-package com.epam.app.repository;
+package com.epam.app.dao;
 
 import java.util.List;
 import java.util.Optional;
 
-public interface CrudRepository<E> {
+public interface CrudDao<E> {
 
     E save(E entity);
 
@@ -11,7 +11,7 @@ public interface CrudRepository<E> {
 
     List<E> findAll();
 
-    E update(E entity);
+    void update(E entity);
 
     void deleteById(Integer id);
 

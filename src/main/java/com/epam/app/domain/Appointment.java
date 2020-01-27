@@ -38,6 +38,17 @@ public class Appointment {
         return serviceType;
     }
 
+    @Override
+    public String toString() {
+        return "Appointment{" +
+                "id=" + id +
+                ", time=" + time +
+                ", serviceType=" + serviceType +
+                ", worker=" + worker +
+                ", client=" + client +
+                '}';
+    }
+
     public static Builder builder() {
         return new Builder();
     }

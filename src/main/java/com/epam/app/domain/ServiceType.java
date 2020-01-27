@@ -25,4 +25,13 @@ public class ServiceType {
     public Duration getDuration() {
         return duration;
     }
+
+    @Override
+    public String toString() {
+        return "ServiceType{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", duration=" + duration +
+                '}';
+    }
 }

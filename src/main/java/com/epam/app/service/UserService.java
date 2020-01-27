@@ -1,8 +1,8 @@
 package com.epam.app.service;
 
 import com.epam.app.domain.User;
-import com.epam.app.repository.Page;
-import com.epam.app.repository.PageProperties;
+import com.epam.app.dao.Page;
+import com.epam.app.dao.PageProperties;
 
 import java.util.Optional;
 

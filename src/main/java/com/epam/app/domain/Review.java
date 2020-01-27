@@ -23,4 +23,13 @@ public class Review {
     public String getText() {
         return text;
     }
+
+    @Override
+    public String toString() {
+        return "Review{" +
+                "id=" + id +
+                ", appointment=" + appointment +
+                ", text='" + text + '\'' +
+                '}';
+    }
 }

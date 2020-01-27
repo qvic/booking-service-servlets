@@ -3,18 +3,18 @@ package com.epam.app.utility;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
-public class ResourceManager {
+import static com.epam.app.utility.Config.L10N_RESOURCE_BUNDLE_NAME;
 
-    private static final String RESOURCE_BUNDLE_NAME = "text";
+public class ResourceManager {
 
     private ResourceBundle resourceBundle;
 
     public ResourceManager() {
-        resourceBundle = ResourceBundle.getBundle(RESOURCE_BUNDLE_NAME, Locale.getDefault());
+        resourceBundle = ResourceBundle.getBundle(L10N_RESOURCE_BUNDLE_NAME, Locale.getDefault());
     }
 
     public void changeLocale(Locale locale) {
-        resourceBundle = ResourceBundle.getBundle(RESOURCE_BUNDLE_NAME, locale);
+        resourceBundle = ResourceBundle.getBundle(L10N_RESOURCE_BUNDLE_NAME, locale);
     }
 
     public String getString(String key) {

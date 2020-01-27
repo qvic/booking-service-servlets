@@ -1,4 +1,4 @@
-package com.epam.app.repository;
+package com.epam.app.dao;
 
 public class PageProperties {
 
@@ -21,12 +21,12 @@ public class PageProperties {
         return itemsPerPage;
     }
 
-    public long getLowerBound() {
+    public long getOffset() {
         return itemsPerPage * pageNumber;
     }
 
     private long getUpperBound() {
-        return getLowerBound() + itemsPerPage - 1;
+        return getOffset() + itemsPerPage - 1;
     }
 
     private long getValidatedPageNumber(long pageNumber) {
@@ -39,6 +39,6 @@ public class PageProperties {
 
     @Override
     public String toString() {
-        return String.format("Page %d (%d - %d)", pageNumber, getLowerBound(), getUpperBound());
+        return String.format("Page %d (%d - %d)", pageNumber, getOffset(), getUpperBound());
     }
 }
