@@ -4,6 +4,7 @@ import com.epam.bookingservice.dao.UserDao;
 import com.epam.bookingservice.entity.Role;
 import com.epam.bookingservice.entity.User;
 import com.epam.bookingservice.utility.DatabaseConnector;
+import com.epam.bookingservice.utility.SimpleDatabaseConnector;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;

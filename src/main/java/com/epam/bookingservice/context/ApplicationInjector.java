@@ -18,6 +18,7 @@ import com.epam.bookingservice.service.validator.UserValidator;
 import com.epam.bookingservice.service.validator.Validator;
 import com.epam.bookingservice.utility.Config;
 import com.epam.bookingservice.utility.DatabaseConnector;
+import com.epam.bookingservice.utility.SimpleDatabaseConnector;
 import com.epam.bookingservice.utility.ResourceManager;
 
 public class ApplicationInjector {
@@ -28,7 +29,7 @@ public class ApplicationInjector {
 
     private static final PasswordEncryptor PASSWORD_ENCRYPTOR = new PasswordEncryptor();
 
-    private static final DatabaseConnector DATABASE_CONNECTOR = new DatabaseConnector(Config.DB_SETTINGS_BUNDLE_NAME);
+    private static final DatabaseConnector DATABASE_CONNECTOR = new SimpleDatabaseConnector(Config.DB_SETTINGS_BUNDLE_NAME);
 
     private static final UserDao USER_DAO = new UserDaoImpl(DATABASE_CONNECTOR);
     private static final ServiceTypeDao SERVICE_TYPE_DAO = new ServiceTypeDaoImpl(DATABASE_CONNECTOR);

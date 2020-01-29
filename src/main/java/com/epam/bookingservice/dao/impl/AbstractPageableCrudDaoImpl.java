@@ -1,8 +1,8 @@
 package com.epam.bookingservice.dao.impl;
 
-import com.epam.bookingservice.dao.PageableCrudDao;
 import com.epam.bookingservice.dao.Page;
 import com.epam.bookingservice.dao.PageProperties;
+import com.epam.bookingservice.dao.PageableCrudDao;
 import com.epam.bookingservice.dao.exception.DatabaseRuntimeException;
 import com.epam.bookingservice.utility.DatabaseConnector;
 

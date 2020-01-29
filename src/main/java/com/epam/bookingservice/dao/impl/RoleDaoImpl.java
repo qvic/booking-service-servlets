@@ -3,6 +3,7 @@ package com.epam.bookingservice.dao.impl;
 import com.epam.bookingservice.dao.RoleDao;
 import com.epam.bookingservice.entity.Role;
 import com.epam.bookingservice.utility.DatabaseConnector;
+import com.epam.bookingservice.utility.SimpleDatabaseConnector;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;

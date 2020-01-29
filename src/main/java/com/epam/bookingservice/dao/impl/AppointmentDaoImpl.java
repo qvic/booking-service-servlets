@@ -8,6 +8,7 @@ import com.epam.bookingservice.entity.Appointment;
 import com.epam.bookingservice.entity.ServiceType;
 import com.epam.bookingservice.entity.User;
 import com.epam.bookingservice.utility.DatabaseConnector;
+import com.epam.bookingservice.utility.SimpleDatabaseConnector;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -45,7 +46,7 @@ public class AppointmentDaoImpl extends AbstractPageableCrudDaoImpl<Appointment>
 
     @Override
     protected Appointment mapResultSetToEntity(ResultSet resultSet) throws SQLException {
-        // todo or leave null?
+        // todo another way
         User client = userDao.findById(resultSet.getInt("client_id"))
                 .orElseThrow(() -> new DatabaseRuntimeException("No client associated with client_id"));
         User worker = userDao.findById(resultSet.getInt("worker_id"))

@@ -7,7 +7,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ResourceBundle;
 
-public class HikariDatabaseConnector {
+public class HikariDatabaseConnector implements DatabaseConnector {
 
     private final HikariDataSource dataSource;
 
@@ -17,6 +17,7 @@ public class HikariDatabaseConnector {
         dataSource = new HikariDataSource(hikariConfig);
     }
 
+    @Override
     public Connection getConnection() throws SQLException {
         return dataSource.getConnection();
     }

@@ -3,6 +3,7 @@ package com.epam.bookingservice.dao.impl;
 import com.epam.bookingservice.dao.CrudDao;
 import com.epam.bookingservice.dao.exception.DatabaseRuntimeException;
 import com.epam.bookingservice.utility.DatabaseConnector;
+import com.epam.bookingservice.utility.SimpleDatabaseConnector;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
