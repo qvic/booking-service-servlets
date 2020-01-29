@@ -1,6 +1,6 @@
 package com.epam.app.dao;
 
-import com.epam.app.domain.Role;
+import com.epam.app.entity.Role;
 
 import java.util.Optional;
 

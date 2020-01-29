@@ -1,23 +1,18 @@
-package com.epam.app.domain;
-
-import java.util.ArrayList;
-import java.util.List;
+package com.epam.app.entity;
 
 public class User {
 
-    private final Integer id;
-    private final String name;
-    private final String email;
-    private final String password;
-    private final List<Appointment> appointments;
-    private final Role role;
+    private Integer id;
+    private String name;
+    private String email;
+    private String password;
+    private Role role;
 
     private User(Builder builder) {
         id = builder.id;
         name = builder.name;
         email = builder.email;
         password = builder.password;
-        appointments = builder.appointments;
         role = builder.role;
     }
 
@@ -37,12 +32,33 @@ public class User {
         return name;
     }
 
-    public List<Appointment> getAppointments() {
-        return appointments;
-    }
-
     public Role getRole() {
         return role;
+    }
+
+    public User setId(Integer id) {
+        this.id = id;
+        return this;
+    }
+
+    public User setName(String name) {
+        this.name = name;
+        return this;
+    }
+
+    public User setEmail(String email) {
+        this.email = email;
+        return this;
+    }
+
+    public User setPassword(String password) {
+        this.password = password;
+        return this;
+    }
+
+    public User setRole(Role role) {
+        this.role = role;
+        return this;
     }
 
     @Override
@@ -52,7 +68,6 @@ public class User {
                 ", name='" + name + '\'' +
                 ", email='" + email + '\'' +
                 ", password='" + password + '\'' +
-                ", appointments=" + appointments +
                 ", role=" + role +
                 '}';
     }
@@ -61,16 +76,11 @@ public class User {
         return new Builder();
     }
 
-    public static Builder builder(User from) {
-        return new Builder(from);
-    }
-
     public static final class Builder {
         private Integer id;
         private String name;
         private String email;
         private String password;
-        private List<Appointment> appointments = new ArrayList<>();
         private Role role;
 
         private Builder() {
@@ -81,7 +91,6 @@ public class User {
             this.name = copy.getName();
             this.email = copy.getEmail();
             this.password = copy.getPassword();
-            this.appointments = copy.getAppointments();
             this.role = copy.getRole();
         }
 
@@ -102,11 +111,6 @@ public class User {
 
         public Builder setPassword(String password) {
             this.password = password;
-            return this;
-        }
-
-        public Builder setAppointments(List<Appointment> appointments) {
-            this.appointments = appointments;
             return this;
         }
 

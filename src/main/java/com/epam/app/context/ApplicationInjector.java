@@ -1,7 +1,7 @@
-package com.epam.app.injector;
+package com.epam.app.context;
 
 import com.epam.app.dao.impl.UserDaoImpl;
-import com.epam.app.domain.User;
+import com.epam.app.entity.User;
 import com.epam.app.dao.UserDao;
 import com.epam.app.service.PasswordEncryptor;
 import com.epam.app.service.UserService;
@@ -24,8 +24,7 @@ public class ApplicationInjector {
 
     private static final UserDao USER_DAO = new UserDaoImpl(DATABASE_CONNECTOR);
 
-    private static final UserService USER_SERVICE = new UserServiceImpl(
-            USER_DAO, USER_VALIDATOR, PASSWORD_ENCRYPTOR);
+    private static final UserService USER_SERVICE = new UserServiceImpl(USER_DAO, USER_VALIDATOR, PASSWORD_ENCRYPTOR);
 
     private static final ResourceManager RESOURCE_MANAGER = new ResourceManager();
 

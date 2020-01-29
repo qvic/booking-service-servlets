@@ -1,6 +1,6 @@
 package com.epam.app.service.validator;
 
-import com.epam.app.domain.User;
+import com.epam.app.entity.User;
 import com.epam.app.service.exception.InvalidUserException;
 
 import java.util.regex.Matcher;

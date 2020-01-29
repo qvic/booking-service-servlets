@@ -5,11 +5,11 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.epam</groupId>
-    <artifactId>project_schedule</artifactId>
+    <artifactId>booking_service</artifactId>
     <version>0.1-SNAPSHOT</version>
     <packaging>war</packaging>
 
-    <name>project_schedule webapp</name>
+    <name>salon booking serviceType webapp</name>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -68,7 +68,6 @@
     </dependencies>
 
     <build>
-        <finalName>project_schedule</finalName>
         <plugins>
             <plugin>
                 <groupId>org.jacoco</groupId>

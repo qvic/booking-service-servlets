@@ -1,6 +1,10 @@
 package com.epam.app.dao;
 
-import com.epam.app.domain.Review;
+import com.epam.app.entity.Review;
 
-public interface ReviewDao extends CrudPagingDao<Review> {
+import java.util.List;
+
+public interface ReviewDao extends PageableCrudDao<Review> {
+
+    List<Review> findReviewsByAppointment(Integer appointmentId);
 }

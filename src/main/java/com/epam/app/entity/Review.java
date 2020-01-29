@@ -1,14 +1,12 @@
-package com.epam.app.domain;
+package com.epam.app.entity;
 
 public class Review {
 
     private Integer id;
-    private Appointment appointment;
     private String text;
 
-    public Review(Integer id, Appointment appointment, String text) {
+    public Review(Integer id, String text) {
         this.id = id;
-        this.appointment = appointment;
         this.text = text;
     }
 
@@ -16,19 +14,24 @@ public class Review {
         return id;
     }
 
-    public Appointment getAppointment() {
-        return appointment;
-    }
-
     public String getText() {
         return text;
+    }
+
+    public Review setId(Integer id) {
+        this.id = id;
+        return this;
+    }
+
+    public Review setText(String text) {
+        this.text = text;
+        return this;
     }
 
     @Override
     public String toString() {
         return "Review{" +
                 "id=" + id +
-                ", appointment=" + appointment +
                 ", text='" + text + '\'' +
                 '}';
     }

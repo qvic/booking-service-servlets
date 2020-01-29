@@ -1,4 +1,4 @@
-package com.epam.app.dao;
+package com.epam.app.dao.domain;
 
 public class PageProperties {
 

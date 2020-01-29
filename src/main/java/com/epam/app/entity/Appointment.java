@@ -1,18 +1,18 @@
-package com.epam.app.domain;
+package com.epam.app.entity;
 
 import java.time.LocalDateTime;
 
 public class Appointment {
 
-    private final Integer id;
-    private final LocalDateTime time;
-    private final ServiceType serviceType;
-    private final User worker;
-    private final User client;
+    private Integer id;
+    private LocalDateTime date;
+    private ServiceType serviceType;
+    private User worker;
+    private User client;
 
     private Appointment(Builder builder) {
         id = builder.id;
-        time = builder.time;
+        date = builder.date;
         serviceType = builder.serviceType;
         worker = builder.worker;
         client = builder.client;
@@ -22,8 +22,8 @@ public class Appointment {
         return id;
     }
 
-    public LocalDateTime getTime() {
-        return time;
+    public LocalDateTime getDate() {
+        return date;
     }
 
     public User getWorker() {
@@ -38,24 +38,54 @@ public class Appointment {
         return serviceType;
     }
 
+    public Appointment setId(Integer id) {
+        this.id = id;
+        return this;
+    }
+
+    public Appointment setDate(LocalDateTime date) {
+        this.date = date;
+        return this;
+    }
+
+    public Appointment setServiceType(ServiceType serviceType) {
+        this.serviceType = serviceType;
+        return this;
+    }
+
+    public Appointment setWorker(User worker) {
+        this.worker = worker;
+        return this;
+    }
+
+    public Appointment setClient(User client) {
+        this.client = client;
+        return this;
+    }
+
     @Override
     public String toString() {
         return "Appointment{" +
                 "id=" + id +
-                ", time=" + time +
+                ", time=" + date +
                 ", serviceType=" + serviceType +
                 ", worker=" + worker +
                 ", client=" + client +
                 '}';
     }
 
+
     public static Builder builder() {
         return new Builder();
     }
 
+    public static Builder builder(Appointment copy) {
+        return new Builder(copy);
+    }
+
     public static final class Builder {
         private Integer id;
-        private LocalDateTime time;
+        private LocalDateTime date;
         private ServiceType serviceType;
         private User worker;
         private User client;
@@ -63,13 +93,21 @@ public class Appointment {
         private Builder() {
         }
 
+        public Builder(Appointment copy) {
+            this.id = copy.getId();
+            this.date = copy.getDate();
+            this.serviceType = copy.getServiceType();
+            this.worker = copy.getWorker();
+            this.client = copy.getClient();
+        }
+
         public Builder setId(Integer id) {
             this.id = id;
             return this;
         }
 
-        public Builder setTime(LocalDateTime time) {
-            this.time = time;
+        public Builder setDate(LocalDateTime date) {
+            this.date = date;
             return this;
         }
 

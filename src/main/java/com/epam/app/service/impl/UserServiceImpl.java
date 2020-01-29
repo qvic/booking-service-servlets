@@ -1,8 +1,8 @@
 package com.epam.app.service.impl;
 
-import com.epam.app.domain.User;
-import com.epam.app.dao.Page;
-import com.epam.app.dao.PageProperties;
+import com.epam.app.entity.User;
+import com.epam.app.dao.domain.Page;
+import com.epam.app.dao.domain.PageProperties;
 import com.epam.app.dao.UserDao;
 import com.epam.app.service.PasswordEncryptor;
 import com.epam.app.service.UserService;

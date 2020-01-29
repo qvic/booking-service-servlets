@@ -1,8 +1,8 @@
 package com.epam.app.dao.impl;
 
 import com.epam.app.dao.RoleDao;
-import com.epam.app.dao.exception.DatabaseRuntimeException;
-import com.epam.app.domain.Role;
+import com.epam.app.dao.domain.CrudQuerySet;
+import com.epam.app.entity.Role;
 import com.epam.app.utility.DatabaseConnector;
 
 import java.sql.PreparedStatement;
@@ -13,7 +13,7 @@ import java.util.Optional;
 public class RoleDaoImpl extends AbstractCrudDaoImpl<Role> implements RoleDao {
 
     private static final String FIND_BY_ID_QUERY = "SELECT * FROM role WHERE id=?";
-    private static final String INSERT_QUERY = "INSERT INTO role (name) VALUES (?) RETURNING id";
+    private static final String SAVE_QUERY = "INSERT INTO role (name) VALUES (?) RETURNING id";
     private static final String FIND_ALL_QUERY = "SELECT * FROM role";
     private static final String UPDATE_QUERY = "UPDATE role SET name = ? WHERE id = ?";
     private static final String FIND_BY_NAME_QUERY = "SELECT * FROM role WHERE name=?";
@@ -21,26 +21,12 @@ public class RoleDaoImpl extends AbstractCrudDaoImpl<Role> implements RoleDao {
     private static final String COUNT_QUERY = "SELECT count(*) FROM role";
 
     public RoleDaoImpl(DatabaseConnector connector) {
-        super(connector, FIND_BY_ID_QUERY, INSERT_QUERY, UPDATE_QUERY,
-                FIND_ALL_QUERY, COUNT_QUERY, DELETE_QUERY);
+        super(connector, new CrudQuerySet(FIND_BY_ID_QUERY, FIND_ALL_QUERY, SAVE_QUERY, UPDATE_QUERY, DELETE_QUERY, COUNT_QUERY));
     }
 
     @Override
     public Optional<Role> findByName(String name) {
-        try (PreparedStatement statement = connector.getConnection().prepareStatement(FIND_BY_NAME_QUERY)) {
-
-            statement.setString(1, name);
-
-            try (ResultSet resultSet = statement.executeQuery()) {
-                if (resultSet.next()) {
-                    return Optional.of(mapResultSetToEntity(resultSet));
-                }
-            }
-        } catch (SQLException e) {
-            throw new DatabaseRuntimeException("Error initializing PreparedStatement", e);
-        }
-
-        return Optional.empty();
+        return findByParam(name, FIND_BY_NAME_QUERY, STRING_SETTER);
     }
 
     @Override
@@ -49,8 +35,9 @@ public class RoleDaoImpl extends AbstractCrudDaoImpl<Role> implements RoleDao {
     }
 
     @Override
-    protected Role applyGeneratedIdToEntity(Role entity, ResultSet resultSet) throws SQLException {
-        return new Role(resultSet.getInt(1), entity.getName());
+    protected Role applyGeneratedKeysToEntity(Role entity, ResultSet generatedKeys) throws SQLException {
+        entity.setId(generatedKeys.getInt("id"));
+        return entity;
     }
 
     @Override

@@ -1,6 +1,10 @@
 package com.epam.app.dao;
 
-import com.epam.app.domain.Appointment;
+import com.epam.app.entity.Appointment;
 
-public interface AppointmentDao extends CrudPagingDao<Appointment> {
+import java.util.Optional;
+
+public interface AppointmentDao extends PageableCrudDao<Appointment> {
+
+    Optional<Appointment> findAppointmentByReview(Integer reviewId);
 }

@@ -7,6 +7,8 @@ import java.util.ResourceBundle;
 
 public class DatabaseConnector {
 
+    // todo connection pool
+
     private final String url;
     private final String user;
     private final String password;

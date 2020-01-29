@@ -1,4 +1,4 @@
-package com.epam.app.domain;
+package com.epam.app.entity;
 
 public class Role {
 
@@ -16,6 +16,16 @@ public class Role {
 
     public String getName() {
         return name;
+    }
+
+    public Role setId(Integer id) {
+        this.id = id;
+        return this;
+    }
+
+    public Role setName(String name) {
+        this.name = name;
+        return this;
     }
 
     @Override
