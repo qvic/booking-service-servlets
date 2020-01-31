@@ -17,9 +17,9 @@ public enum UserStatus {
     }
 
     public static UserStatus getById(int id) {
-        for (UserStatus revieuserStatus : values()) {
-            if (revieuserStatus.id == id) {
-                return revieuserStatus;
+        for (UserStatus userStatus : values()) {
+            if (userStatus.id == id) {
+                return userStatus;
             }
         }
         throw new NoSuchElementException("Not found UserStatus for id " + id);

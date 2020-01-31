@@ -19,14 +19,16 @@ import java.util.List;
 
 public class OrderDaoImpl extends AbstractPageableCrudDaoImpl<Order> implements OrderDao {
 
-    private static final String FIND_BY_ID_QUERY = "SELECT * FROM appointment a WHERE a.id = ?";
-    private static final String FIND_ALL_QUERY = "SELECT * FROM appointment a";
-    private static final String FIND_ALL_PAGED_QUERY = "SELECT * FROM appointment a OFFSET ? LIMIT ?";
+    private static final String FIND_BY_ID_QUERY = "SELECT * FROM \"order\" o WHERE 0.id = ?";
+    private static final String FIND_ALL_QUERY = "SELECT * FROM \"order\" o";
+    private static final String FIND_ALL_PAGED_QUERY = "SELECT * FROM \"order\" o OFFSET ? LIMIT ?";
+    private static final String FIND_ALL_BY_CLIENT = "SELECT o.id, o.date, o.worker_id, o.client_id, o.timeslot_id, o.status_id FROM \"order\" o INNER JOIN \"user\" u on o.client_id = u.id";
+    private static final String FIND_ALL_BY_WORKER = "SELECT o.id, o.date, o.worker_id, o.client_id, o.timeslot_id, o.status_id FROM \"order\" o INNER JOIN \"user\" u on o.worker_id = u.id";
 
-    private static final String SAVE_QUERY = "INSERT INTO appointment (date, worker_id, client_id, timeslot_id, status_id) VALUES (?, ?, ?, ?) RETURNING id";
-    private static final String UPDATE_QUERY = "UPDATE appointment SET date = ?, worker_id = ?, client_id = ?, timeslot_id = ?, status_id = ? WHERE id = ?";
-    private static final String DELETE_QUERY = "DELETE FROM appointment WHERE id = ?";
-    private static final String COUNT_QUERY = "SELECT count(*) FROM appointment";
+    private static final String SAVE_QUERY = "INSERT INTO \"order\" (date, worker_id, client_id, timeslot_id, status_id) VALUES (?, ?, ?, ?) RETURNING id";
+    private static final String UPDATE_QUERY = "UPDATE \"order\" SET date = ?, worker_id = ?, client_id = ?, timeslot_id = ?, status_id = ? WHERE id = ?";
+    private static final String DELETE_QUERY = "DELETE FROM \"order\" WHERE id = ?";
+    private static final String COUNT_QUERY = "SELECT count(*) FROM order";
 
     private final UserDao userDao;
     private final ServiceDao serviceDao;
@@ -42,7 +44,18 @@ public class OrderDaoImpl extends AbstractPageableCrudDaoImpl<Order> implements 
     }
 
     @Override
+    public List<Order> findOrdersByClientId(Integer id) {
+        return findAllByParam(id, FIND_ALL_BY_CLIENT, INT_SETTER);
+    }
+
+    @Override
+    public List<Order> findOrdersByWorkerId(Integer id) {
+        return findAllByParam(id, FIND_ALL_BY_WORKER, INT_SETTER);
+    }
+
+    @Override
     protected Order mapResultSetToEntity(ResultSet resultSet) throws SQLException {
+        // todo implement with joins
         User client = userDao.findById(resultSet.getInt("client_id"))
                 .orElseThrow(() -> new DatabaseRuntimeException("No client associated with client_id"));
         User worker = userDao.findById(resultSet.getInt("worker_id"))

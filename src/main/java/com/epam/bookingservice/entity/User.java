@@ -2,8 +2,6 @@ package com.epam.bookingservice.entity;
 
 public class User {
 
-    // todo mb inheritance
-
     private Integer id;
     private String name;
     private String email;
