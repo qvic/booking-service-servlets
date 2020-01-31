@@ -2,12 +2,14 @@ package com.epam.bookingservice.entity;
 
 public class Review {
 
-    private Integer id;
-    private String text;
+    private final Integer id;
+    private final String text;
+    private final ReviewStatus status;
 
-    public Review(Integer id, String text) {
+    public Review(Integer id, String text, ReviewStatus status) {
         this.id = id;
         this.text = text;
+        this.status = status;
     }
 
     public Integer getId() {
@@ -18,14 +20,8 @@ public class Review {
         return text;
     }
 
-    public Review setId(Integer id) {
-        this.id = id;
-        return this;
-    }
-
-    public Review setText(String text) {
-        this.text = text;
-        return this;
+    public ReviewStatus getStatus() {
+        return status;
     }
 
     @Override
@@ -33,6 +29,7 @@ public class Review {
         return "Review{" +
                 "id=" + id +
                 ", text='" + text + '\'' +
+                ", status=" + status +
                 '}';
     }
 }

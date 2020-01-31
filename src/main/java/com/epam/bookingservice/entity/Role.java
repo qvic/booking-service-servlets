@@ -1,38 +1,27 @@
 package com.epam.bookingservice.entity;
 
-public class Role {
+import java.util.NoSuchElementException;
+
+public enum Role {
+
+    ACTIVE(1), DEACTIVATED(2);
 
     private Integer id;
-    private String name;
 
-    public Role(Integer id, String name) {
+    Role(Integer id) {
         this.id = id;
-        this.name = name;
     }
 
     public Integer getId() {
         return id;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public Role setId(Integer id) {
-        this.id = id;
-        return this;
-    }
-
-    public Role setName(String name) {
-        this.name = name;
-        return this;
-    }
-
-    @Override
-    public String toString() {
-        return "Role{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                '}';
+    public static Role getById(int id) {
+        for (Role role : values()) {
+            if (role.id == id) {
+                return role;
+            }
+        }
+        throw new NoSuchElementException("Not found Role for id " + id);
     }
 }

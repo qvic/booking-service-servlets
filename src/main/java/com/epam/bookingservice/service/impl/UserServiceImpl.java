@@ -14,12 +14,12 @@ import java.util.Optional;
 
 public class UserServiceImpl implements UserService {
 
-    private final UserDao userRepository;
+    private final UserDao userDao;
     private final Validator<User> userValidator;
     private final PasswordEncryptor passwordEncryptor;
 
-    public UserServiceImpl(UserDao userRepository, Validator<User> userValidator, PasswordEncryptor passwordEncryptor) {
-        this.userRepository = userRepository;
+    public UserServiceImpl(UserDao userDao, Validator<User> userValidator, PasswordEncryptor passwordEncryptor) {
+        this.userDao = userDao;
         this.userValidator = userValidator;
         this.passwordEncryptor = passwordEncryptor;
     }
@@ -28,17 +28,17 @@ public class UserServiceImpl implements UserService {
     public Optional<User> login(String email, String password) {
         String hashedPassword = passwordEncryptor.encrypt(password, Config.PASSWORD_SALT);
 
-        return userRepository.findByEmail(email)
+        return userDao.findByEmail(email)
                 .filter(s -> s.getPassword().equals(hashedPassword));
     }
 
     @Override
     public User register(User user) {
         userValidator.validate(user);
-        if (userRepository.findByEmail(user.getEmail()).isPresent()) {
+        if (userDao.findByEmail(user.getEmail()).isPresent()) {
             throw new UserAlreadyExistsException();
         }
-        return userRepository.save(encryptPassword(user));
+        return userDao.save(encryptPassword(user));
     }
 
     private User encryptPassword(User user) {
@@ -48,9 +48,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Page<User> findAll(PageProperties properties) {
-        Page<User> page = userRepository.findAll(properties);
+        Page<User> page = userDao.findAll(properties);
         if (page.getProperties().getPageNumber() >= page.getTotalPages()) {
-            page = userRepository.findAll(new PageProperties(page.getTotalPages() - 1, properties.getItemsPerPage()));
+            page = userDao.findAll(new PageProperties(page.getTotalPages() - 1, properties.getItemsPerPage()));
         }
         return page;
     }

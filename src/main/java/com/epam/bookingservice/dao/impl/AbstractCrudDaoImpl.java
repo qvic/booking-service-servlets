@@ -3,7 +3,6 @@ package com.epam.bookingservice.dao.impl;
 import com.epam.bookingservice.dao.CrudDao;
 import com.epam.bookingservice.dao.exception.DatabaseRuntimeException;
 import com.epam.bookingservice.utility.DatabaseConnector;
-import com.epam.bookingservice.utility.SimpleDatabaseConnector;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -17,7 +16,7 @@ import java.util.Optional;
 
 abstract class AbstractCrudDaoImpl<E> implements CrudDao<E> {
 
-    private static final Logger logger = LogManager.getLogger(AbstractCrudDaoImpl.class);
+    private static final Logger LOGGER = LogManager.getLogger(AbstractCrudDaoImpl.class);
 
     protected static final StatementParamSetter<String> STRING_SETTER =
             (PreparedStatement statement, String param) -> statement.setString(1, param);
@@ -41,6 +40,7 @@ abstract class AbstractCrudDaoImpl<E> implements CrudDao<E> {
 
             return getResultList(statement);
         } catch (SQLException e) {
+            LOGGER.error("Error in findAll", e);
             throw new DatabaseRuntimeException("Error performing findAll", e);
         }
     }
@@ -55,6 +55,7 @@ abstract class AbstractCrudDaoImpl<E> implements CrudDao<E> {
             int affectedRows = statement.executeUpdate();
             throwIfNotAffected(affectedRows);
         } catch (SQLException e) {
+            LOGGER.error("Error performing update on [" + entity + "]", e);
             throw new DatabaseRuntimeException("Error performing update", e);
         }
     }
@@ -67,10 +68,9 @@ abstract class AbstractCrudDaoImpl<E> implements CrudDao<E> {
             statement.setInt(1, id);
 
             int affectedRows = statement.executeUpdate();
-            if (affectedRows == 0) {
-                throw new DatabaseRuntimeException("Error performing deleteById, no rows affected");
-            }
+            throwIfNotAffected(affectedRows);
         } catch (SQLException e) {
+            LOGGER.error("Error performing deleteById on [" + id + "]", e);
             throw new DatabaseRuntimeException("Error performing deleteById", e);
         }
     }
@@ -84,9 +84,11 @@ abstract class AbstractCrudDaoImpl<E> implements CrudDao<E> {
             if (resultSet.next()) {
                 return resultSet.getLong(1);
             } else {
+                LOGGER.error("Error performing count, no results found");
                 throw new DatabaseRuntimeException("Error performing count, no results found");
             }
         } catch (SQLException e) {
+            LOGGER.error("Error performing count", e);
             throw new DatabaseRuntimeException("Error performing count", e);
         }
     }
@@ -105,10 +107,12 @@ abstract class AbstractCrudDaoImpl<E> implements CrudDao<E> {
                 if (generatedKeys.next()) {
                     return applyGeneratedKeysToEntity(entity, generatedKeys);
                 } else {
+                    LOGGER.error("Error performing save on [" + entity + "]");
                     throw new DatabaseRuntimeException("Error performing save, no id obtained");
                 }
             }
         } catch (SQLException e) {
+            LOGGER.error("Error performing save on [" + entity + "]", e);
             throw new DatabaseRuntimeException("Error performing save", e);
         }
     }
@@ -120,6 +124,7 @@ abstract class AbstractCrudDaoImpl<E> implements CrudDao<E> {
 
     private void throwIfNotAffected(int affectedRows) {
         if (affectedRows == 0) {
+            LOGGER.error("No rows affected");
             throw new DatabaseRuntimeException("No rows affected");
         }
     }
@@ -135,22 +140,26 @@ abstract class AbstractCrudDaoImpl<E> implements CrudDao<E> {
         }
     }
 
+    protected Optional<E> getResultOptional(PreparedStatement statement) throws SQLException {
+        try (ResultSet resultSet = statement.executeQuery()) {
+            if (resultSet.next()) {
+                return Optional.of(mapResultSetToEntity(resultSet));
+            }
+        }
+        return Optional.empty();
+    }
+
     protected <P> Optional<E> findByParam(P parameter, String findByParamQuery, StatementParamSetter<P> paramSetter) {
         try (PreparedStatement preparedStatement = connector.getConnection()
                 .prepareStatement(findByParamQuery)) {
 
             paramSetter.accept(preparedStatement, parameter);
 
-            try (ResultSet resultSet = preparedStatement.executeQuery()) {
-                if (resultSet.next()) {
-                    return Optional.of(mapResultSetToEntity(resultSet));
-                }
-            }
+            return getResultOptional(preparedStatement);
         } catch (SQLException e) {
+            LOGGER.error("Error performing findByParam by [" + parameter + "] on query [" + findByParamQuery + "]", e);
             throw new DatabaseRuntimeException("Error performing findByParam", e);
         }
-
-        return Optional.empty();
     }
 
     protected <P> List<E> findAllByParam(P parameter, String findAllByParamQuery, StatementParamSetter<P> paramSetter) {
@@ -161,7 +170,8 @@ abstract class AbstractCrudDaoImpl<E> implements CrudDao<E> {
 
             return getResultList(preparedStatement);
         } catch (SQLException e) {
-            throw new DatabaseRuntimeException("Error performing findByParam", e);
+            LOGGER.error("Error performing findAllByParam by [" + parameter + "] on query [" + findAllByParamQuery + "]", e);
+            throw new DatabaseRuntimeException("Error performing findAllByParam", e);
         }
     }
 

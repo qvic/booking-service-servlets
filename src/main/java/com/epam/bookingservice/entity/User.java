@@ -7,6 +7,7 @@ public class User {
     private String email;
     private String password;
     private Role role;
+    private UserStatus status;
 
     private User(Builder builder) {
         id = builder.id;
@@ -14,6 +15,7 @@ public class User {
         email = builder.email;
         password = builder.password;
         role = builder.role;
+        status = builder.status;
     }
 
     public Integer getId() {
@@ -36,29 +38,8 @@ public class User {
         return role;
     }
 
-    public User setId(Integer id) {
-        this.id = id;
-        return this;
-    }
-
-    public User setName(String name) {
-        this.name = name;
-        return this;
-    }
-
-    public User setEmail(String email) {
-        this.email = email;
-        return this;
-    }
-
-    public User setPassword(String password) {
-        this.password = password;
-        return this;
-    }
-
-    public User setRole(Role role) {
-        this.role = role;
-        return this;
+    public UserStatus getStatus() {
+        return status;
     }
 
     @Override
@@ -69,6 +50,7 @@ public class User {
                 ", email='" + email + '\'' +
                 ", password='" + password + '\'' +
                 ", role=" + role +
+                ", status=" + status +
                 '}';
     }
 
@@ -76,12 +58,25 @@ public class User {
         return new Builder();
     }
 
+    public static Builder builder(User copy) {
+        Builder builder = new Builder();
+        builder.id = copy.getId();
+        builder.name = copy.getName();
+        builder.email = copy.getEmail();
+        builder.password = copy.getPassword();
+        builder.role = copy.getRole();
+        builder.status = copy.getStatus();
+        return builder;
+    }
+
+
     public static final class Builder {
         private Integer id;
         private String name;
         private String email;
         private String password;
         private Role role;
+        private UserStatus status;
 
         private Builder() {
         }
@@ -92,6 +87,7 @@ public class User {
             this.email = copy.getEmail();
             this.password = copy.getPassword();
             this.role = copy.getRole();
+            this.status = copy.getStatus();
         }
 
         public Builder setId(Integer id) {
@@ -116,6 +112,11 @@ public class User {
 
         public Builder setRole(Role role) {
             this.role = role;
+            return this;
+        }
+
+        public Builder setStatus(UserStatus status) {
+            this.status = status;
             return this;
         }
 

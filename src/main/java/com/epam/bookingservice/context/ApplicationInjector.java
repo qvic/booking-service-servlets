@@ -1,14 +1,12 @@
 package com.epam.bookingservice.context;
 
-import com.epam.bookingservice.dao.AppointmentDao;
+import com.epam.bookingservice.dao.OrderDao;
 import com.epam.bookingservice.dao.ReviewDao;
-import com.epam.bookingservice.dao.RoleDao;
-import com.epam.bookingservice.dao.ServiceTypeDao;
+import com.epam.bookingservice.dao.ServiceDao;
 import com.epam.bookingservice.dao.UserDao;
-import com.epam.bookingservice.dao.impl.AppointmentDaoImpl;
+import com.epam.bookingservice.dao.impl.OrderDaoImpl;
 import com.epam.bookingservice.dao.impl.ReviewDaoImpl;
-import com.epam.bookingservice.dao.impl.RoleDaoImpl;
-import com.epam.bookingservice.dao.impl.ServiceTypeDaoImpl;
+import com.epam.bookingservice.dao.impl.ServiceDaoImpl;
 import com.epam.bookingservice.dao.impl.UserDaoImpl;
 import com.epam.bookingservice.entity.User;
 import com.epam.bookingservice.service.PasswordEncryptor;
@@ -32,10 +30,10 @@ public class ApplicationInjector {
     private static final DatabaseConnector DATABASE_CONNECTOR = new SimpleDatabaseConnector(Config.DB_SETTINGS_BUNDLE_NAME);
 
     private static final UserDao USER_DAO = new UserDaoImpl(DATABASE_CONNECTOR);
-    private static final ServiceTypeDao SERVICE_TYPE_DAO = new ServiceTypeDaoImpl(DATABASE_CONNECTOR);
+    private static final ServiceDao SERVICE_TYPE_DAO = new ServiceDaoImpl(DATABASE_CONNECTOR);
     private static final RoleDao ROLE_DAO = new RoleDaoImpl(DATABASE_CONNECTOR);
     private static final ReviewDao REVIEW_DAO = new ReviewDaoImpl(DATABASE_CONNECTOR);
-    private static final AppointmentDao APPOINTMENT_DAO = new AppointmentDaoImpl(DATABASE_CONNECTOR, USER_DAO, SERVICE_TYPE_DAO);
+    private static final OrderDao APPOINTMENT_DAO = new OrderDaoImpl(DATABASE_CONNECTOR, USER_DAO, SERVICE_TYPE_DAO);
 
     private static final UserService USER_SERVICE = new UserServiceImpl(USER_DAO, USER_VALIDATOR, PASSWORD_ENCRYPTOR);
 
@@ -53,7 +51,7 @@ public class ApplicationInjector {
         return USER_DAO;
     }
 
-    public ServiceTypeDao getServiceTypeDao() {
+    public ServiceDao getServiceTypeDao() {
         return SERVICE_TYPE_DAO;
     }
 
@@ -65,7 +63,7 @@ public class ApplicationInjector {
         return REVIEW_DAO;
     }
 
-    public AppointmentDao getAppointmentDao() {
+    public OrderDao getAppointmentDao() {
         return APPOINTMENT_DAO;
     }
 
