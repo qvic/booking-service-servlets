@@ -6,6 +6,7 @@ import com.epam.bookingservice.dao.TimeslotDao;
 import com.epam.bookingservice.dao.UserDao;
 import com.epam.bookingservice.dao.exception.DatabaseRuntimeException;
 import com.epam.bookingservice.entity.Order;
+import com.epam.bookingservice.entity.OrderStatus;
 import com.epam.bookingservice.entity.Service;
 import com.epam.bookingservice.entity.Timeslot;
 import com.epam.bookingservice.entity.User;
@@ -71,6 +72,7 @@ public class OrderDaoImpl extends AbstractPageableCrudDaoImpl<Order> implements 
                 .setDate(resultSet.getTimestamp("date").toLocalDateTime())
                 .setServices(services)
                 .setTimeslot(timeslot)
+                .setStatus(OrderStatus.getById(resultSet.getInt("status_id")))
                 .build();
     }
 

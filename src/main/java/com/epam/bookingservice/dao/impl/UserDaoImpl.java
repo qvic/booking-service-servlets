@@ -3,6 +3,7 @@ package com.epam.bookingservice.dao.impl;
 import com.epam.bookingservice.dao.UserDao;
 import com.epam.bookingservice.entity.Role;
 import com.epam.bookingservice.entity.User;
+import com.epam.bookingservice.entity.UserStatus;
 import com.epam.bookingservice.utility.DatabaseConnector;
 
 import java.sql.PreparedStatement;
@@ -41,6 +42,7 @@ public class UserDaoImpl extends AbstractPageableCrudDaoImpl<User> implements Us
                 .setName(resultSet.getString("name"))
                 .setPassword(resultSet.getString("password"))
                 .setRole(Role.getById(resultSet.getInt("role_id")))
+                .setStatus(UserStatus.getById(resultSet.getInt("status_id")))
                 .build();
     }
 
