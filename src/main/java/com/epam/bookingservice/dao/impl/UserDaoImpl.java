@@ -12,10 +12,10 @@ import java.util.Optional;
 
 public class UserDaoImpl extends AbstractPageableCrudDaoImpl<User> implements UserDao {
 
-    private static final String FIND_BY_ID_QUERY = "SELECT u.id, u.name, u.email, u.password, u.role_id, u.status_id FROM \"user\" u WHERE u.id = ?";
-    private static final String FIND_BY_EMAIL_QUERY = "SELECT u.id, u.name, u.email, u.password, u.role_id, u.status_id FROM \"user\" u WHERE u.email = ?";
-    private static final String FIND_ALL_QUERY = "SELECT u.id, u.name, u.email, u.password, u.role_id, u.status_id FROM \"user\" u";
-    private static final String FIND_ALL_PAGED_QUERY = "SELECT u.id, u.name, u.email, u.password, u.role_id, u.status_id FROM \"user\" u OFFSET ? LIMIT ?";
+    private static final String FIND_BY_ID_QUERY = "SELECT * FROM \"user\" u WHERE u.id = ?";
+    private static final String FIND_BY_EMAIL_QUERY = "SELECT * FROM \"user\" u WHERE u.email = ?";
+    private static final String FIND_ALL_QUERY = "SELECT * FROM \"user\" u";
+    private static final String FIND_ALL_PAGED_QUERY = "SELECT * FROM \"user\" u OFFSET ? LIMIT ?";
 
     private static final String SAVE_QUERY = "INSERT INTO \"user\" (name, email, password, role_id, status_id) VALUES (?, ?, ?, ?, ?) RETURNING id";
     private static final String UPDATE_QUERY = "UPDATE \"user\" SET name = ?, email = ?, password = ?, role_id = ?, status_id = ? WHERE id = ?";

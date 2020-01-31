@@ -2,6 +2,8 @@ package com.epam.bookingservice.entity;
 
 public class User {
 
+    // todo mb inheritance
+
     private Integer id;
     private String name;
     private String email;
@@ -79,15 +81,6 @@ public class User {
         private UserStatus status;
 
         private Builder() {
-        }
-
-        private Builder(User copy) {
-            this.id = copy.getId();
-            this.name = copy.getName();
-            this.email = copy.getEmail();
-            this.password = copy.getPassword();
-            this.role = copy.getRole();
-            this.status = copy.getStatus();
         }
 
         public Builder setId(Integer id) {

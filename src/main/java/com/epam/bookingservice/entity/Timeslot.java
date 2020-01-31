@@ -9,13 +9,6 @@ public class Timeslot {
     private final LocalTime from;
     private final LocalTime to;
 
-    public Timeslot(Integer id, Integer weekday, LocalTime from, LocalTime to) {
-        this.id = id;
-        this.weekday = weekday;
-        this.from = from;
-        this.to = to;
-    }
-
     private Timeslot(Builder builder) {
         id = builder.id;
         weekday = builder.weekday;
@@ -49,11 +42,11 @@ public class Timeslot {
                 '}';
     }
 
-    public static Builder newBuilder() {
+    public static Builder builder() {
         return new Builder();
     }
 
-    public static Builder newBuilder(Timeslot copy) {
+    public static Builder builder(Timeslot copy) {
         Builder builder = new Builder();
         builder.id = copy.getId();
         builder.weekday = copy.getWeekday();
