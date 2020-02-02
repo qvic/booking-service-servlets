@@ -1,7 +1,6 @@
 package com.epam.bookingservice.entity;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 public class Order {
 
@@ -11,7 +10,7 @@ public class Order {
     private final User client;
     private final Timeslot timeslot;
     private final OrderStatus status;
-    private final List<Service> services;
+    private final Service service;
 
     private Order(Builder builder) {
         id = builder.id;
@@ -20,7 +19,7 @@ public class Order {
         client = builder.client;
         timeslot = builder.timeslot;
         status = builder.status;
-        services = builder.services;
+        service = builder.service;
     }
 
     public Integer getId() {
@@ -47,8 +46,8 @@ public class Order {
         return status;
     }
 
-    public List<Service> getServices() {
-        return services;
+    public Service getService() {
+        return service;
     }
 
     @Override
@@ -60,7 +59,7 @@ public class Order {
                 ", client=" + client +
                 ", timeslot=" + timeslot +
                 ", status=" + status +
-                ", services=" + services +
+                ", service=" + service +
                 '}';
     }
 
@@ -76,7 +75,7 @@ public class Order {
         builder.client = copy.getClient();
         builder.timeslot = copy.getTimeslot();
         builder.status = copy.getStatus();
-        builder.services = copy.getServices();
+        builder.service = copy.getService();
         return builder;
     }
 
@@ -88,7 +87,7 @@ public class Order {
         private User client;
         private Timeslot timeslot;
         private OrderStatus status;
-        private List<Service> services;
+        private Service service;
 
         private Builder() {
         }
@@ -123,8 +122,8 @@ public class Order {
             return this;
         }
 
-        public Builder setServices(List<Service> services) {
-            this.services = services;
+        public Builder setService(Service service) {
+            this.service = service;
             return this;
         }
 

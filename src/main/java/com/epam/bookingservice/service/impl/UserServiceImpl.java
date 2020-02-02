@@ -42,8 +42,9 @@ public class UserServiceImpl implements UserService {
     }
 
     private User encryptPassword(User user) {
-        user.setPassword(passwordEncryptor.encrypt(user.getPassword(), Config.PASSWORD_SALT));
-        return user;
+        return User.builder(user)
+                .setPassword(passwordEncryptor.encrypt(user.getPassword(), Config.PASSWORD_SALT))
+                .build();
     }
 
     @Override

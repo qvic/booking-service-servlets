@@ -2,10 +2,10 @@ INSERT INTO public.appointment (id, date, worker_id, client_id, service_id) VALU
 INSERT INTO public.appointment (id, date, worker_id, client_id, service_id) VALUES (2, '2020-01-28 21:11:06.000000', 9, 5, 2);
 INSERT INTO public.appointment (id, date, worker_id, client_id, service_id) VALUES (3, '2020-01-29 01:53:07.000000', 7, 6, 2);
 INSERT INTO public.appointment (id, date, worker_id, client_id, service_id) VALUES (4, '2020-01-29 04:53:09.000000', 9, 6, 1);
-INSERT INTO public.review (id, order_id, text) VALUES (1, 1, 'Very nice');
-INSERT INTO public.review (id, order_id, text) VALUES (2, 2, 'Very good');
-INSERT INTO public.review (id, order_id, text) VALUES (3, null, 'OK');
-INSERT INTO public.review (id, order_id, text) VALUES (4, 1, 'Recommend!');
+INSERT INTO public.feedback (id, order_id, text) VALUES (1, 1, 'Very nice');
+INSERT INTO public.feedback (id, order_id, text) VALUES (2, 2, 'Very good');
+INSERT INTO public.feedback (id, order_id, text) VALUES (3, null, 'OK');
+INSERT INTO public.feedback (id, order_id, text) VALUES (4, 1, 'Recommend!');
 INSERT INTO public.role (id, name) VALUES (1, 'CLIENT');
 INSERT INTO public.role (id, name) VALUES (2, 'WORKER');
 INSERT INTO public.role (id, name) VALUES (3, 'ADMIN');

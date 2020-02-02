@@ -8,6 +8,7 @@ import com.epam.bookingservice.utility.DatabaseConnector;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.List;
@@ -25,8 +26,8 @@ abstract class AbstractPageableCrudDaoImpl<E> extends AbstractCrudDaoImpl<E> imp
 
     @Override
     public Page<E> findAll(PageProperties properties) {
-        try (PreparedStatement statement = connector.getConnection()
-                .prepareStatement(queries.getFindAllPageableQuery())) {
+        try (Connection connection = connector.getConnection();
+             PreparedStatement statement = connection.prepareStatement(queries.getFindAllPageableQuery())) {
 
             statement.setLong(1, properties.getOffset());
             statement.setLong(2, properties.getItemsPerPage());

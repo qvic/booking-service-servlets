@@ -1,0 +1,33 @@
+html,
+body {
+    height: 100%;
+}
+
+body {
+    padding-top: 30px;
+    padding-bottom: 30px;
+    background-color: #f5f5f5;
+}
+
+.form-signin {
+    width: 100%;
+    max-width: 400px;
+    margin: 30% auto 0;
+}
+
+input[type=checkbox]:checked + .print-label {
+    color: #fff;
+    background-color: #007bff;
+    border-color: #007bff;
+}
+
+.fixed-alert {
+    position: fixed;
+    top: 70px;
+    left: 25%;
+    width: 50%;
+}
+
+.bg-admin-primary {
+    background-color: #c0392b;
+}

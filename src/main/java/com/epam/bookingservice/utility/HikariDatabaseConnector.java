@@ -25,9 +25,14 @@ public class HikariDatabaseConnector implements DatabaseConnector {
     private static HikariConfig getHikariConfigByResource(ResourceBundle resource) {
         HikariConfig config = new HikariConfig();
         config.setJdbcUrl(resource.getString("db.url"));
+        config.setDriverClassName("org.postgresql.Driver");
         config.setUsername(resource.getString("db.username"));
         config.setPassword(resource.getString("db.password"));
         config.setConnectionTimeout(Long.parseLong(resource.getString("db.hikari.connectionTimeout")));
+        config.setMaximumPoolSize(Integer.parseInt(resource.getString("db.hikari.maxPoolSize")));
+        config.addDataSourceProperty("cachePrepStmts", resource.getString("db.hikari.cachePrepStmts"));
+        config.addDataSourceProperty("prepStmtCacheSize", resource.getString("db.hikari.prepStmtCacheSize"));
+        config.addDataSourceProperty("prepStmtCacheSqlLimit", resource.getString("db.hikari.prepStmtCacheSqlLimit"));
         return config;
     }
 }

@@ -6,14 +6,14 @@ public class Timeslot {
 
     private final Integer id;
     private final Integer weekday;
-    private final LocalTime from;
-    private final LocalTime to;
+    private final LocalTime fromTime;
+    private final LocalTime toTime;
 
     private Timeslot(Builder builder) {
         id = builder.id;
         weekday = builder.weekday;
-        from = builder.from;
-        to = builder.to;
+        fromTime = builder.fromTime;
+        toTime = builder.toTime;
     }
 
     public Integer getId() {
@@ -24,12 +24,12 @@ public class Timeslot {
         return weekday;
     }
 
-    public LocalTime getFrom() {
-        return from;
+    public LocalTime getFromTime() {
+        return fromTime;
     }
 
-    public LocalTime getTo() {
-        return to;
+    public LocalTime getToTime() {
+        return toTime;
     }
 
     @Override
@@ -37,8 +37,8 @@ public class Timeslot {
         return "Timeslot{" +
                 "id=" + id +
                 ", weekday=" + weekday +
-                ", from=" + from +
-                ", to=" + to +
+                ", from=" + fromTime +
+                ", to=" + toTime +
                 '}';
     }
 
@@ -50,8 +50,8 @@ public class Timeslot {
         Builder builder = new Builder();
         builder.id = copy.getId();
         builder.weekday = copy.getWeekday();
-        builder.from = copy.getFrom();
-        builder.to = copy.getTo();
+        builder.fromTime = copy.getFromTime();
+        builder.toTime = copy.getToTime();
         return builder;
     }
 
@@ -59,8 +59,8 @@ public class Timeslot {
 
         private Integer id;
         private Integer weekday;
-        private LocalTime from;
-        private LocalTime to;
+        private LocalTime fromTime;
+        private LocalTime toTime;
 
         private Builder() {
         }
@@ -75,13 +75,13 @@ public class Timeslot {
             return this;
         }
 
-        public Builder setFrom(LocalTime from) {
-            this.from = from;
+        public Builder setFromTime(LocalTime from) {
+            this.fromTime = from;
             return this;
         }
 
-        public Builder setTo(LocalTime to) {
-            this.to = to;
+        public Builder setToTime(LocalTime toTime) {
+            this.toTime = toTime;
             return this;
         }
 

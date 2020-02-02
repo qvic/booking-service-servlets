@@ -2,6 +2,8 @@ package com.epam.bookingservice.dao;
 
 public class PageProperties {
 
+    private static final long DEFAULT_PAGE_NUMBER = 0;
+
     private long pageNumber;
     private long itemsPerPage;
 
@@ -40,5 +42,23 @@ public class PageProperties {
     @Override
     public String toString() {
         return String.format("Page %d (%d - %d)", pageNumber, getOffset(), getUpperBound());
+    }
+
+    public static PageProperties fromStringParameters(String pageNumber, String itemsPerPage, long defaultItemsPerPage) {
+        long page;
+        try {
+            page = Long.parseLong(pageNumber);
+        } catch (NumberFormatException e) {
+            page = DEFAULT_PAGE_NUMBER;
+        }
+
+        long items;
+        try {
+            items = Long.parseLong(itemsPerPage);
+        } catch (NumberFormatException e) {
+            items = defaultItemsPerPage;
+        }
+
+        return new PageProperties(page, items);
     }
 }

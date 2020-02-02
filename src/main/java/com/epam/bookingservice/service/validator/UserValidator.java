@@ -21,6 +21,7 @@ public class UserValidator implements Validator<User> {
 
     @Override
     public void validate(User user) {
+        // todo validate name
         validateEmail(user.getEmail());
         validatePassword(user.getPassword());
     }

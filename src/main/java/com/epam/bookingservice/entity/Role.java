@@ -4,7 +4,7 @@ import java.util.NoSuchElementException;
 
 public enum Role {
 
-    ACTIVE(1), DEACTIVATED(2);
+    CLIENT(1), WORKER(2), ADMIN(3);
 
     private Integer id;
 

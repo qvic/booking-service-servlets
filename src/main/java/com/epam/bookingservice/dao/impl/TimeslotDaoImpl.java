@@ -30,8 +30,8 @@ public class TimeslotDaoImpl extends AbstractCrudDaoImpl<Timeslot> implements Ti
         return Timeslot.builder()
                 .setId(resultSet.getInt("id"))
                 .setWeekday(resultSet.getInt("weekday"))
-                .setFrom(resultSet.getTime("from_time").toLocalTime())
-                .setTo(resultSet.getTime("to_time").toLocalTime())
+                .setFromTime(resultSet.getTime("from_time").toLocalTime())
+                .setToTime(resultSet.getTime("to_time").toLocalTime())
                 .build();
     }
 
@@ -55,7 +55,12 @@ public class TimeslotDaoImpl extends AbstractCrudDaoImpl<Timeslot> implements Ti
 
     private void populateNonIdFields(Timeslot entity, PreparedStatement statement) throws SQLException {
         statement.setInt(1, entity.getWeekday());
-        statement.setTime(2, Time.valueOf(entity.getFrom()));
-        statement.setTime(3, Time.valueOf(entity.getFrom()));
+        statement.setTime(2, Time.valueOf(entity.getFromTime()));
+        statement.setTime(3, Time.valueOf(entity.getFromTime()));
     }
+
+//    @Override
+//    public Optional<Timeslot> findTimeslotByWeekdayAndStartTime() {
+//        return findByParam();
+//    }
 }

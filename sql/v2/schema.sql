@@ -101,7 +101,7 @@ create table review
     text      varchar(5000) not null,
     status_id integer       not null
         constraint reviews_review_status_id_fk
-            references review_status
+            references feedback_status
 );
 
 create table order_service
