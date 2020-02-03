@@ -1,5 +1,7 @@
 package com.epam.bookingservice.entity;
 
+import java.util.Objects;
+
 public class Service {
 
     private final Integer id;
@@ -45,6 +47,27 @@ public class Service {
                 ", price=" + price +
                 ", workspaces=" + workspaces +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        Service service = (Service) o;
+        return Objects.equals(id, service.id) &&
+                Objects.equals(name, service.name) &&
+                Objects.equals(durationInTimeslots, service.durationInTimeslots) &&
+                Objects.equals(price, service.price) &&
+                Objects.equals(workspaces, service.workspaces);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name, durationInTimeslots, price, workspaces);
     }
 
     public static Builder builder() {

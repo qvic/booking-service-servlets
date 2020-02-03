@@ -4,6 +4,7 @@ import com.epam.bookingservice.dao.TimeslotDao;
 import com.epam.bookingservice.entity.Timeslot;
 import com.epam.bookingservice.utility.DatabaseConnector;
 
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -29,7 +30,7 @@ public class TimeslotDaoImpl extends AbstractCrudDaoImpl<Timeslot> implements Ti
     protected Timeslot mapResultSetToEntity(ResultSet resultSet) throws SQLException {
         return Timeslot.builder()
                 .setId(resultSet.getInt("id"))
-                .setWeekday(resultSet.getInt("weekday"))
+                .setDate(resultSet.getDate("date").toLocalDate())
                 .setFromTime(resultSet.getTime("from_time").toLocalTime())
                 .setToTime(resultSet.getTime("to_time").toLocalTime())
                 .build();
@@ -54,13 +55,8 @@ public class TimeslotDaoImpl extends AbstractCrudDaoImpl<Timeslot> implements Ti
     }
 
     private void populateNonIdFields(Timeslot entity, PreparedStatement statement) throws SQLException {
-        statement.setInt(1, entity.getWeekday());
+        statement.setDate(1, Date.valueOf(entity.getDate()));
         statement.setTime(2, Time.valueOf(entity.getFromTime()));
         statement.setTime(3, Time.valueOf(entity.getFromTime()));
     }
-
-//    @Override
-//    public Optional<Timeslot> findTimeslotByWeekdayAndStartTime() {
-//        return findByParam();
-//    }
 }

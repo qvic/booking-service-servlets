@@ -16,15 +16,17 @@
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
 
-        <mockito-core.version>2.28.2</mockito-core.version>
-        <log4j.version>2.12.1</log4j.version>
-        <junit.version>4.13</junit.version>
-        <jacoco-maven-plugin.version>0.8.5</jacoco-maven-plugin.version>
-        <jacoco-maven-plugin.covered-ratio>0.60</jacoco-maven-plugin.covered-ratio>
         <javax.servlet-api.version>4.0.1</javax.servlet-api.version>
         <jstl.version>1.2</jstl.version>
         <postgresql.version>42.2.9</postgresql.version>
         <HikariCP.version>3.4.1</HikariCP.version>
+        <log4j.version>2.12.1</log4j.version>
+
+        <junit.version>4.13</junit.version>
+        <mockito-core.version>2.28.2</mockito-core.version>
+        <h2.version>1.4.200</h2.version>
+        <jacoco-maven-plugin.version>0.8.5</jacoco-maven-plugin.version>
+        <jacoco-maven-plugin.covered-ratio>0.60</jacoco-maven-plugin.covered-ratio>
     </properties>
 
     <build>
@@ -144,6 +146,18 @@
             <groupId>com.zaxxer</groupId>
             <artifactId>HikariCP</artifactId>
             <version>${HikariCP.version}</version>
+        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>com.h2database</groupId>-->
+<!--            <artifactId>h2</artifactId>-->
+<!--            <version>${h2.version}</version>-->
+<!--            <scope>test</scope>-->
+<!--        </dependency>-->
+        <dependency>
+            <groupId>io.zonky.test</groupId>
+            <artifactId>embedded-postgres</artifactId>
+            <version>1.2.6</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 </project>

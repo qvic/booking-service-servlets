@@ -25,7 +25,7 @@ public class HikariDatabaseConnector implements DatabaseConnector {
     private static HikariConfig getHikariConfigByResource(ResourceBundle resource) {
         HikariConfig config = new HikariConfig();
         config.setJdbcUrl(resource.getString("db.url"));
-        config.setDriverClassName("org.postgresql.Driver");
+        config.setDriverClassName(resource.getString("db.hikari.driverClassName"));
         config.setUsername(resource.getString("db.username"));
         config.setPassword(resource.getString("db.password"));
         config.setConnectionTimeout(Long.parseLong(resource.getString("db.hikari.connectionTimeout")));

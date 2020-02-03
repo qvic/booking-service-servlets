@@ -12,6 +12,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.util.List;
 
 public class OrderDaoImpl extends AbstractPageableCrudDaoImpl<Order> implements OrderDao {
@@ -34,12 +35,12 @@ public class OrderDaoImpl extends AbstractPageableCrudDaoImpl<Order> implements 
     }
 
     @Override
-    public List<Order> findOrdersByClientId(Integer id) {
+    public List<Order> findAllByClientId(Integer id) {
         return findAllByParam(id, FIND_ALL_BY_CLIENT, INT_SETTER);
     }
 
     @Override
-    public List<Order> findOrdersByWorkerId(Integer id) {
+    public List<Order> findAllByWorkerId(Integer id) {
         return findAllByParam(id, FIND_ALL_BY_WORKER, INT_SETTER);
     }
 

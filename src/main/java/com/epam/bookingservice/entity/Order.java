@@ -1,6 +1,7 @@
 package com.epam.bookingservice.entity;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 public class Order {
 
@@ -61,6 +62,29 @@ public class Order {
                 ", status=" + status +
                 ", service=" + service +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        Order order = (Order) o;
+        return Objects.equals(id, order.id) &&
+                Objects.equals(date, order.date) &&
+                Objects.equals(worker, order.worker) &&
+                Objects.equals(client, order.client) &&
+                Objects.equals(timeslot, order.timeslot) &&
+                status == order.status &&
+                Objects.equals(service, order.service);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, date, worker, client, timeslot, status, service);
     }
 
     public static Builder builder() {

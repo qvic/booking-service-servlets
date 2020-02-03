@@ -1,6 +1,7 @@
 package com.epam.bookingservice.entity;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 public class User implements Serializable {
 
@@ -54,6 +55,28 @@ public class User implements Serializable {
                 ", role=" + role +
                 ", status=" + status +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        User user = (User) o;
+        return Objects.equals(id, user.id) &&
+                Objects.equals(name, user.name) &&
+                Objects.equals(email, user.email) &&
+                Objects.equals(password, user.password) &&
+                role == user.role &&
+                status == user.status;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name, email, password, role, status);
     }
 
     public static Builder builder() {

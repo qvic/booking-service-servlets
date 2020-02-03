@@ -1,17 +1,19 @@
 package com.epam.bookingservice.entity;
 
+import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.Objects;
 
 public class Timeslot {
 
     private final Integer id;
-    private final Integer weekday;
+    private final LocalDate date;
     private final LocalTime fromTime;
     private final LocalTime toTime;
 
     private Timeslot(Builder builder) {
         id = builder.id;
-        weekday = builder.weekday;
+        date = builder.date;
         fromTime = builder.fromTime;
         toTime = builder.toTime;
     }
@@ -20,8 +22,8 @@ public class Timeslot {
         return id;
     }
 
-    public Integer getWeekday() {
-        return weekday;
+    public LocalDate getDate() {
+        return date;
     }
 
     public LocalTime getFromTime() {
@@ -36,10 +38,30 @@ public class Timeslot {
     public String toString() {
         return "Timeslot{" +
                 "id=" + id +
-                ", weekday=" + weekday +
+                ", date=" + date +
                 ", from=" + fromTime +
                 ", to=" + toTime +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        Timeslot timeslot = (Timeslot) o;
+        return Objects.equals(id, timeslot.id) &&
+                Objects.equals(date, timeslot.date) &&
+                Objects.equals(fromTime, timeslot.fromTime) &&
+                Objects.equals(toTime, timeslot.toTime);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, date, fromTime, toTime);
     }
 
     public static Builder builder() {
@@ -49,7 +71,7 @@ public class Timeslot {
     public static Builder builder(Timeslot copy) {
         Builder builder = new Builder();
         builder.id = copy.getId();
-        builder.weekday = copy.getWeekday();
+        builder.date = copy.getDate();
         builder.fromTime = copy.getFromTime();
         builder.toTime = copy.getToTime();
         return builder;
@@ -58,7 +80,7 @@ public class Timeslot {
     public static final class Builder {
 
         private Integer id;
-        private Integer weekday;
+        private LocalDate date;
         private LocalTime fromTime;
         private LocalTime toTime;
 
@@ -70,8 +92,8 @@ public class Timeslot {
             return this;
         }
 
-        public Builder setWeekday(Integer weekday) {
-            this.weekday = weekday;
+        public Builder setDate(LocalDate date) {
+            this.date = date;
             return this;
         }
 
