@@ -1,6 +1,6 @@
 package com.epam.bookingservice.service.validator;
 
-import com.epam.bookingservice.entity.User;
+import com.epam.bookingservice.domain.User;
 import com.epam.bookingservice.service.exception.InvalidUserException;
 
 import java.util.regex.Matcher;
@@ -12,45 +12,33 @@ import static com.epam.bookingservice.utility.StringUtility.shorterThan;
 
 public class UserValidator implements Validator<User> {
 
-    private static final int EMAIL_MAX_LENGTH = 254;
+    private static final int NAME_MAX_LENGTH = 200;
     private static final int PASSWORD_MIN_LENGTH = 5;
 
-    private static final Pattern EMAIL_REGEX = Pattern.compile(
-            "^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$",
-            Pattern.CASE_INSENSITIVE);
+    private EmailValidator emailValidator;
+
+    public UserValidator() {
+        this.emailValidator = new EmailValidator(() -> new InvalidUserException(InvalidUserException.Reason.INVALID_EMAIL));
+    }
 
     @Override
     public void validate(User user) {
-        // todo validate name
-        validateEmail(user.getEmail());
+        validateName(user.getName());
         validatePassword(user.getPassword());
-    }
-
-    private static void validateEmail(String email) {
-        if (nullOrEmpty(email)) {
-            throwWithReason(InvalidUserException.Reason.EMPTY_EMAIL);
-        }
-
-        if (longerThan(email, EMAIL_MAX_LENGTH)) {
-            throwWithReason(InvalidUserException.Reason.EMAIL_TOO_LONG);
-        }
-
-        throwWithReasonIfMatches(email, EMAIL_REGEX, InvalidUserException.Reason.INVALID_EMAIL);
+        emailValidator.validate(user.getEmail());
     }
 
     private static void validatePassword(String password) {
-        if (nullOrEmpty(password)) {
-            throwWithReason(InvalidUserException.Reason.EMPTY_PASSWORD);
-        }
-
-        if (shorterThan(password, PASSWORD_MIN_LENGTH)) {
-            throwWithReason(InvalidUserException.Reason.PASSWORD_TOO_SHORT);
-        }
+        throwWithReasonIf(nullOrEmpty(password), InvalidUserException.Reason.EMPTY_PASSWORD);
+        throwWithReasonIf(shorterThan(password, PASSWORD_MIN_LENGTH), InvalidUserException.Reason.PASSWORD_TOO_SHORT);
     }
 
-    private static void throwWithReasonIfMatches(String string, Pattern pattern, InvalidUserException.Reason reason) {
-        Matcher matcher = pattern.matcher(string);
-        if (!matcher.matches()) {
+    private static void validateName(String name) {
+        throwWithReasonIf(longerThan(name, NAME_MAX_LENGTH), InvalidUserException.Reason.NAME_TOO_LONG);
+    }
+
+    private static void throwWithReasonIf(boolean condition, InvalidUserException.Reason reason) {
+        if (condition) {
             throwWithReason(reason);
         }
     }

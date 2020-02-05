@@ -9,7 +9,7 @@
                autofocus="">
 
         <label for="inputName" class="sr-only"></label>
-        <input name="name" type="text" id="inputName" class="form-control" placeholder="Your name" required=""
+        <input name="name" type="text" id="inputName" class="mt-1 form-control" placeholder="Your name" required=""
                autofocus="">
 
         <label for="input-password" class="sr-only"></label>

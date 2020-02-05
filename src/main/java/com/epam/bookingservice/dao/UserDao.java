@@ -1,11 +1,10 @@
 package com.epam.bookingservice.dao;
 
-import com.epam.bookingservice.entity.User;
+import com.epam.bookingservice.entity.UserEntity;
 
-import java.util.List;
 import java.util.Optional;
 
-public interface UserDao extends PageableCrudDao<User> {
+public interface UserDao extends PageableCrudDao<UserEntity> {
 
-    Optional<User> findByEmail(String email);
+    Optional<UserEntity> findByEmail(String email);
 }

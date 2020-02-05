@@ -2,13 +2,13 @@ package com.epam.bookingservice.entity;
 
 import java.util.NoSuchElementException;
 
-public enum Role {
+public enum RoleEntity {
 
     CLIENT(1), WORKER(2), ADMIN(3);
 
-    private Integer id;
+    private final Integer id;
 
-    Role(Integer id) {
+    RoleEntity(Integer id) {
         this.id = id;
     }
 
@@ -16,8 +16,8 @@ public enum Role {
         return id;
     }
 
-    public static Role getById(int id) {
-        for (Role role : values()) {
+    public static RoleEntity getById(int id) {
+        for (RoleEntity role : values()) {
             if (role.id == id) {
                 return role;
             }

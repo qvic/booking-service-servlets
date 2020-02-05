@@ -1,6 +1,8 @@
-package com.epam.bookingservice.dao;
+package com.epam.bookingservice.domain;
 
 import java.util.List;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 public class Page<E> {
 
@@ -34,6 +36,12 @@ public class Page<E> {
 
     public PageProperties nextPageProperties() {
         return new PageProperties(properties.getPageNumber() + 1, properties.getItemsPerPage());
+    }
+
+    public <V> Page<V> map(Function<? super E, ? extends V> mapper) {
+        return new Page<>(items.stream()
+                .map(mapper)
+                .collect(Collectors.toList()), properties, totalItems);
     }
 
     @Override

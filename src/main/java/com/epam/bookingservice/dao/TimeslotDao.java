@@ -1,8 +1,11 @@
 package com.epam.bookingservice.dao;
 
-import com.epam.bookingservice.entity.Timeslot;
+import com.epam.bookingservice.entity.TimeslotEntity;
 
-public interface TimeslotDao extends CrudDao<Timeslot> {
+import java.time.LocalDate;
+import java.util.List;
 
-//    Optional<Timeslot> findTimeslotByStartTime();
+public interface TimeslotDao extends CrudDao<TimeslotEntity> {
+
+    List<TimeslotEntity> findAllFromNowToDate(LocalDate date);
 }

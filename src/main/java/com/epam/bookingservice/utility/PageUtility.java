@@ -1,12 +1,12 @@
 package com.epam.bookingservice.utility;
 
-public class PageUtility {
+public final class PageUtility {
 
     private PageUtility() {
 
     }
 
-    public static String getViewByName(String name) {
+    public static String getViewPathByName(String name) {
         return String.format("/WEB-INF/views/%s.jsp", name);
     }
 }

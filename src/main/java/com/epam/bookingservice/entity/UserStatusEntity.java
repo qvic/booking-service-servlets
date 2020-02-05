@@ -2,13 +2,13 @@ package com.epam.bookingservice.entity;
 
 import java.util.NoSuchElementException;
 
-public enum UserStatus {
+public enum UserStatusEntity {
 
     ACTIVE(1), DEACTIVATED(2);
 
     private final Integer id;
 
-    UserStatus(Integer id) {
+    UserStatusEntity(Integer id) {
         this.id = id;
     }
 
@@ -16,8 +16,8 @@ public enum UserStatus {
         return id;
     }
 
-    public static UserStatus getById(int id) {
-        for (UserStatus userStatus : values()) {
+    public static UserStatusEntity getById(int id) {
+        for (UserStatusEntity userStatus : values()) {
             if (userStatus.id == id) {
                 return userStatus;
             }

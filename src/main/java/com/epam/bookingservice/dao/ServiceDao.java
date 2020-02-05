@@ -1,10 +1,6 @@
 package com.epam.bookingservice.dao;
 
-import com.epam.bookingservice.entity.Service;
+import com.epam.bookingservice.entity.ServiceEntity;
 
-import java.util.List;
-
-public interface ServiceDao extends CrudDao<Service> {
-
-    List<Service> findAllByOrderId(Integer orderId);
+public interface ServiceDao extends CrudDao<ServiceEntity> {
 }

@@ -1,9 +1,9 @@
 package com.epam.bookingservice.dao.impl;
 
-import com.epam.bookingservice.utility.DatabaseConnector;
-import io.zonky.test.db.postgres.embedded.EmbeddedPostgres;
+import com.epam.bookingservice.dao.impl.connector.DataSourceConnector;
 import io.zonky.test.db.postgres.junit.EmbeddedPostgresRules;
 import io.zonky.test.db.postgres.junit.SingleInstancePostgresRule;
+import org.junit.Before;
 import org.junit.Rule;
 
 import java.io.IOException;
@@ -21,10 +21,12 @@ public abstract class AbstractDaoImplTest {
 
     @Rule
     public SingleInstancePostgresRule pg = EmbeddedPostgresRules.singleInstance();
-    private DatabaseConnector connector = () -> pg.getEmbeddedPostgres().getPostgresDatabase().getConnection();
 
-    protected DatabaseConnector getConnector() {
-        return connector;
+    protected DataSourceConnector connector = () -> pg.getEmbeddedPostgres().getPostgresDatabase().getConnection();
+
+    @Before
+    public void beforeTest() {
+        initializeDatabase();
     }
 
     protected void initializeDatabase() {

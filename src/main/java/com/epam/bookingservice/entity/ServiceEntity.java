@@ -2,7 +2,7 @@ package com.epam.bookingservice.entity;
 
 import java.util.Objects;
 
-public class Service {
+public class ServiceEntity {
 
     private final Integer id;
     private final String name;
@@ -10,7 +10,7 @@ public class Service {
     private final Integer price;
     private final Integer workspaces;
 
-    private Service(Builder builder) {
+    private ServiceEntity(Builder builder) {
         id = builder.id;
         name = builder.name;
         durationInTimeslots = builder.durationInTimeslots;
@@ -57,7 +57,7 @@ public class Service {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        Service service = (Service) o;
+        ServiceEntity service = (ServiceEntity) o;
         return Objects.equals(id, service.id) &&
                 Objects.equals(name, service.name) &&
                 Objects.equals(durationInTimeslots, service.durationInTimeslots) &&
@@ -74,7 +74,7 @@ public class Service {
         return new Builder();
     }
 
-    public static Builder builder(Service copy) {
+    public static Builder builder(ServiceEntity copy) {
         Builder builder = new Builder();
         builder.id = copy.getId();
         builder.name = copy.getName();
@@ -120,8 +120,8 @@ public class Service {
             return this;
         }
 
-        public Service build() {
-            return new Service(this);
+        public ServiceEntity build() {
+            return new ServiceEntity(this);
         }
     }
 }

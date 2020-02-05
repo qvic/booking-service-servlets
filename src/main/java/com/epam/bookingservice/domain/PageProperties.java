@@ -1,4 +1,6 @@
-package com.epam.bookingservice.dao;
+package com.epam.bookingservice.domain;
+
+import static com.epam.bookingservice.utility.ParseUtility.parseLongOrDefault;
 
 public class PageProperties {
 
@@ -12,9 +14,6 @@ public class PageProperties {
         this.itemsPerPage = getValidatedItemsPerPage(itemsPerPage);
     }
 
-    /**
-     * @return pageNumber (starting from 0)
-     */
     public long getPageNumber() {
         return pageNumber;
     }
@@ -44,20 +43,9 @@ public class PageProperties {
         return String.format("Page %d (%d - %d)", pageNumber, getOffset(), getUpperBound());
     }
 
-    public static PageProperties fromStringParameters(String pageNumber, String itemsPerPage, long defaultItemsPerPage) {
-        long page;
-        try {
-            page = Long.parseLong(pageNumber);
-        } catch (NumberFormatException e) {
-            page = DEFAULT_PAGE_NUMBER;
-        }
-
-        long items;
-        try {
-            items = Long.parseLong(itemsPerPage);
-        } catch (NumberFormatException e) {
-            items = defaultItemsPerPage;
-        }
+    public static PageProperties buildByParameters(String pageNumber, String itemsPerPage, long defaultItemsPerPage) {
+        long page = parseLongOrDefault(pageNumber, DEFAULT_PAGE_NUMBER);
+        long items = parseLongOrDefault(itemsPerPage, defaultItemsPerPage);
 
         return new PageProperties(page, items);
     }

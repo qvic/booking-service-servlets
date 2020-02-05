@@ -3,16 +3,16 @@ package com.epam.bookingservice.entity;
 import java.io.Serializable;
 import java.util.Objects;
 
-public class User implements Serializable {
+public class UserEntity {
 
-    private Integer id;
-    private String name;
-    private String email;
-    private String password;
-    private Role role;
-    private UserStatus status;
+    private final Integer id;
+    private final String name;
+    private final String email;
+    private final String password;
+    private final RoleEntity role;
+    private final UserStatusEntity status;
 
-    private User(Builder builder) {
+    private UserEntity(Builder builder) {
         id = builder.id;
         name = builder.name;
         email = builder.email;
@@ -37,17 +37,17 @@ public class User implements Serializable {
         return name;
     }
 
-    public Role getRole() {
+    public RoleEntity getRole() {
         return role;
     }
 
-    public UserStatus getStatus() {
+    public UserStatusEntity getStatus() {
         return status;
     }
 
     @Override
     public String toString() {
-        return "User{" +
+        return "UserEntity{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", email='" + email + '\'' +
@@ -65,7 +65,7 @@ public class User implements Serializable {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        User user = (User) o;
+        UserEntity user = (UserEntity) o;
         return Objects.equals(id, user.id) &&
                 Objects.equals(name, user.name) &&
                 Objects.equals(email, user.email) &&
@@ -83,7 +83,7 @@ public class User implements Serializable {
         return new Builder();
     }
 
-    public static Builder builder(User copy) {
+    public static Builder builder(UserEntity copy) {
         Builder builder = new Builder();
         builder.id = copy.getId();
         builder.name = copy.getName();
@@ -100,8 +100,8 @@ public class User implements Serializable {
         private String name;
         private String email;
         private String password;
-        private Role role;
-        private UserStatus status;
+        private RoleEntity role;
+        private UserStatusEntity status;
 
         private Builder() {
         }
@@ -126,18 +126,18 @@ public class User implements Serializable {
             return this;
         }
 
-        public Builder setRole(Role role) {
+        public Builder setRole(RoleEntity role) {
             this.role = role;
             return this;
         }
 
-        public Builder setStatus(UserStatus status) {
+        public Builder setStatus(UserStatusEntity status) {
             this.status = status;
             return this;
         }
 
-        public User build() {
-            return new User(this);
+        public UserEntity build() {
+            return new UserEntity(this);
         }
     }
 }

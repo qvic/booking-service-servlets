@@ -1,13 +1,9 @@
 package com.epam.bookingservice.dao.impl;
 
 import com.epam.bookingservice.dao.FeedbackDao;
-import com.epam.bookingservice.dao.UserDao;
-import com.epam.bookingservice.entity.Feedback;
-import com.epam.bookingservice.entity.FeedbackStatus;
-import com.epam.bookingservice.entity.Role;
-import com.epam.bookingservice.entity.User;
-import com.epam.bookingservice.entity.UserStatus;
-import com.epam.bookingservice.utility.DatabaseConnector;
+import com.epam.bookingservice.entity.FeedbackEntity;
+import com.epam.bookingservice.entity.FeedbackStatusEntity;
+import com.epam.bookingservice.entity.UserEntity;
 import org.junit.Test;
 
 import java.util.Optional;
@@ -17,33 +13,25 @@ import static org.junit.Assert.assertTrue;
 
 public class FeedbackDaoImplTest extends AbstractDaoImplTest {
 
-    private static final User TEST_USER = User.builder()
-            .setId(1)
-            .setName("Name")
-            .setEmail("Email")
-            .setPassword("Password")
-            .setRole(Role.CLIENT)
-            .setStatus(UserStatus.ACTIVE)
+    private static final UserEntity TEST_USER = UserEntity.builder()
+            .setId(5)
             .build();
 
-    private static final Feedback TEST_FEEDBACK = Feedback.builder()
-            .setStatus(FeedbackStatus.CREATED)
+    private static final FeedbackEntity TEST_FEEDBACK = FeedbackEntity.builder()
+            .setStatus(FeedbackStatusEntity.CREATED)
             .setWorker(TEST_USER)
             .setText("Text")
             .build();
 
     @Test
     public void feedbackShouldBeMappedCorrectly() {
-        DatabaseConnector connector = getConnector();
-        initializeDatabase();
-
         FeedbackDao feedbackDao = new FeedbackDaoImpl(connector);
-        Feedback saved = feedbackDao.save(TEST_FEEDBACK);
+        FeedbackEntity saved = feedbackDao.save(TEST_FEEDBACK);
 
-        Optional<Feedback> byId = feedbackDao.findById(saved.getId());
+        Optional<FeedbackEntity> byId = feedbackDao.findById(saved.getId());
         assertTrue("Could not fetch feedback after saving", byId.isPresent());
 
-        Feedback fetched = byId.get();
+        FeedbackEntity fetched = byId.get();
         assertEquals(saved, fetched);
     }
 }

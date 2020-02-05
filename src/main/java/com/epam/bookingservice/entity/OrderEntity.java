@@ -3,17 +3,17 @@ package com.epam.bookingservice.entity;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
-public class Order {
+public class OrderEntity {
 
     private final Integer id;
     private final LocalDateTime date;
-    private final User worker;
-    private final User client;
-    private final Timeslot timeslot;
-    private final OrderStatus status;
-    private final Service service;
+    private final UserEntity worker;
+    private final UserEntity client;
+    private final TimeslotEntity timeslot;
+    private final OrderStatusEntity status;
+    private final ServiceEntity service;
 
-    private Order(Builder builder) {
+    private OrderEntity(Builder builder) {
         id = builder.id;
         date = builder.date;
         worker = builder.worker;
@@ -31,23 +31,23 @@ public class Order {
         return date;
     }
 
-    public User getWorker() {
+    public UserEntity getWorker() {
         return worker;
     }
 
-    public User getClient() {
+    public UserEntity getClient() {
         return client;
     }
 
-    public Timeslot getTimeslot() {
+    public TimeslotEntity getTimeslot() {
         return timeslot;
     }
 
-    public OrderStatus getStatus() {
+    public OrderStatusEntity getStatus() {
         return status;
     }
 
-    public Service getService() {
+    public ServiceEntity getService() {
         return service;
     }
 
@@ -72,7 +72,7 @@ public class Order {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        Order order = (Order) o;
+        OrderEntity order = (OrderEntity) o;
         return Objects.equals(id, order.id) &&
                 Objects.equals(date, order.date) &&
                 Objects.equals(worker, order.worker) &&
@@ -91,7 +91,7 @@ public class Order {
         return new Builder();
     }
 
-    public static Builder builder(Order copy) {
+    public static Builder builder(OrderEntity copy) {
         Builder builder = new Builder();
         builder.id = copy.getId();
         builder.date = copy.getDate();
@@ -107,11 +107,11 @@ public class Order {
     public static final class Builder {
         private Integer id;
         private LocalDateTime date;
-        private User worker;
-        private User client;
-        private Timeslot timeslot;
-        private OrderStatus status;
-        private Service service;
+        private UserEntity worker;
+        private UserEntity client;
+        private TimeslotEntity timeslot;
+        private OrderStatusEntity status;
+        private ServiceEntity service;
 
         private Builder() {
         }
@@ -126,33 +126,33 @@ public class Order {
             return this;
         }
 
-        public Builder setWorker(User worker) {
+        public Builder setWorker(UserEntity worker) {
             this.worker = worker;
             return this;
         }
 
-        public Builder setClient(User client) {
+        public Builder setClient(UserEntity client) {
             this.client = client;
             return this;
         }
 
-        public Builder setTimeslot(Timeslot timeslot) {
+        public Builder setTimeslot(TimeslotEntity timeslot) {
             this.timeslot = timeslot;
             return this;
         }
 
-        public Builder setStatus(OrderStatus status) {
+        public Builder setStatus(OrderStatusEntity status) {
             this.status = status;
             return this;
         }
 
-        public Builder setService(Service service) {
+        public Builder setService(ServiceEntity service) {
             this.service = service;
             return this;
         }
 
-        public Order build() {
-            return new Order(this);
+        public OrderEntity build() {
+            return new OrderEntity(this);
         }
     }
 }

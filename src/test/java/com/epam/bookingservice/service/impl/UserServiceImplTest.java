@@ -1,11 +1,11 @@
-package com.epam.bank.service.impl;
+package com.epam.bookingservice.service.impl;
 
 import com.epam.bookingservice.dao.UserDao;
-import com.epam.bookingservice.entity.User;
+import com.epam.bookingservice.domain.User;
+import com.epam.bookingservice.entity.UserEntity;
 import com.epam.bookingservice.service.PasswordEncryptor;
 import com.epam.bookingservice.service.exception.UserAlreadyExistsException;
 import com.epam.bookingservice.service.exception.ValidationException;
-import com.epam.bookingservice.service.impl.UserServiceImpl;
 import com.epam.bookingservice.service.validator.Validator;
 import org.junit.After;
 import org.junit.Test;
@@ -20,7 +20,6 @@ import java.util.Optional;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThrows;
-import static org.junit.Assert.assertTrue;
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.any;
@@ -42,10 +41,22 @@ public class UserServiceImplTest {
     private static final String USER_EMAIL = "user@email.com";
     private static final String INCORRECT_USER_EMAIL = "incorrrect_user@email.com";
 
-    private static final User USER = User.builder()
-            .setEmail(USER_EMAIL)
-            .setPassword(ENCODED_PASSWORD)
-            .build();
+    private static final User USER = initUser();
+    private static final UserEntity USER_ENTITY = initUserEntity();
+
+    private static User initUser() {
+        return User.builder()
+                .setEmail(USER_EMAIL)
+                .setPassword(ENCODED_PASSWORD)
+                .build();
+    }
+
+    private static UserEntity initUserEntity() {
+        return UserEntity.builder()
+                .setEmail(USER_EMAIL)
+                .setPassword(ENCODED_PASSWORD)
+                .build();
+    }
 
     @Mock
     private UserDao userDao;
@@ -69,7 +80,7 @@ public class UserServiceImplTest {
         when(passwordEncryptor.encrypt(eq(PASSWORD), anyString()))
                 .thenReturn(ENCODED_PASSWORD);
         when(userDao.findByEmail(eq(USER_EMAIL)))
-                .thenReturn(Optional.of(USER));
+                .thenReturn(Optional.of(USER_ENTITY));
 
         Optional<User> user = userService.login(USER_EMAIL, PASSWORD);
 
@@ -83,7 +94,7 @@ public class UserServiceImplTest {
         when(passwordEncryptor.encrypt(eq(INCORRECT_PASSWORD), anyString()))
                 .thenReturn(INCORRECT_ENCODED_PASSWORD);
         when(userDao.findByEmail(eq(USER_EMAIL)))
-                .thenReturn(Optional.of(USER));
+                .thenReturn(Optional.of(USER_ENTITY));
 
         Optional<User> user = userService.login(USER_EMAIL, INCORRECT_PASSWORD);
 
@@ -113,7 +124,7 @@ public class UserServiceImplTest {
                 .thenReturn(ENCODED_PASSWORD);
         when(userDao.findByEmail(eq(USER_EMAIL)))
                 .thenReturn(Optional.empty());
-        when(userDao.save(any(User.class))).then(returnsFirstArg());
+        when(userDao.save(any(UserEntity.class))).then(returnsFirstArg());
 
         User userToBeRegistered = User.builder()
                 .setPassword(PASSWORD)
@@ -125,7 +136,7 @@ public class UserServiceImplTest {
         assertEquals(USER, registeredUser);
         verify(userValidator, times(1)).validate(eq(userToBeRegistered));
         verify(userDao, times(1)).findByEmail(eq(USER_EMAIL));
-        verify(userDao, times(1)).save(any(User.class));
+        verify(userDao, times(1)).save(any(UserEntity.class));
     }
 
     @Test
@@ -138,7 +149,7 @@ public class UserServiceImplTest {
     @Test
     public void userShouldNotRegisterAsEmailIsAlreadyUsed() {
         doNothing().when(userValidator).validate(any(User.class));
-        when(userDao.findByEmail(eq(USER_EMAIL))).thenReturn(Optional.of(USER));
+        when(userDao.findByEmail(eq(USER_EMAIL))).thenReturn(Optional.of(USER_ENTITY));
 
         assertThrows(UserAlreadyExistsException.class, () -> userService.register(USER));
     }

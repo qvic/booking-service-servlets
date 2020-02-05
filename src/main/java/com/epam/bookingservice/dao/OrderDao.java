@@ -1,13 +1,12 @@
 package com.epam.bookingservice.dao;
 
-import com.epam.bookingservice.entity.Order;
+import com.epam.bookingservice.entity.OrderEntity;
 
-import java.time.LocalDate;
 import java.util.List;
 
-public interface OrderDao extends PageableCrudDao<Order> {
+public interface OrderDao extends PageableCrudDao<OrderEntity> {
 
-    List<Order> findAllByClientId(Integer id);
+    List<OrderEntity> findAllByClientId(Integer id);
 
-    List<Order> findAllByWorkerId(Integer id);
+    List<OrderEntity> findAllByWorkerId(Integer id);
 }

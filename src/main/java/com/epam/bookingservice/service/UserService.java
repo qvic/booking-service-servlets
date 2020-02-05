@@ -1,8 +1,8 @@
 package com.epam.bookingservice.service;
 
-import com.epam.bookingservice.entity.User;
-import com.epam.bookingservice.dao.Page;
-import com.epam.bookingservice.dao.PageProperties;
+import com.epam.bookingservice.domain.Page;
+import com.epam.bookingservice.domain.PageProperties;
+import com.epam.bookingservice.domain.User;
 
 import java.util.Optional;
 

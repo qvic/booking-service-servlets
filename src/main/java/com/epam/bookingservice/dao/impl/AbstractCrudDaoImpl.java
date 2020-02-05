@@ -2,16 +2,17 @@ package com.epam.bookingservice.dao.impl;
 
 import com.epam.bookingservice.dao.CrudDao;
 import com.epam.bookingservice.dao.exception.DatabaseRuntimeException;
-import com.epam.bookingservice.utility.DatabaseConnector;
+import com.epam.bookingservice.dao.impl.connector.DataSourceConnector;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.sql.Time;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -26,14 +27,14 @@ abstract class AbstractCrudDaoImpl<E> implements CrudDao<E> {
     protected static final StatementParamSetter<Integer> INT_SETTER =
             (PreparedStatement statement, Integer param) -> statement.setInt(1, param);
 
-    protected static final StatementParamSetter<Time> TIME_SETTER =
-            (PreparedStatement statement, Time param) -> statement.setTime(1, param);
+    protected static final StatementParamSetter<LocalDate> LOCAL_DATE_SETTER =
+            (PreparedStatement statement, LocalDate param) -> statement.setDate(1, Date.valueOf(param));
 
-    protected final DatabaseConnector connector;
+    protected final DataSourceConnector connector;
 
     private CrudQuerySet queries;
 
-    protected AbstractCrudDaoImpl(DatabaseConnector connector, CrudQuerySet queries) {
+    protected AbstractCrudDaoImpl(DataSourceConnector connector, CrudQuerySet queries) {
         this.connector = connector;
         this.queries = queries;
     }
@@ -83,8 +84,7 @@ abstract class AbstractCrudDaoImpl<E> implements CrudDao<E> {
     @Override
     public long count() {
         try (Connection connection = connector.getConnection();
-             ResultSet resultSet = connection.prepareStatement(queries.getCountQuery())
-                     .executeQuery()) {
+             ResultSet resultSet = connection.prepareStatement(queries.getCountQuery()).executeQuery()) {
 
             if (resultSet.next()) {
                 return resultSet.getLong(1);

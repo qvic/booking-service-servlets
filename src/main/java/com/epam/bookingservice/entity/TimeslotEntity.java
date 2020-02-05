@@ -4,14 +4,14 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Objects;
 
-public class Timeslot {
+public class TimeslotEntity {
 
     private final Integer id;
     private final LocalDate date;
     private final LocalTime fromTime;
     private final LocalTime toTime;
 
-    private Timeslot(Builder builder) {
+    private TimeslotEntity(Builder builder) {
         id = builder.id;
         date = builder.date;
         fromTime = builder.fromTime;
@@ -52,7 +52,7 @@ public class Timeslot {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        Timeslot timeslot = (Timeslot) o;
+        TimeslotEntity timeslot = (TimeslotEntity) o;
         return Objects.equals(id, timeslot.id) &&
                 Objects.equals(date, timeslot.date) &&
                 Objects.equals(fromTime, timeslot.fromTime) &&
@@ -68,7 +68,7 @@ public class Timeslot {
         return new Builder();
     }
 
-    public static Builder builder(Timeslot copy) {
+    public static Builder builder(TimeslotEntity copy) {
         Builder builder = new Builder();
         builder.id = copy.getId();
         builder.date = copy.getDate();
@@ -107,8 +107,8 @@ public class Timeslot {
             return this;
         }
 
-        public Timeslot build() {
-            return new Timeslot(this);
+        public TimeslotEntity build() {
+            return new TimeslotEntity(this);
         }
     }
 }

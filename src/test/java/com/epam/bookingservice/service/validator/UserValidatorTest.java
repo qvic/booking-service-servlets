@@ -1,6 +1,7 @@
 package com.epam.bookingservice.service.validator;
 
-import com.epam.bookingservice.entity.User;
+import com.epam.bookingservice.domain.User;
+import com.epam.bookingservice.entity.UserEntity;
 import com.epam.bookingservice.service.exception.InvalidUserException;
 import org.junit.Test;
 
@@ -10,17 +11,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
 public class UserValidatorTest {
-
-    private void assertValidateThrowsInvalidUserExceptionWithReason(User user, InvalidUserException.Reason reason, String failMessage) {
-        UserValidator userValidator = new UserValidator();
-
-        try {
-            userValidator.validate(user);
-            fail(failMessage);
-        } catch (InvalidUserException e) {
-            assertEquals(reason, e.getReason());
-        }
-    }
 
     @Test
     public void validateShouldThrowValidationExceptionWhenUserEmailLengthIsNotValid() {
@@ -63,7 +53,7 @@ public class UserValidatorTest {
                 .setPassword("12345")
                 .build();
 
-        assertValidateThrowsInvalidUserExceptionWithReason(user, InvalidUserException.Reason.EMPTY_EMAIL,
+        assertValidateThrowsInvalidUserExceptionWithReason(user, InvalidUserException.Reason.INVALID_EMAIL,
                 "Email is empty but exception was not thrown");
     }
 
@@ -74,7 +64,7 @@ public class UserValidatorTest {
                 .setPassword("12345")
                 .build();
 
-        assertValidateThrowsInvalidUserExceptionWithReason(user, InvalidUserException.Reason.EMPTY_EMAIL,
+        assertValidateThrowsInvalidUserExceptionWithReason(user, InvalidUserException.Reason.INVALID_EMAIL,
                 "Email is null but exception was not thrown");
     }
 
@@ -87,5 +77,16 @@ public class UserValidatorTest {
 
         assertValidateThrowsInvalidUserExceptionWithReason(user, InvalidUserException.Reason.EMPTY_PASSWORD,
                 "Password is null but exception was not thrown");
+    }
+
+    private void assertValidateThrowsInvalidUserExceptionWithReason(User user, InvalidUserException.Reason reason, String failMessage) {
+        UserValidator userValidator = new UserValidator();
+
+        try {
+            userValidator.validate(user);
+            fail(failMessage);
+        } catch (InvalidUserException e) {
+            assertEquals(reason, e.getReason());
+        }
     }
 }

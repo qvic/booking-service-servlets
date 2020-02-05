@@ -2,14 +2,14 @@ package com.epam.bookingservice.entity;
 
 import java.util.Objects;
 
-public class Feedback {
+public class FeedbackEntity {
 
     private final Integer id;
     private final String text;
-    private final FeedbackStatus status;
-    private final User worker;
+    private final FeedbackStatusEntity status;
+    private final UserEntity worker;
 
-    private Feedback(Builder builder) {
+    private FeedbackEntity(Builder builder) {
         id = builder.id;
         text = builder.text;
         status = builder.status;
@@ -20,7 +20,7 @@ public class Feedback {
         return new Builder();
     }
 
-    public static Builder builder(Feedback copy) {
+    public static Builder builder(FeedbackEntity copy) {
         Builder builder = new Builder();
         builder.id = copy.getId();
         builder.text = copy.getText();
@@ -29,7 +29,7 @@ public class Feedback {
         return builder;
     }
 
-    public User getWorker() {
+    public UserEntity getWorker() {
         return worker;
     }
 
@@ -41,7 +41,7 @@ public class Feedback {
         return text;
     }
 
-    public FeedbackStatus getStatus() {
+    public FeedbackStatusEntity getStatus() {
         return status;
     }
 
@@ -62,7 +62,7 @@ public class Feedback {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        Feedback feedback = (Feedback) o;
+        FeedbackEntity feedback = (FeedbackEntity) o;
         return Objects.equals(id, feedback.id) &&
                 Objects.equals(text, feedback.text) &&
                 status == feedback.status &&
@@ -77,8 +77,8 @@ public class Feedback {
     public static final class Builder {
         private Integer id;
         private String text;
-        private FeedbackStatus status;
-        private User worker;
+        private FeedbackStatusEntity status;
+        private UserEntity worker;
 
         private Builder() {
         }
@@ -93,18 +93,18 @@ public class Feedback {
             return this;
         }
 
-        public Builder setStatus(FeedbackStatus status) {
+        public Builder setStatus(FeedbackStatusEntity status) {
             this.status = status;
             return this;
         }
 
-        public Builder setWorker(User worker) {
+        public Builder setWorker(UserEntity worker) {
             this.worker = worker;
             return this;
         }
 
-        public Feedback build() {
-            return new Feedback(this);
+        public FeedbackEntity build() {
+            return new FeedbackEntity(this);
         }
     }
 }

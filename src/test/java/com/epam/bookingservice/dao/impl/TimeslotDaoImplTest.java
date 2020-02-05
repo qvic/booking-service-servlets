@@ -1,8 +1,7 @@
 package com.epam.bookingservice.dao.impl;
 
 import com.epam.bookingservice.dao.TimeslotDao;
-import com.epam.bookingservice.entity.Timeslot;
-import com.epam.bookingservice.utility.DatabaseConnector;
+import com.epam.bookingservice.entity.TimeslotEntity;
 import org.junit.Test;
 
 import java.time.LocalDate;
@@ -14,7 +13,7 @@ import static org.junit.Assert.assertTrue;
 
 public class TimeslotDaoImplTest extends AbstractDaoImplTest {
 
-    private static final Timeslot TEST_TIMESLOT = Timeslot.builder()
+    private static final TimeslotEntity TEST_TIMESLOT = TimeslotEntity.builder()
             .setFromTime(LocalTime.of(8, 0))
             .setToTime(LocalTime.of(9, 30))
             .setDate(LocalDate.now())
@@ -22,16 +21,13 @@ public class TimeslotDaoImplTest extends AbstractDaoImplTest {
 
     @Test
     public void userShouldBeMappedCorrectly() {
-        DatabaseConnector connector = getConnector();
-        initializeDatabase();
-
         TimeslotDao timeslotDao = new TimeslotDaoImpl(connector);
-        Timeslot saved = timeslotDao.save(TEST_TIMESLOT);
+        TimeslotEntity saved = timeslotDao.save(TEST_TIMESLOT);
 
-        Optional<Timeslot> byId = timeslotDao.findById(saved.getId());
+        Optional<TimeslotEntity> byId = timeslotDao.findById(saved.getId());
         assertTrue("Could not fetch timeslot after saving", byId.isPresent());
 
-        Timeslot fetched = byId.get();
+        TimeslotEntity fetched = byId.get();
         assertEquals(saved, fetched);
     }
 }

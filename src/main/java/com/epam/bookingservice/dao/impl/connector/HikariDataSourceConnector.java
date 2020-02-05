@@ -1,4 +1,4 @@
-package com.epam.bookingservice.utility;
+package com.epam.bookingservice.dao.impl.connector;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
@@ -7,11 +7,11 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ResourceBundle;
 
-public class HikariDatabaseConnector implements DatabaseConnector {
+public class HikariDataSourceConnector implements DataSourceConnector {
 
     private final HikariDataSource dataSource;
 
-    public HikariDatabaseConnector(String settingsBundleName) {
+    public HikariDataSourceConnector(String settingsBundleName) {
         ResourceBundle resource = ResourceBundle.getBundle(settingsBundleName);
         HikariConfig hikariConfig = getHikariConfigByResource(resource);
         dataSource = new HikariDataSource(hikariConfig);
@@ -28,6 +28,7 @@ public class HikariDatabaseConnector implements DatabaseConnector {
         config.setDriverClassName(resource.getString("db.hikari.driverClassName"));
         config.setUsername(resource.getString("db.username"));
         config.setPassword(resource.getString("db.password"));
+        // extract to separate methods
         config.setConnectionTimeout(Long.parseLong(resource.getString("db.hikari.connectionTimeout")));
         config.setMaximumPoolSize(Integer.parseInt(resource.getString("db.hikari.maxPoolSize")));
         config.addDataSourceProperty("cachePrepStmts", resource.getString("db.hikari.cachePrepStmts"));

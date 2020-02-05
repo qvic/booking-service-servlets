@@ -103,7 +103,7 @@ create table "order"
             references order_status,
     service_id  integer   not null
         constraint order_service_id_fk
-            references order_status
+            references service
 );
 
 create unique index user_email_uindex

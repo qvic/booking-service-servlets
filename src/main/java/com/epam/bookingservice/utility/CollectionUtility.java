@@ -3,7 +3,7 @@ package com.epam.bookingservice.utility;
 import java.util.Collections;
 import java.util.List;
 
-public class CollectionUtility {
+public final class CollectionUtility {
 
     private CollectionUtility() {
     }

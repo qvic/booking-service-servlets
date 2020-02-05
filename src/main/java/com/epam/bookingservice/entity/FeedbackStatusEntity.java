@@ -2,13 +2,13 @@ package com.epam.bookingservice.entity;
 
 import java.util.NoSuchElementException;
 
-public enum FeedbackStatus {
+public enum FeedbackStatusEntity {
 
     CREATED(1), APPROVED(2);
 
     private final Integer id;
 
-    FeedbackStatus(Integer id) {
+    FeedbackStatusEntity(Integer id) {
         this.id = id;
     }
 
@@ -16,8 +16,8 @@ public enum FeedbackStatus {
         return id;
     }
 
-    public static FeedbackStatus getById(int id) {
-        for (FeedbackStatus feedbackStatus : values()) {
+    public static FeedbackStatusEntity getById(int id) {
+        for (FeedbackStatusEntity feedbackStatus : values()) {
             if (feedbackStatus.id == id) {
                 return feedbackStatus;
             }

@@ -1,13 +1,13 @@
 package com.epam.bookingservice.dao;
 
-import com.epam.bookingservice.entity.Feedback;
-import com.epam.bookingservice.entity.FeedbackStatus;
+import com.epam.bookingservice.entity.FeedbackEntity;
+import com.epam.bookingservice.entity.FeedbackStatusEntity;
 
 import java.util.List;
 
-public interface FeedbackDao extends PageableCrudDao<Feedback> {
+public interface FeedbackDao extends PageableCrudDao<FeedbackEntity> {
 
-    List<Feedback> findAllByWorkerId(Integer id);
+    List<FeedbackEntity> findAllByWorkerId(Integer id);
 
-    List<Feedback> findAllByStatus(FeedbackStatus status);
+    List<FeedbackEntity> findAllByStatus(FeedbackStatusEntity status);
 }

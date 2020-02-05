@@ -10,14 +10,15 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
-public class LogoutCommand implements Command {
+public class LogoutCommand extends Command {
 
     private static final Logger LOGGER = LogManager.getLogger(LogoutCommand.class);
+    private static final String ON_SUCCESS_REDIRECT = "/app/login";
 
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         invalidateSession(request);
-        response.sendRedirect("/app/login");
+        response.sendRedirect(ON_SUCCESS_REDIRECT);
     }
 
     private void invalidateSession(HttpServletRequest request) {

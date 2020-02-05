@@ -1,6 +1,10 @@
 package com.epam.bookingservice.utility;
 
-public class StringUtility {
+public final class StringUtility {
+
+    private StringUtility() {
+
+    }
 
     public static boolean nullOrEmpty(String string) {
         return string == null || string.isEmpty();

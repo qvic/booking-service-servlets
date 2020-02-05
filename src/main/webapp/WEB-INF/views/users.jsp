@@ -14,7 +14,6 @@
                     </p>
                 </div>
                 <p class="mb-1"><c:out value="${item.email}"/></p>
-                <small><c:out value="${item.role}"/></small>
             </div>
         </c:forEach>
     </div>
