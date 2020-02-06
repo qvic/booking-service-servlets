@@ -6,6 +6,7 @@ public class ServiceEntity {
 
     private final Integer id;
     private final String name;
+    // todo duration in minutes
     private final Integer durationInTimeslots;
     private final Integer price;
     private final Integer workspaces;

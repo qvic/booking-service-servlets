@@ -27,7 +27,7 @@ public abstract class AbstractDaoImplTest {
     @Rule
     public SingleInstancePostgresRule pg = EmbeddedPostgresRules.singleInstance();
 
-    protected DataSourceConnector connector = () -> pg.getEmbeddedPostgres().getPostgresDatabase().getConnection();
+    DataSourceConnector connector = () -> pg.getEmbeddedPostgres().getPostgresDatabase().getConnection();
 
     @Before
     public void initializeDatabase() {
@@ -43,8 +43,7 @@ public abstract class AbstractDaoImplTest {
         }
     }
 
-    protected <E> void testDaoMapping(CrudDao<E> dao, E entityToBeSaved, Function<E, Integer> idExtractor,
-                                      String errorMessage) {
+    <E> void testDaoMapping(CrudDao<E> dao, E entityToBeSaved, Function<E, Integer> idExtractor, String errorMessage) {
         E savedEntity = dao.save(entityToBeSaved);
 
         Optional<E> fetchedEntity = dao.findById(idExtractor.apply(savedEntity));

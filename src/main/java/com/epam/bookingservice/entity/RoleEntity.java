@@ -4,6 +4,7 @@ import java.util.NoSuchElementException;
 
 public enum RoleEntity {
 
+    // todo fetch by id or name
     CLIENT(1), WORKER(2), ADMIN(3);
 
     private final Integer id;

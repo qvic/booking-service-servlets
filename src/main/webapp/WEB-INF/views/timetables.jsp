@@ -4,7 +4,7 @@
     <h3 class="mb-5 text-center"><fmt:message key="label.timetable"/></h3>
     <div class="list-group">
         <c:forEach items="${requestScope.timetables}" var="timetable">
-            <p class="my-1">
+            <p class="mt-3 mb-1">
                 <c:out value="${timetable.date}"/>
             </p>
             <div class="list-group">

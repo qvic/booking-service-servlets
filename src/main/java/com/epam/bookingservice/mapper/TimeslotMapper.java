@@ -8,7 +8,7 @@ public class TimeslotMapper implements Mapper<TimeslotEntity, Timeslot> {
 
     @Override
     public TimeslotEntity mapDomainToEntity(Timeslot domain) {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     @Override

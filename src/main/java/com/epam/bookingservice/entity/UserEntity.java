@@ -50,7 +50,6 @@ public class UserEntity {
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", email='" + email + '\'' +
-                ", password='" + password + '\'' +
                 ", role=" + role +
                 ", status=" + status +
                 '}';

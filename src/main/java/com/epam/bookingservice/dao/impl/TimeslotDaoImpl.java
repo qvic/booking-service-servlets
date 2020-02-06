@@ -17,7 +17,7 @@ public class TimeslotDaoImpl extends AbstractCrudDaoImpl<TimeslotEntity> impleme
 
     private static final String FIND_BY_ID_QUERY = "SELECT * FROM timeslot WHERE id = ?";
     private static final String FIND_ALL_QUERY = "SELECT * FROM timeslot";
-    private static final String FIND_ALL_BETWEEN_DATES = "SELECT * FROM timeslot WHERE date BETWEEN ? AND ?";
+    private static final String FIND_ALL_BETWEEN_DATES = "SELECT * FROM timeslot WHERE date >= ? AND date < ?";
 
     private static final String SAVE_QUERY = "INSERT INTO timeslot (date, from_time, to_time, order_id) VALUES (?, ?, ?, ?) RETURNING id";
     private static final String UPDATE_QUERY = "UPDATE timeslot SET date = ?, from_time = ?, to_time = ?, order_id = ? WHERE id = ?";

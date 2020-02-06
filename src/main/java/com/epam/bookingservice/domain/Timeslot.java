@@ -1,15 +1,14 @@
 package com.epam.bookingservice.domain;
 
 import com.epam.bookingservice.entity.OrderEntity;
-import com.epam.bookingservice.entity.TimeslotEntity;
 
 import java.time.LocalTime;
+import java.util.Objects;
 
 public class Timeslot {
 
     private final LocalTime fromTime;
     private final LocalTime toTime;
-    // todo Order domain object
     private final OrderEntity order;
 
     public Timeslot(LocalTime fromTime, LocalTime toTime, OrderEntity order) {
@@ -30,8 +29,27 @@ public class Timeslot {
         return order;
     }
 
-    public static Timeslot fromTimeslotEntity(TimeslotEntity entity) {
-        OrderEntity orderEntity = entity.getOrder();
-        return new Timeslot(entity.getFromTime(), entity.getToTime(), orderEntity);
+    @Override
+    public String toString() {
+        return "Timeslot{" +
+                "fromTime=" + fromTime +
+                ", toTime=" + toTime +
+                ", order=" + order +
+                '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Timeslot timeslot = (Timeslot) o;
+        return Objects.equals(fromTime, timeslot.fromTime) &&
+                Objects.equals(toTime, timeslot.toTime) &&
+                Objects.equals(order, timeslot.order);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(fromTime, toTime, order);
     }
 }
