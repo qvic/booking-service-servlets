@@ -6,9 +6,9 @@ import java.util.List;
 public class Timetable {
 
     private final LocalDate date;
-    private final List<TimetableRow> rows;
+    private final List<Timeslot> rows;
 
-    public Timetable(LocalDate date, List<TimetableRow> rows) {
+    public Timetable(LocalDate date, List<Timeslot> rows) {
         this.date = date;
         this.rows = rows;
     }
@@ -17,7 +17,7 @@ public class Timetable {
         return date;
     }
 
-    public List<TimetableRow> getRows() {
+    public List<Timeslot> getRows() {
         return rows;
     }
 }

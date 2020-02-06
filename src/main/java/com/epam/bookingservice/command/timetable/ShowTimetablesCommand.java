@@ -27,9 +27,11 @@ public class ShowTimetablesCommand extends GetCommand {
 
     @Override
     protected void processGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        LocalDate from = parseLocalDateOrDefault(request.getParameter("from_date"),
+        LocalDate from = parseLocalDateOrDefault(
+                request.getParameter("from_date"),
                 LocalDate.now());
-        LocalDate to = parseLocalDateOrDefault(request.getParameter("to_date"),
+        LocalDate to = parseLocalDateOrDefault(
+                request.getParameter("to_date"),
                 LocalDate.now().plus(DEFAULT_TIMETABLE_PERIOD, ChronoUnit.DAYS));
 
         List<Timetable> timetables = timeslotService.findAllBetween(from, to);

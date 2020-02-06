@@ -5,14 +5,14 @@ import com.epam.bookingservice.entity.TimeslotEntity;
 
 import java.time.LocalTime;
 
-public class TimetableRow {
+public class Timeslot {
 
     private final LocalTime fromTime;
     private final LocalTime toTime;
     // todo Order domain object
     private final OrderEntity order;
 
-    public TimetableRow(LocalTime fromTime, LocalTime toTime, OrderEntity order) {
+    public Timeslot(LocalTime fromTime, LocalTime toTime, OrderEntity order) {
         this.fromTime = fromTime;
         this.toTime = toTime;
         this.order = order;
@@ -30,8 +30,8 @@ public class TimetableRow {
         return order;
     }
 
-    public static TimetableRow fromTimeslotEntity(TimeslotEntity entity) {
+    public static Timeslot fromTimeslotEntity(TimeslotEntity entity) {
         OrderEntity orderEntity = entity.getOrder();
-        return new TimetableRow(entity.getFromTime(), entity.getToTime(), orderEntity);
+        return new Timeslot(entity.getFromTime(), entity.getToTime(), orderEntity);
     }
 }

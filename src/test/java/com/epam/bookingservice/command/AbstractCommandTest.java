@@ -1,4 +1,4 @@
-package com.epam.bookingservice.command.user;
+package com.epam.bookingservice.command;
 
 import org.junit.After;
 import org.mockito.Mock;

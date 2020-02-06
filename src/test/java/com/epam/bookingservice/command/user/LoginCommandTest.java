@@ -1,5 +1,6 @@
 package com.epam.bookingservice.command.user;
 
+import com.epam.bookingservice.command.AbstractCommandTest;
 import com.epam.bookingservice.domain.User;
 import com.epam.bookingservice.service.UserService;
 import com.epam.bookingservice.utility.PageUtility;
