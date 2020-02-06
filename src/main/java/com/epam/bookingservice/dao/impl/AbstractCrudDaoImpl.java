@@ -22,13 +22,13 @@ abstract class AbstractCrudDaoImpl<E> implements CrudDao<E> {
     private static final Logger LOGGER = LogManager.getLogger(AbstractCrudDaoImpl.class);
 
     protected static final StatementParamSetter<String> STRING_SETTER =
-            (PreparedStatement statement, String param) -> statement.setString(1, param);
+            (statement, param, position) -> statement.setString(position, param);
 
     protected static final StatementParamSetter<Integer> INT_SETTER =
-            (PreparedStatement statement, Integer param) -> statement.setInt(1, param);
+            (statement, param, position) -> statement.setInt(position, param);
 
     protected static final StatementParamSetter<LocalDate> LOCAL_DATE_SETTER =
-            (PreparedStatement statement, LocalDate param) -> statement.setDate(1, Date.valueOf(param));
+            (statement, param, position) -> statement.setDate(position, Date.valueOf(param));
 
     protected final DataSourceConnector connector;
 
@@ -46,7 +46,6 @@ abstract class AbstractCrudDaoImpl<E> implements CrudDao<E> {
 
             return getResultList(statement);
         } catch (SQLException e) {
-            LOGGER.error("Error in findAll", e);
             throw new DatabaseRuntimeException("Error performing findAll", e);
         }
     }
@@ -61,7 +60,6 @@ abstract class AbstractCrudDaoImpl<E> implements CrudDao<E> {
             int affectedRows = statement.executeUpdate();
             throwIfNotAffected(affectedRows);
         } catch (SQLException e) {
-            LOGGER.error("Error performing update on [" + entity + "]", e);
             throw new DatabaseRuntimeException("Error performing update", e);
         }
     }
@@ -76,7 +74,6 @@ abstract class AbstractCrudDaoImpl<E> implements CrudDao<E> {
             int affectedRows = statement.executeUpdate();
             throwIfNotAffected(affectedRows);
         } catch (SQLException e) {
-            LOGGER.error("Error performing deleteById on [" + id + "]", e);
             throw new DatabaseRuntimeException("Error performing deleteById", e);
         }
     }
@@ -112,12 +109,10 @@ abstract class AbstractCrudDaoImpl<E> implements CrudDao<E> {
                 if (generatedKeys.next()) {
                     return applyGeneratedKeysToEntity(entity, generatedKeys);
                 } else {
-                    LOGGER.error("Error performing save on [" + entity + "]");
                     throw new DatabaseRuntimeException("Error performing save, no id obtained");
                 }
             }
         } catch (SQLException e) {
-            LOGGER.error("Error performing save on [" + entity + "]", e);
             throw new DatabaseRuntimeException("Error performing save", e);
         }
     }
@@ -129,7 +124,6 @@ abstract class AbstractCrudDaoImpl<E> implements CrudDao<E> {
 
     private void throwIfNotAffected(int affectedRows) {
         if (affectedRows == 0) {
-            LOGGER.error("No rows affected");
             throw new DatabaseRuntimeException("No rows affected");
         }
     }
@@ -162,7 +156,6 @@ abstract class AbstractCrudDaoImpl<E> implements CrudDao<E> {
 
             return getResultOptional(statement);
         } catch (SQLException e) {
-            LOGGER.error("Error performing findByParam by [" + parameter + "] on query [" + findByParamQuery + "]", e);
             throw new DatabaseRuntimeException("Error performing findByParam", e);
         }
     }
@@ -175,8 +168,20 @@ abstract class AbstractCrudDaoImpl<E> implements CrudDao<E> {
 
             return getResultList(statement);
         } catch (SQLException e) {
-            LOGGER.error("Error performing findAllByParam by [" + parameter + "] on query [" + findAllByParamQuery + "]", e);
             throw new DatabaseRuntimeException("Error performing findAllByParam", e);
+        }
+    }
+
+    protected <P> List<E> findAllByTwoParams(P parameterA, P parameterB, String findAllByParamQuery, StatementParamSetter<P> paramSetter) {
+        try (Connection connection = connector.getConnection();
+             PreparedStatement statement = connection.prepareStatement(findAllByParamQuery)) {
+
+            paramSetter.accept(statement, parameterA, 1);
+            paramSetter.accept(statement, parameterB, 2);
+
+            return getResultList(statement);
+        } catch (SQLException e) {
+            throw new DatabaseRuntimeException("Error performing findAllByTwoParams", e);
         }
     }
 

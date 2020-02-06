@@ -10,12 +10,14 @@ public class TimeslotEntity {
     private final LocalDate date;
     private final LocalTime fromTime;
     private final LocalTime toTime;
+    private final OrderEntity order;
 
     private TimeslotEntity(Builder builder) {
         id = builder.id;
         date = builder.date;
         fromTime = builder.fromTime;
         toTime = builder.toTime;
+        order = builder.order;
     }
 
     public Integer getId() {
@@ -34,13 +36,18 @@ public class TimeslotEntity {
         return toTime;
     }
 
+    public OrderEntity getOrder() {
+        return order;
+    }
+
     @Override
     public String toString() {
-        return "Timeslot{" +
+        return "TimeslotEntity{" +
                 "id=" + id +
                 ", date=" + date +
-                ", from=" + fromTime +
-                ", to=" + toTime +
+                ", fromTime=" + fromTime +
+                ", toTime=" + toTime +
+                ", order=" + order +
                 '}';
     }
 
@@ -74,6 +81,7 @@ public class TimeslotEntity {
         builder.date = copy.getDate();
         builder.fromTime = copy.getFromTime();
         builder.toTime = copy.getToTime();
+        builder.order = copy.getOrder();
         return builder;
     }
 
@@ -83,6 +91,7 @@ public class TimeslotEntity {
         private LocalDate date;
         private LocalTime fromTime;
         private LocalTime toTime;
+        private OrderEntity order;
 
         private Builder() {
         }
@@ -104,6 +113,11 @@ public class TimeslotEntity {
 
         public Builder setToTime(LocalTime toTime) {
             this.toTime = toTime;
+            return this;
+        }
+
+        public Builder setOrder(OrderEntity order) {
+            this.order = order;
             return this;
         }
 

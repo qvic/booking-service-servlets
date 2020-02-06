@@ -13,13 +13,13 @@ import java.io.IOException;
 
 import static com.epam.bookingservice.utility.PageUtility.getViewPathByName;
 
-public class ShowUsersListCommand extends GetCommand {
+public class ShowUsersCommand extends GetCommand {
 
     private static final int DEFAULT_USERS_PER_PAGE = 5;
 
     private final UserService userService;
 
-    public ShowUsersListCommand(UserService userService) {
+    public ShowUsersCommand(UserService userService) {
         this.userService = userService;
     }
 

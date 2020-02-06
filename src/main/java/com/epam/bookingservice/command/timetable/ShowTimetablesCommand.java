@@ -22,8 +22,9 @@ public class ShowTimetablesCommand extends GetCommand {
 
     @Override
     protected void processGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        LocalDate now = LocalDate.now();
         request.setAttribute("timetables",
-                timeslotService.findAllFromNowToDate(LocalDate.now().plus(7, ChronoUnit.DAYS)));
+                timeslotService.findAllBetween(now, now.plus(10, ChronoUnit.DAYS)));
 
         forward(getViewPathByName("timetables"), request, response);
     }

@@ -7,5 +7,5 @@ import java.util.List;
 
 public interface TimeslotDao extends CrudDao<TimeslotEntity> {
 
-    List<TimeslotEntity> findAllFromNowToDate(LocalDate date);
+    List<TimeslotEntity> findAllBetween(LocalDate from, LocalDate to);
 }

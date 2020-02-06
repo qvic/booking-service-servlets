@@ -8,6 +8,7 @@ import com.epam.bookingservice.service.exception.UserAlreadyExistsException;
 import com.epam.bookingservice.service.exception.ValidationException;
 import com.epam.bookingservice.service.validator.Validator;
 import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -67,12 +68,19 @@ public class UserServiceImplTest {
     @Mock
     private Validator<User> userValidator;
 
-    @InjectMocks
+    @Mock
+    private Validator<String> emailValidator;
+
     private UserServiceImpl userService;
+
+    @Before
+    public void injectMocks() {
+        userService = new UserServiceImpl(userDao, userValidator, emailValidator, passwordEncryptor);
+    }
 
     @After
     public void resetMocks() {
-        Mockito.reset(userDao, passwordEncryptor, userValidator);
+        Mockito.reset(userDao, passwordEncryptor, userValidator, emailValidator);
     }
 
     @Test
@@ -87,10 +95,11 @@ public class UserServiceImplTest {
         assertEquals(USER, user.orElseThrow(() -> new RuntimeException("Login failed")));
         verify(passwordEncryptor, times(1)).encrypt(eq(PASSWORD), anyString());
         verifyZeroInteractions(userValidator);
+        verify(emailValidator, times(1)).validate(anyString());
     }
 
     @Test
-    public void userShouldNotLoginBecauseOfIncorrectPassword() {
+    public void userShouldNotLoginInCaseOfIncorrectPassword() {
         when(passwordEncryptor.encrypt(eq(INCORRECT_PASSWORD), anyString()))
                 .thenReturn(INCORRECT_ENCODED_PASSWORD);
         when(userDao.findByEmail(eq(USER_EMAIL)))
@@ -104,7 +113,7 @@ public class UserServiceImplTest {
     }
 
     @Test
-    public void userShouldNotLoginBecauseOfIncorrectEmail() {
+    public void userShouldNotLoginInCaseOfIncorrectEmail() {
         when(passwordEncryptor.encrypt(eq(PASSWORD), anyString()))
                 .thenReturn(ENCODED_PASSWORD);
         when(userDao.findByEmail(eq(INCORRECT_USER_EMAIL)))
@@ -113,7 +122,7 @@ public class UserServiceImplTest {
         Optional<User> user = userService.login(INCORRECT_USER_EMAIL, PASSWORD);
 
         assertFalse(user.isPresent());
-        verify(passwordEncryptor, times(1)).encrypt(eq(PASSWORD), anyString());
+        verifyZeroInteractions(passwordEncryptor);
         verifyZeroInteractions(userValidator);
     }
 

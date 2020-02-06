@@ -7,5 +7,5 @@ import java.util.List;
 
 public interface TimeslotService {
 
-    List<Timetable> findAllFromNowToDate(LocalDate date);
+    List<Timetable> findAllBetween(LocalDate from, LocalDate to);
 }

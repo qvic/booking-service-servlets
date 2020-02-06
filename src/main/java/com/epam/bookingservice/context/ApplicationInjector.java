@@ -5,7 +5,7 @@ import com.epam.bookingservice.command.timetable.ShowTimetablesCommand;
 import com.epam.bookingservice.command.user.LoginCommand;
 import com.epam.bookingservice.command.user.LogoutCommand;
 import com.epam.bookingservice.command.user.RegisterCommand;
-import com.epam.bookingservice.command.user.ShowUsersListCommand;
+import com.epam.bookingservice.command.user.ShowUsersCommand;
 import com.epam.bookingservice.dao.OrderDao;
 import com.epam.bookingservice.dao.TimeslotDao;
 import com.epam.bookingservice.dao.UserDao;
@@ -17,8 +17,8 @@ import com.epam.bookingservice.dao.impl.connector.HikariDataSourceConnector;
 import com.epam.bookingservice.domain.User;
 import com.epam.bookingservice.service.PasswordEncryptor;
 import com.epam.bookingservice.service.TimeslotService;
-import com.epam.bookingservice.service.TimeslotServiceImpl;
 import com.epam.bookingservice.service.UserService;
+import com.epam.bookingservice.service.impl.TimeslotServiceImpl;
 import com.epam.bookingservice.service.impl.UserServiceImpl;
 import com.epam.bookingservice.service.validator.EmailValidator;
 import com.epam.bookingservice.service.validator.UserValidator;
@@ -44,13 +44,9 @@ public class ApplicationInjector {
     private static final UserService USER_SERVICE = new UserServiceImpl(USER_DAO, USER_VALIDATOR, EMAIL_VALIDATOR, PASSWORD_ENCRYPTOR);
     private static final TimeslotService TIMESLOT_SERVICE = new TimeslotServiceImpl(TIMESLOT_DAO, ORDER_DAO);
 
-    private static final Map<String, Command> URL_TO_COMMAND = initializeCommands();
+    private static final Map<String, Command> ROUTE_TO_COMMAND = initializeCommands();
 
     private ApplicationInjector() {
-    }
-
-    public static ApplicationInjector getInstance() {
-        return INSTANCE;
     }
 
     public UserService getUserService() {
@@ -58,7 +54,7 @@ public class ApplicationInjector {
     }
 
     public Map<String, Command> getCommands() {
-        return URL_TO_COMMAND;
+        return ROUTE_TO_COMMAND;
     }
 
     private static Map<String, Command> initializeCommands() {
@@ -67,9 +63,14 @@ public class ApplicationInjector {
         commands.put("/app/login", new LoginCommand(USER_SERVICE));
         commands.put("/app/logout", new LogoutCommand());
         commands.put("/app/signup", new RegisterCommand(USER_SERVICE));
-        commands.put("/app/users", new ShowUsersListCommand(USER_SERVICE));
+        commands.put("/app/users", new ShowUsersCommand(USER_SERVICE));
+
         commands.put("/app/timetables", new ShowTimetablesCommand(TIMESLOT_SERVICE));
 
         return commands;
+    }
+
+    public static ApplicationInjector getInstance() {
+        return INSTANCE;
     }
 }

@@ -2,6 +2,7 @@ package com.epam.bookingservice.dao.impl;
 
 import com.epam.bookingservice.dao.TimeslotDao;
 import com.epam.bookingservice.dao.impl.connector.DataSourceConnector;
+import com.epam.bookingservice.entity.OrderEntity;
 import com.epam.bookingservice.entity.TimeslotEntity;
 
 import java.sql.Date;
@@ -16,11 +17,11 @@ public class TimeslotDaoImpl extends AbstractCrudDaoImpl<TimeslotEntity> impleme
 
     private static final String FIND_BY_ID_QUERY = "SELECT * FROM timeslot WHERE id = ?";
     private static final String FIND_ALL_QUERY = "SELECT * FROM timeslot";
-    private static final String FIND_ALL_FROM_NOW_TO_DATE = "SELECT * FROM timeslot WHERE date BETWEEN CURRENT_DATE AND ?";
+    private static final String FIND_ALL_BETWEEN_DATES = "SELECT * FROM timeslot WHERE date BETWEEN ? AND ?";
 
-    private static final String SAVE_QUERY = "INSERT INTO timeslot (date, from_time, to_time) VALUES (?, ?, ?) RETURNING id";
-    private static final String UPDATE_QUERY = "UPDATE timeslot SET date = ?, from_time = ?, to_time = ? WHERE id = ?";
-    private static final String DELETE_QUERY = "DELETE FROM review WHERE id = ?";
+    private static final String SAVE_QUERY = "INSERT INTO timeslot (date, from_time, to_time, order_id) VALUES (?, ?, ?, ?) RETURNING id";
+    private static final String UPDATE_QUERY = "UPDATE timeslot SET date = ?, from_time = ?, to_time = ?, order_id = ? WHERE id = ?";
+    private static final String DELETE_QUERY = "DELETE FROM timeslot WHERE id = ?";
     private static final String COUNT_QUERY = "SELECT count(*) FROM timeslot";
 
     public TimeslotDaoImpl(DataSourceConnector connector) {
@@ -31,11 +32,22 @@ public class TimeslotDaoImpl extends AbstractCrudDaoImpl<TimeslotEntity> impleme
 
     @Override
     protected TimeslotEntity mapResultSetToEntity(ResultSet resultSet) throws SQLException {
+        Integer orderId = resultSet.getObject("order_id", Integer.class);
+        OrderEntity order;
+        if (orderId == null) {
+            order = null;
+        } else {
+            order = OrderEntity.builder()
+                    .setId(orderId)
+                    .build();
+        }
+
         return TimeslotEntity.builder()
                 .setId(resultSet.getInt("id"))
                 .setDate(resultSet.getDate("date").toLocalDate())
                 .setFromTime(resultSet.getTime("from_time").toLocalTime())
                 .setToTime(resultSet.getTime("to_time").toLocalTime())
+                .setOrder(order)
                 .build();
     }
 
@@ -52,19 +64,20 @@ public class TimeslotDaoImpl extends AbstractCrudDaoImpl<TimeslotEntity> impleme
     }
 
     @Override
-    public List<TimeslotEntity> findAllFromNowToDate(LocalDate date) {
-        return findAllByParam(date, FIND_ALL_FROM_NOW_TO_DATE, LOCAL_DATE_SETTER);
+    public List<TimeslotEntity> findAllBetween(LocalDate from, LocalDate to) {
+        return findAllByTwoParams(from, to, FIND_ALL_BETWEEN_DATES, LOCAL_DATE_SETTER);
     }
 
     @Override
     protected void populateUpdateStatement(TimeslotEntity entity, PreparedStatement statement) throws SQLException {
         populateNonIdFields(entity, statement);
-        statement.setInt(4, entity.getId());
+        statement.setInt(5, entity.getId());
     }
 
     private void populateNonIdFields(TimeslotEntity entity, PreparedStatement statement) throws SQLException {
         statement.setDate(1, Date.valueOf(entity.getDate()));
         statement.setTime(2, Time.valueOf(entity.getFromTime()));
         statement.setTime(3, Time.valueOf(entity.getToTime()));
+        statement.setInt(4, entity.getOrder().getId());
     }
 }

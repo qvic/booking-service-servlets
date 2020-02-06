@@ -1,6 +1,4 @@
-drop table if exists role;
-
-create table role
+create table if not exists role
 (
     id   serial      not null
         constraint role_pk
@@ -8,9 +6,7 @@ create table role
     name varchar(15) not null
 );
 
-drop table if exists service;
-
-create table service
+create table if not exists service
 (
     id                 serial       not null
         constraint service_type_pk
@@ -21,9 +17,7 @@ create table service
     workspaces         integer      not null
 );
 
-drop table if exists order_status;
-
-create table order_status
+create table if not exists order_status
 (
     id   serial      not null
         constraint order_status_pk
@@ -31,21 +25,7 @@ create table order_status
     name varchar(20) not null
 );
 
-drop table if exists timeslot;
-
-create table timeslot
-(
-    id        serial  not null
-        constraint timeslot_pk
-            primary key,
-    from_time time(0) not null,
-    to_time   time(0) not null,
-    date      date    not null
-);
-
-drop table if exists feedback_status;
-
-create table feedback_status
+create table if not exists feedback_status
 (
     id   serial      not null
         constraint review_status_pk
@@ -53,9 +33,7 @@ create table feedback_status
     name varchar(20) not null
 );
 
-drop table if exists user_status;
-
-create table user_status
+create table if not exists user_status
 (
     id   serial      not null
         constraint user_status_pk
@@ -63,9 +41,7 @@ create table user_status
     name varchar(20) not null
 );
 
-drop table if exists "user";
-
-create table "user"
+create table if not exists "user"
 (
     id        serial       not null
         constraint user_pk
@@ -81,46 +57,52 @@ create table "user"
             references user_status
 );
 
-drop table if exists "order";
-
-create table "order"
+create table if not exists "order"
 (
-    id          serial    not null
-        constraint order_pk
+    id         serial    not null
+        constraint appointment_pk
             primary key,
-    date        timestamp not null,
-    worker_id   integer
+    date       timestamp not null,
+    worker_id  integer
         constraint order_worker_id_fk
             references "user",
-    client_id   integer   not null
+    client_id  integer   not null
         constraint order_client_id_fk
             references "user",
-    timeslot_id integer   not null
-        constraint order_timeslot_id_fk
-            references timeslot,
-    status_id   integer   not null
+    status_id  integer   not null
         constraint order_order_status_id_fk
             references order_status,
-    service_id  integer   not null
+    service_id integer   not null
         constraint order_service_id_fk
             references service
 );
 
-create unique index user_email_uindex
+create unique index if not exists user_email_uindex
     on "user" (email);
 
-drop table if exists feedback;
-
-create table feedback
+create table if not exists feedback
 (
     id        serial        not null
-        constraint feedback_pk
+        constraint review_pk
             primary key,
     text      varchar(5000) not null,
     status_id integer       not null
-        constraint feedback_feedback_status_id_fk
+        constraint reviews_review_status_id_fk
             references feedback_status,
     worker_id integer       not null
-        constraint feedback_user_id_fk
+        constraint review_user_id_fk
             references "user"
+);
+
+create table if not exists timeslot
+(
+    id        serial  not null
+        constraint timeslot_pk
+            primary key,
+    from_time time(0) not null,
+    to_time   time(0) not null,
+    date      date    not null,
+    order_id  integer
+        constraint timeslot_order_id_fk
+            references "order"
 );

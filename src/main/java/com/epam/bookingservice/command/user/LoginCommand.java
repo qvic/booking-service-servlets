@@ -2,10 +2,7 @@ package com.epam.bookingservice.command.user;
 
 import com.epam.bookingservice.command.GetAndPostCommand;
 import com.epam.bookingservice.domain.User;
-import com.epam.bookingservice.entity.UserEntity;
 import com.epam.bookingservice.service.UserService;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -18,10 +15,8 @@ import static com.epam.bookingservice.utility.PageUtility.getViewPathByName;
 
 public class LoginCommand extends GetAndPostCommand {
 
-    private static final Logger LOGGER = LogManager.getLogger(LoginCommand.class);
-
     private static final String LOGIN_PAGE_PATH = getViewPathByName("login");
-    public static final String ON_SUCCESS_REDIRECT = "/app/users";
+    private static final String ON_SUCCESS_REDIRECT = "/app/users";
 
     private final UserService userService;
 

@@ -9,7 +9,6 @@ public class OrderEntity {
     private final LocalDateTime date;
     private final UserEntity worker;
     private final UserEntity client;
-    private final TimeslotEntity timeslot;
     private final OrderStatusEntity status;
     private final ServiceEntity service;
 
@@ -18,7 +17,6 @@ public class OrderEntity {
         date = builder.date;
         worker = builder.worker;
         client = builder.client;
-        timeslot = builder.timeslot;
         status = builder.status;
         service = builder.service;
     }
@@ -39,10 +37,6 @@ public class OrderEntity {
         return client;
     }
 
-    public TimeslotEntity getTimeslot() {
-        return timeslot;
-    }
-
     public OrderStatusEntity getStatus() {
         return status;
     }
@@ -53,12 +47,11 @@ public class OrderEntity {
 
     @Override
     public String toString() {
-        return "Order{" +
+        return "OrderEntity{" +
                 "id=" + id +
                 ", date=" + date +
                 ", worker=" + worker +
                 ", client=" + client +
-                ", timeslot=" + timeslot +
                 ", status=" + status +
                 ", service=" + service +
                 '}';
@@ -77,14 +70,13 @@ public class OrderEntity {
                 Objects.equals(date, order.date) &&
                 Objects.equals(worker, order.worker) &&
                 Objects.equals(client, order.client) &&
-                Objects.equals(timeslot, order.timeslot) &&
                 status == order.status &&
                 Objects.equals(service, order.service);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, date, worker, client, timeslot, status, service);
+        return Objects.hash(id, date, worker, client, status, service);
     }
 
     public static Builder builder() {
@@ -97,7 +89,6 @@ public class OrderEntity {
         builder.date = copy.getDate();
         builder.worker = copy.getWorker();
         builder.client = copy.getClient();
-        builder.timeslot = copy.getTimeslot();
         builder.status = copy.getStatus();
         builder.service = copy.getService();
         return builder;
@@ -109,7 +100,6 @@ public class OrderEntity {
         private LocalDateTime date;
         private UserEntity worker;
         private UserEntity client;
-        private TimeslotEntity timeslot;
         private OrderStatusEntity status;
         private ServiceEntity service;
 
@@ -133,11 +123,6 @@ public class OrderEntity {
 
         public Builder setClient(UserEntity client) {
             this.client = client;
-            return this;
-        }
-
-        public Builder setTimeslot(TimeslotEntity timeslot) {
-            this.timeslot = timeslot;
             return this;
         }
 

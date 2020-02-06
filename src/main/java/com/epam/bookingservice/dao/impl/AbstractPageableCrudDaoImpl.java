@@ -36,7 +36,6 @@ abstract class AbstractPageableCrudDaoImpl<E> extends AbstractCrudDaoImpl<E> imp
             List<E> items = getResultList(statement);
             return new Page<>(items, properties, totalItemsCount);
         } catch (SQLException e) {
-            LOGGER.error("Error performing findAll with [" + properties + "]", e);
             throw new DatabaseRuntimeException("Error performing findAll", e);
         }
     }
