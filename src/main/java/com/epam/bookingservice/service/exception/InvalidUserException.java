@@ -6,7 +6,7 @@ public class InvalidUserException extends ValidationException {
         EMPTY_PASSWORD, PASSWORD_TOO_SHORT, EMAIL_TOO_LONG, NAME_TOO_LONG, INVALID_EMAIL
     }
 
-    private Reason reason;
+    private final Reason reason;
 
     public InvalidUserException(Reason reason) {
         super("InvalidUserException with reason " + reason);

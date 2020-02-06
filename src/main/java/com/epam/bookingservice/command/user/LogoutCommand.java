@@ -1,8 +1,6 @@
 package com.epam.bookingservice.command.user;
 
 import com.epam.bookingservice.command.Command;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -12,7 +10,6 @@ import java.io.IOException;
 
 public class LogoutCommand extends Command {
 
-    private static final Logger LOGGER = LogManager.getLogger(LogoutCommand.class);
     private static final String ON_SUCCESS_REDIRECT = "/app/login";
 
     @Override

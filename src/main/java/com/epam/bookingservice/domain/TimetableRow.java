@@ -9,6 +9,7 @@ public class TimetableRow {
 
     private final LocalTime fromTime;
     private final LocalTime toTime;
+    // todo Order domain object
     private final OrderEntity order;
 
     public TimetableRow(LocalTime fromTime, LocalTime toTime, OrderEntity order) {

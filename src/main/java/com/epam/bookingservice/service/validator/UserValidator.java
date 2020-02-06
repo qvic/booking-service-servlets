@@ -3,9 +3,6 @@ package com.epam.bookingservice.service.validator;
 import com.epam.bookingservice.domain.User;
 import com.epam.bookingservice.service.exception.InvalidUserException;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import static com.epam.bookingservice.utility.StringUtility.longerThan;
 import static com.epam.bookingservice.utility.StringUtility.nullOrEmpty;
 import static com.epam.bookingservice.utility.StringUtility.shorterThan;

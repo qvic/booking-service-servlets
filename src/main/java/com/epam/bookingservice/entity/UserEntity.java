@@ -1,6 +1,5 @@
 package com.epam.bookingservice.entity;
 
-import java.io.Serializable;
 import java.util.Objects;
 
 public class UserEntity {

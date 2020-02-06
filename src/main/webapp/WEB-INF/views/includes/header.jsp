@@ -25,9 +25,24 @@
             <ul class="navbar-nav mr-auto">
                 <c:choose>
                     <c:when test="${sessionScope.user ne null}">
+                        <li class="nav-item mr-2">
+                        <span class="nav-link">
+                        <span class="text-secondary">
+                            <fmt:message key="label.logged_in_as"/>
+                        </span>
+                        <span class="text-white">
+                            <c:out value="${sessionScope.user.name}"/>
+                        </span>
+                        </span>
+
+                        </li>
                         <li class="nav-item">
                             <a class="nav-link" href="<c:url value="/app/users"/>"><fmt:message
                                     key="label.list_users"/></a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="<c:url value="/app/timetables"/>"><fmt:message
+                                    key="label.show_timetable"/></a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="<c:url value="/app/logout"/>"><fmt:message
