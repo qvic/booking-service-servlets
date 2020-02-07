@@ -12,7 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-public class RegisterCommand extends GetAndPostCommand {
+public class RegisterCommand implements GetAndPostCommand {
 
     private static final String REGISTER_PAGE_PATH = PageUtility.getViewPathByName("sign-up");
     private static final String ON_SUCCESS_REDIRECT = "/app/login";
@@ -24,12 +24,12 @@ public class RegisterCommand extends GetAndPostCommand {
     }
 
     @Override
-    protected void processGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    public void processGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         forward(REGISTER_PAGE_PATH, request, response);
     }
 
     @Override
-    protected void processPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    public void processPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String name = request.getParameter("name");
         String email = request.getParameter("email");
         String password = request.getParameter("password");

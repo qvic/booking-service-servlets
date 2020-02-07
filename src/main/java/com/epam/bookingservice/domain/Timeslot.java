@@ -36,6 +36,10 @@ public class Timeslot {
         return order;
     }
 
+    public Integer getId() {
+        return id;
+    }
+
     @Override
     public String toString() {
         return "Timeslot{" +

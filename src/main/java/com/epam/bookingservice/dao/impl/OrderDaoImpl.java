@@ -5,6 +5,7 @@ import com.epam.bookingservice.dao.impl.connector.DataSourceConnector;
 import com.epam.bookingservice.entity.OrderEntity;
 import com.epam.bookingservice.entity.OrderStatusEntity;
 import com.epam.bookingservice.entity.ServiceEntity;
+import com.epam.bookingservice.entity.TimeslotEntity;
 import com.epam.bookingservice.entity.UserEntity;
 
 import java.sql.PreparedStatement;

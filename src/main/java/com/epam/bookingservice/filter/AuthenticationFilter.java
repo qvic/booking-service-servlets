@@ -22,6 +22,8 @@ public class AuthenticationFilter implements Filter {
             "/app/signup",
             "/app/login"
     );
+    private static final String STATIC_RESOURCES_URL_PREFIX = "/static/";
+    private static final String LOGIN_REDIRECT_URL = "/app/login";
 
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain chain) throws IOException, ServletException {
@@ -29,12 +31,16 @@ public class AuthenticationFilter implements Filter {
         HttpServletResponse response = (HttpServletResponse) servletResponse;
 
         String requestURI = request.getRequestURI();
+        if (requestURI.startsWith(STATIC_RESOURCES_URL_PREFIX)) {
+            chain.doFilter(request, response);
+            return;
+        }
 
         Optional<User> user = getUserFromSession(request);
-        if (!user.isPresent() && PUBLIC_URLS.contains(requestURI)) {
-            chain.doFilter(request, servletResponse);
+        if (!user.isPresent() && !PUBLIC_URLS.contains(requestURI)) {
+            response.sendRedirect(LOGIN_REDIRECT_URL);
         } else {
-            response.sendRedirect("/app/login");
+            chain.doFilter(request, response);
         }
     }
 

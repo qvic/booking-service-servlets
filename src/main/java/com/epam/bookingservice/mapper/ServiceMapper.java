@@ -12,6 +12,7 @@ public class ServiceMapper implements Mapper<ServiceEntity, Service> {
         }
 
         return ServiceEntity.builder()
+                .setId(domain.getId())
                 .setName(domain.getName())
                 .setDurationInTimeslots(domain.getDurationInTimeslots())
                 .setPrice(domain.getPrice())
@@ -24,6 +25,6 @@ public class ServiceMapper implements Mapper<ServiceEntity, Service> {
             return null;
         }
 
-        return new Service(entity.getName(), entity.getDurationInTimeslots(), entity.getPrice());
+        return new Service(entity.getId(), entity.getName(), entity.getDurationInTimeslots(), entity.getPrice());
     }
 }

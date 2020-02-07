@@ -13,7 +13,7 @@ import java.util.Optional;
 
 import static com.epam.bookingservice.utility.PageUtility.getViewPathByName;
 
-public class LoginCommand extends GetAndPostCommand {
+public class LoginCommand implements GetAndPostCommand {
 
     private static final String LOGIN_PAGE_PATH = getViewPathByName("login");
     private static final String ON_SUCCESS_REDIRECT = "/app/users";
@@ -25,7 +25,7 @@ public class LoginCommand extends GetAndPostCommand {
     }
 
     @Override
-    protected void processPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    public void processPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String email = request.getParameter("email");
         String password = request.getParameter("password");
 
@@ -44,7 +44,7 @@ public class LoginCommand extends GetAndPostCommand {
     }
 
     @Override
-    protected void processGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    public void processGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         forward(LOGIN_PAGE_PATH, request, response);
     }
 

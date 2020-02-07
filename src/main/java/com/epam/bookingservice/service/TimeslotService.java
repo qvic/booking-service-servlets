@@ -1,6 +1,5 @@
 package com.epam.bookingservice.service;
 
-import com.epam.bookingservice.domain.Order;
 import com.epam.bookingservice.domain.Timeslot;
 import com.epam.bookingservice.domain.Timetable;
 
@@ -11,5 +10,5 @@ public interface TimeslotService {
 
     List<Timetable> findAllBetween(LocalDate fromInclusive, LocalDate toExclusive);
 
-    void save(Timeslot timeslot, Order order);
+    void updateTimeslotWithOrder(Timeslot timeslot);
 }

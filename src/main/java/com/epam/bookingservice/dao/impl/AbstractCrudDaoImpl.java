@@ -122,7 +122,7 @@ abstract class AbstractCrudDaoImpl<E> implements CrudDao<E> {
         return findByParam(id, queries.getFindByIdQuery(), INT_SETTER);
     }
 
-    private void throwIfNotAffected(int affectedRows) {
+    protected void throwIfNotAffected(int affectedRows) {
         if (affectedRows == 0) {
             throw new DatabaseRuntimeException("No rows affected");
         }

@@ -7,10 +7,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-public abstract class GetCommand extends Command {
+public interface GetCommand extends Command {
 
     @Override
-    public void execute(HttpServletRequest request, HttpServletResponse response)
+    default void execute(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String method = request.getMethod();
 
@@ -21,6 +21,6 @@ public abstract class GetCommand extends Command {
         }
     }
 
-    protected abstract void processGet(HttpServletRequest request, HttpServletResponse response)
+    void processGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException;
 }

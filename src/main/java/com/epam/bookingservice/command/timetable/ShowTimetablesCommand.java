@@ -15,7 +15,7 @@ import java.util.List;
 import static com.epam.bookingservice.utility.PageUtility.getViewPathByName;
 import static com.epam.bookingservice.utility.ParseUtility.parseLocalDateOrDefault;
 
-public class ShowTimetablesCommand extends GetCommand {
+public class ShowTimetablesCommand implements GetCommand {
 
     private static final Period DEFAULT_TIMETABLE_PERIOD = Period.ofDays(14);
 
@@ -26,7 +26,7 @@ public class ShowTimetablesCommand extends GetCommand {
     }
 
     @Override
-    protected void processGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    public void processGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         LocalDate from = parseLocalDateOrDefault(
                 request.getParameter("from_date"),
                 LocalDate.now());

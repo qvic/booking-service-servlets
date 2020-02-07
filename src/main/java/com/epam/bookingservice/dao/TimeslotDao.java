@@ -8,4 +8,6 @@ import java.util.List;
 public interface TimeslotDao extends CrudDao<TimeslotEntity> {
 
     List<TimeslotEntity> findAllBetween(LocalDate from, LocalDate to);
+
+    TimeslotEntity saveOrderAndUpdateTimeslot(TimeslotEntity timeslotEntity);
 }

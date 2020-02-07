@@ -1,15 +1,20 @@
 package com.epam.bookingservice.dao.impl;
 
+import com.epam.bookingservice.dao.OrderDao;
 import com.epam.bookingservice.dao.TimeslotDao;
+import com.epam.bookingservice.dao.exception.DatabaseRuntimeException;
 import com.epam.bookingservice.dao.impl.connector.DataSourceConnector;
 import com.epam.bookingservice.entity.OrderEntity;
 import com.epam.bookingservice.entity.TimeslotEntity;
 
+import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.sql.Time;
+import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -18,6 +23,8 @@ public class TimeslotDaoImpl extends AbstractCrudDaoImpl<TimeslotEntity> impleme
     private static final String FIND_BY_ID_QUERY = "SELECT * FROM timeslot WHERE id = ?";
     private static final String FIND_ALL_QUERY = "SELECT * FROM timeslot";
     private static final String FIND_ALL_BETWEEN_DATES = "SELECT * FROM timeslot WHERE date >= ? AND date < ?";
+
+    private static final String SAVE_ORDER_QUERY = "INSERT INTO \"order\" (date, worker_id, client_id, status_id, service_id) VALUES (?, ?, ?, ?, ?) RETURNING id";
 
     private static final String SAVE_QUERY = "INSERT INTO timeslot (date, from_time, to_time, order_id) VALUES (?, ?, ?, ?) RETURNING id";
     private static final String UPDATE_QUERY = "UPDATE timeslot SET date = ?, from_time = ?, to_time = ?, order_id = ? WHERE id = ?";
@@ -66,6 +73,12 @@ public class TimeslotDaoImpl extends AbstractCrudDaoImpl<TimeslotEntity> impleme
     @Override
     public List<TimeslotEntity> findAllBetween(LocalDate from, LocalDate to) {
         return findAllByTwoParams(from, to, FIND_ALL_BETWEEN_DATES, LOCAL_DATE_SETTER);
+    }
+
+    @Override
+    public TimeslotEntity saveOrderAndUpdateTimeslot(TimeslotEntity entity) {
+        // todo somehow do it all in transaction
+        return entity;
     }
 
     @Override

@@ -28,12 +28,19 @@ public class HikariDataSourceConnector implements DataSourceConnector {
         config.setDriverClassName(resource.getString("db.hikari.driverClassName"));
         config.setUsername(resource.getString("db.username"));
         config.setPassword(resource.getString("db.password"));
-        config.setConnectionTimeout(Long.parseLong(resource.getString("db.hikari.connectionTimeout")));
-        config.setMaximumPoolSize(Integer.parseInt(resource.getString("db.hikari.maxPoolSize")));
-        config.addDataSourceProperty("closeMethod", "close");
+        config.setConnectionTimeout(getLongResourceProperty("db.hikari.connectionTimeout", resource));
+        config.setMaximumPoolSize(getIntResourceProperty("db.hikari.maxPoolSize", resource));
         config.addDataSourceProperty("cachePrepStmts", resource.getString("db.hikari.cachePrepStmts"));
         config.addDataSourceProperty("prepStmtCacheSize", resource.getString("db.hikari.prepStmtCacheSize"));
         config.addDataSourceProperty("prepStmtCacheSqlLimit", resource.getString("db.hikari.prepStmtCacheSqlLimit"));
         return config;
+    }
+
+    private static long getLongResourceProperty(String key, ResourceBundle resource) {
+        return Long.parseLong(resource.getString(key));
+    }
+
+    private static int getIntResourceProperty(String key, ResourceBundle resource) {
+        return Integer.parseInt(resource.getString(key));
     }
 }

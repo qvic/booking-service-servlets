@@ -7,7 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-public interface GetAndPostCommand extends GetCommand, PostCommand {
+public interface PostCommand extends Command {
 
     @Override
     default void execute(HttpServletRequest request, HttpServletResponse response)
@@ -16,10 +16,11 @@ public interface GetAndPostCommand extends GetCommand, PostCommand {
 
         if (method.equals("POST")) {
             processPost(request, response);
-        } else if (method.equals("GET")) {
-            processGet(request, response);
         } else {
             throw new HttpMethodNotAllowedException(method);
         }
     }
+
+    void processPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException;
 }

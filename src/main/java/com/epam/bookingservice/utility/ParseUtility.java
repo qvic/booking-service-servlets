@@ -2,6 +2,7 @@ package com.epam.bookingservice.utility;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
+import java.util.function.Supplier;
 
 public final class ParseUtility {
 
@@ -30,6 +31,18 @@ public final class ParseUtility {
             return LocalDate.parse(date);
         } catch (DateTimeParseException e) {
             return defaultDate;
+        }
+    }
+
+    public static int parseIntOrThrow(String value, Supplier<RuntimeException> exceptionSupplier) {
+        if (value == null) {
+            throw exceptionSupplier.get();
+        }
+
+        try {
+            return Integer.parseInt(value);
+        } catch (NumberFormatException e) {
+            throw exceptionSupplier.get();
         }
     }
 }
