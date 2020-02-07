@@ -32,8 +32,12 @@ public class Timetable {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         Timetable timetable = (Timetable) o;
         return Objects.equals(date, timetable.date) &&
                 Objects.equals(rows, timetable.rows);

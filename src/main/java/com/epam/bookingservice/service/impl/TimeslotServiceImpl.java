@@ -2,10 +2,12 @@ package com.epam.bookingservice.service.impl;
 
 import com.epam.bookingservice.dao.OrderDao;
 import com.epam.bookingservice.dao.TimeslotDao;
+import com.epam.bookingservice.domain.Order;
 import com.epam.bookingservice.domain.Timeslot;
 import com.epam.bookingservice.domain.Timetable;
 import com.epam.bookingservice.entity.OrderEntity;
 import com.epam.bookingservice.entity.TimeslotEntity;
+import com.epam.bookingservice.mapper.Mapper;
 import com.epam.bookingservice.service.TimeslotService;
 
 import java.time.LocalDate;
@@ -21,9 +23,13 @@ public class TimeslotServiceImpl implements TimeslotService {
     private final TimeslotDao timeslotDao;
     private final OrderDao orderDao;
 
-    public TimeslotServiceImpl(TimeslotDao timeslotDao, OrderDao orderDao) {
+    private final Mapper<TimeslotEntity, Timeslot> timeslotMapper;
+
+    public TimeslotServiceImpl(TimeslotDao timeslotDao, OrderDao orderDao,
+                               Mapper<TimeslotEntity, Timeslot> timeslotMapper) {
         this.timeslotDao = timeslotDao;
         this.orderDao = orderDao;
+        this.timeslotMapper = timeslotMapper;
     }
 
     @Override
@@ -49,12 +55,21 @@ public class TimeslotServiceImpl implements TimeslotService {
         return timetables;
     }
 
+    @Override
+    public void save(Timeslot timeslot, Order order) {
+
+    }
+
     private Timeslot buildTimeslot(TimeslotEntity timeslotEntity) {
         Optional<OrderEntity> order = Optional.ofNullable(timeslotEntity.getOrder())
                 .flatMap(orderEntity -> orderDao.findById(orderEntity.getId()));
 
-        return new Timeslot(timeslotEntity.getFromTime(),
-                timeslotEntity.getToTime(),
-                order.orElse(null));
+        TimeslotEntity entityWithOrder = TimeslotEntity.builder(timeslotEntity)
+                .setOrder(order.orElse(null))
+                .build();
+
+        return timeslotMapper.mapEntityToDomain(entityWithOrder);
     }
+
+
 }

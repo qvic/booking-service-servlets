@@ -6,20 +6,25 @@
          version="4.0">
     <display-name>Salon booking service</display-name>
 
+    <!-- Servlets -->
+
     <servlet>
         <servlet-name>frontServlet</servlet-name>
         <servlet-class>com.epam.bookingservice.controller.FrontController</servlet-class>
     </servlet>
 
     <servlet-mapping>
-        <servlet-name>frontServlet</servlet-name>
-        <url-pattern>/app/*</url-pattern>
-    </servlet-mapping>
-
-    <servlet-mapping>
         <servlet-name>default</servlet-name>
         <url-pattern>/static/*</url-pattern>
     </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>frontServlet</servlet-name>
+        <url-pattern>/app/*</url-pattern>
+        <url-pattern>/</url-pattern>
+    </servlet-mapping>
+
+    <!-- Filters -->
 
     <filter>
         <filter-name>encodingFilter</filter-name>
@@ -31,6 +36,11 @@
         <filter-class>com.epam.bookingservice.filter.LocaleFilter</filter-class>
     </filter>
 
+    <filter>
+        <filter-name>authenticationFilter</filter-name>
+        <filter-class>com.epam.bookingservice.filter.AuthenticationFilter</filter-class>
+    </filter>
+
     <filter-mapping>
         <filter-name>encodingFilter</filter-name>
         <url-pattern>/*</url-pattern>
@@ -40,4 +50,21 @@
         <filter-name>localeFilter</filter-name>
         <url-pattern>/*</url-pattern>
     </filter-mapping>
+
+    <filter-mapping>
+        <filter-name>authenticationFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
+    <!-- Errors -->
+
+    <error-page>
+        <error-code>404</error-code>
+        <location>/WEB-INF/views/errors/404.jsp</location>
+    </error-page>
+
+    <error-page>
+        <exception-type>com.epam.bookingservice.command.exception.HttpMethodNotAllowedException</exception-type>
+        <location>/WEB-INF/views/errors/405.jsp</location>
+    </error-page>
 </web-app>

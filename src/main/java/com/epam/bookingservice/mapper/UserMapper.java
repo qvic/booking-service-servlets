@@ -9,6 +9,10 @@ public class UserMapper implements Mapper<UserEntity, User> {
 
     @Override
     public UserEntity mapDomainToEntity(User domain) {
+        if (domain == null) {
+            return null;
+        }
+        
         return UserEntity.builder()
                 .setId(domain.getId())
                 .setName(domain.getName())
@@ -21,6 +25,10 @@ public class UserMapper implements Mapper<UserEntity, User> {
 
     @Override
     public User mapEntityToDomain(UserEntity entity) {
+        if (entity == null) {
+            return null;
+        }
+
         return User.builder()
                 .setId(entity.getId())
                 .setName(entity.getName())

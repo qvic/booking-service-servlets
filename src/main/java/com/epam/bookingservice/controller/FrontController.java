@@ -2,6 +2,8 @@ package com.epam.bookingservice.controller;
 
 import com.epam.bookingservice.command.Command;
 import com.epam.bookingservice.context.ApplicationInjector;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -11,6 +13,8 @@ import java.io.IOException;
 import java.util.Map;
 
 public class FrontController extends HttpServlet {
+
+    private static final Logger LOGGER = LogManager.getLogger(FrontController.class);
 
     private final Map<String, Command> commands;
 
@@ -23,6 +27,7 @@ public class FrontController extends HttpServlet {
     @Override
     protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String requestURI = request.getRequestURI();
+        LOGGER.debug(requestURI);
 
         Command command = commands.get(requestURI);
         if (command == null) {

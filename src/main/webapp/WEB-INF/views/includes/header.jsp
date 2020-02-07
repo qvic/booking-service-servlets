@@ -20,19 +20,19 @@
 <body>
 <header>
     <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
-        <a class="navbar-brand" href="#"><fmt:message key="label.app_name"/></a>
+        <a class="navbar-brand" href="<c:url value="/"/>"><fmt:message key="label.app_name"/></a>
         <div class="collapse navbar-collapse">
             <ul class="navbar-nav mr-auto">
                 <c:choose>
                     <c:when test="${sessionScope.user ne null}">
                         <li class="nav-item mr-2">
                         <span class="nav-link">
-                        <span class="text-secondary">
-                            <fmt:message key="label.logged_in_as"/>
-                        </span>
-                        <span class="text-white">
-                            <c:out value="${sessionScope.user.name}"/>
-                        </span>
+                            <span class="text-secondary">
+                                <fmt:message key="label.logged_in_as"/>
+                            </span>
+                            <span class="text-white">
+                                <c:out value="${sessionScope.user.name}"/>
+                            </span>
                         </span>
 
                         </li>
