@@ -2,6 +2,8 @@ package com.epam.bookingservice.context;
 
 import com.epam.bookingservice.command.Command;
 import com.epam.bookingservice.command.HomeCommand;
+import com.epam.bookingservice.command.client.CreateOrderCommand;
+import com.epam.bookingservice.command.client.ShowOrdersCommand;
 import com.epam.bookingservice.command.timetable.ShowTimetablesCommand;
 import com.epam.bookingservice.command.user.LoginCommand;
 import com.epam.bookingservice.command.user.LogoutCommand;
@@ -28,6 +30,8 @@ import com.epam.bookingservice.mapper.OrderMapper;
 import com.epam.bookingservice.mapper.ServiceMapper;
 import com.epam.bookingservice.mapper.TimeslotMapper;
 import com.epam.bookingservice.mapper.UserMapper;
+import com.epam.bookingservice.service.OrderService;
+import com.epam.bookingservice.service.OrderServiceImpl;
 import com.epam.bookingservice.service.PasswordEncryptor;
 import com.epam.bookingservice.service.TimeslotService;
 import com.epam.bookingservice.service.UserService;
@@ -37,11 +41,10 @@ import com.epam.bookingservice.service.validator.EmailValidator;
 import com.epam.bookingservice.service.validator.UserValidator;
 import com.epam.bookingservice.service.validator.Validator;
 
-import java.sql.Time;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ApplicationInjector {
+public final class ApplicationInjector {
 
     private static final ApplicationInjector INSTANCE = new ApplicationInjector();
 
@@ -62,14 +65,11 @@ public class ApplicationInjector {
 
     private static final UserService USER_SERVICE = new UserServiceImpl(USER_DAO, USER_VALIDATOR, EMAIL_VALIDATOR, PASSWORD_ENCRYPTOR);
     private static final TimeslotService TIMESLOT_SERVICE = new TimeslotServiceImpl(TIMESLOT_DAO, ORDER_DAO, TIMESLOT_MAPPER);
+    private static final OrderService ORDER_SERVICE = new OrderServiceImpl(ORDER_DAO, ORDER_MAPPER);
 
     private static final Map<String, Command> ROUTE_TO_COMMAND = initializeCommands();
 
     private ApplicationInjector() {
-    }
-
-    public UserService getUserService() {
-        return USER_SERVICE;
     }
 
     public Map<String, Command> getCommands() {
@@ -86,6 +86,8 @@ public class ApplicationInjector {
         commands.put("/app/users", new ShowUsersCommand(USER_SERVICE));
 
         commands.put("/app/timetables", new ShowTimetablesCommand(TIMESLOT_SERVICE));
+        commands.put("/app/client/orders", new ShowOrdersCommand(ORDER_SERVICE));
+        commands.put("/app/client/create-order", new CreateOrderCommand(TIMESLOT_SERVICE));
 
         return commands;
     }

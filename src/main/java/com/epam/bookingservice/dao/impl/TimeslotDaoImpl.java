@@ -1,6 +1,5 @@
 package com.epam.bookingservice.dao.impl;
 
-import com.epam.bookingservice.dao.OrderDao;
 import com.epam.bookingservice.dao.TimeslotDao;
 import com.epam.bookingservice.dao.exception.DatabaseRuntimeException;
 import com.epam.bookingservice.dao.impl.connector.DataSourceConnector;
@@ -25,6 +24,7 @@ public class TimeslotDaoImpl extends AbstractCrudDaoImpl<TimeslotEntity> impleme
     private static final String FIND_ALL_BETWEEN_DATES = "SELECT * FROM timeslot WHERE date >= ? AND date < ?";
 
     private static final String SAVE_ORDER_QUERY = "INSERT INTO \"order\" (date, worker_id, client_id, status_id, service_id) VALUES (?, ?, ?, ?, ?) RETURNING id";
+    private static final String UPDATE_TIMESLOT_ORDER_QUERY = "UPDATE timeslot SET order_id = ? WHERE id = ?";
 
     private static final String SAVE_QUERY = "INSERT INTO timeslot (date, from_time, to_time, order_id) VALUES (?, ?, ?, ?) RETURNING id";
     private static final String UPDATE_QUERY = "UPDATE timeslot SET date = ?, from_time = ?, to_time = ?, order_id = ? WHERE id = ?";
@@ -76,9 +76,49 @@ public class TimeslotDaoImpl extends AbstractCrudDaoImpl<TimeslotEntity> impleme
     }
 
     @Override
-    public TimeslotEntity saveOrderAndUpdateTimeslot(TimeslotEntity entity) {
-        // todo somehow do it all in transaction
-        return entity;
+    public void saveOrderAndUpdateTimeslot(TimeslotEntity entity) {
+        Connection connection = null;
+        try {
+            connection = connector.getConnection();
+            connection.setAutoCommit(false);
+            saveOrderAndUpdateTimeslotWithConnection(entity, connection);
+            connection.commit();
+        } catch (SQLException e) {
+            if (connection != null) {
+                try {
+                    connection.rollback();
+                } catch (SQLException ex) {
+                    throw new DatabaseRuntimeException("Error performing rollback from saveOrderAndUpdateTimeslot", e);
+                }
+            }
+            throw new DatabaseRuntimeException("Error performing saveOrderAndUpdateTimeslot", e);
+        }
+    }
+
+    private void saveOrderAndUpdateTimeslotWithConnection(TimeslotEntity entity, Connection connection) throws SQLException {
+        // todo refactor
+        try (PreparedStatement saveOrderStatement = connection.prepareStatement(SAVE_ORDER_QUERY, Statement.RETURN_GENERATED_KEYS);
+             PreparedStatement updateTimeslotStatement = connection.prepareStatement(UPDATE_TIMESLOT_ORDER_QUERY)) {
+
+            OrderEntity orderEntity = entity.getOrder();
+            populateOrderInsertStatement(orderEntity, saveOrderStatement);
+
+            int orderAffectedRows = saveOrderStatement.executeUpdate();
+            throwIfNotAffected(orderAffectedRows);
+
+            try (ResultSet generatedKeys = saveOrderStatement.getGeneratedKeys()) {
+                if (generatedKeys.next()) {
+                    orderEntity = applyGeneratedKeysToOrderEntity(orderEntity, generatedKeys);
+                } else {
+                    throw new DatabaseRuntimeException("Error saving OrderEntity, no id obtained");
+                }
+            }
+
+            updateTimeslotStatement.setInt(1, orderEntity.getId());
+            updateTimeslotStatement.setInt(2, entity.getId());
+            int timeslotAffectedRows = updateTimeslotStatement.executeUpdate();
+            throwIfNotAffected(timeslotAffectedRows);
+        }
     }
 
     @Override
@@ -92,5 +132,19 @@ public class TimeslotDaoImpl extends AbstractCrudDaoImpl<TimeslotEntity> impleme
         statement.setTime(2, Time.valueOf(entity.getFromTime()));
         statement.setTime(3, Time.valueOf(entity.getToTime()));
         statement.setInt(4, entity.getOrder().getId());
+    }
+
+    private OrderEntity applyGeneratedKeysToOrderEntity(OrderEntity entity, ResultSet generatedKeys) throws SQLException {
+        return OrderEntity.builder(entity)
+                .setId(generatedKeys.getInt("id"))
+                .build();
+    }
+
+    private void populateOrderInsertStatement(OrderEntity entity, PreparedStatement statement) throws SQLException {
+        statement.setTimestamp(1, Timestamp.valueOf(entity.getDate()));
+        statement.setInt(2, entity.getWorker().getId());
+        statement.setInt(3, entity.getClient().getId());
+        statement.setInt(4, entity.getStatus().getId());
+        statement.setInt(5, entity.getService().getId());
     }
 }

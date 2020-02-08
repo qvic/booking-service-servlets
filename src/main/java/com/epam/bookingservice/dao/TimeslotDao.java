@@ -9,5 +9,5 @@ public interface TimeslotDao extends CrudDao<TimeslotEntity> {
 
     List<TimeslotEntity> findAllBetween(LocalDate from, LocalDate to);
 
-    TimeslotEntity saveOrderAndUpdateTimeslot(TimeslotEntity timeslotEntity);
+    void saveOrderAndUpdateTimeslot(TimeslotEntity timeslotEntity);
 }

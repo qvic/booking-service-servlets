@@ -38,7 +38,7 @@ public class AuthenticationFilter implements Filter {
 
         Optional<User> user = getUserFromSession(request);
         if (!user.isPresent() && !PUBLIC_URLS.contains(requestURI)) {
-            response.sendRedirect(LOGIN_REDIRECT_URL);
+            response.sendRedirect(LOGIN_REDIRECT_URL + "?from=" + requestURI);
         } else {
             chain.doFilter(request, response);
         }

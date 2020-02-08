@@ -1,9 +1,12 @@
 package com.epam.bookingservice.command;
 
+import com.epam.bookingservice.domain.User;
+
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Optional;
 
 public interface Command {
 
@@ -19,5 +22,10 @@ public interface Command {
             throws ServletException, IOException {
         request.setAttribute("message", message);
         forward(path, request, response);
+    }
+
+   default Optional<User> getUserFromSession(HttpServletRequest request) {
+        return Optional.ofNullable(request.getSession(false))
+                .map(session -> (User) session.getAttribute("user"));
     }
 }

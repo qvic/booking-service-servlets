@@ -51,7 +51,9 @@
                     </c:when>
                     <c:otherwise>
                         <li class="nav-item">
-                            <a class="nav-link" href="<c:url value="/app/login"/>"><fmt:message key="label.log_in"/></a>
+                            <a class="nav-link" href="<c:url value="/app/login?from=${requestScope['javax.servlet.forward.request_uri']}"/>">
+                                <fmt:message key="label.log_in"/>
+                            </a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="<c:url value="/app/signup"/>"><fmt:message

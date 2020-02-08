@@ -58,11 +58,8 @@ public class TimeslotServiceImpl implements TimeslotService {
     @Override
     public void updateTimeslotWithOrder(Timeslot timeslot) {
         TimeslotEntity timeslotEntity = timeslotMapper.mapDomainToEntity(timeslot);
-        OrderEntity orderEntity = timeslotEntity.getOrder();
 
-        // todo transaction
-        orderDao.save(orderEntity);
-        timeslotDao.update(timeslotEntity);
+        timeslotDao.saveOrderAndUpdateTimeslot(timeslotEntity);
     }
 
     private Timeslot buildTimeslot(TimeslotEntity timeslotEntity) {

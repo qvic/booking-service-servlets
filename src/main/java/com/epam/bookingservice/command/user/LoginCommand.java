@@ -40,7 +40,9 @@ public class LoginCommand implements GetAndPostCommand {
         HttpSession session = createNewSession(request);
         session.setAttribute("user", user.get());
 
-        response.sendRedirect(ON_SUCCESS_REDIRECT);
+        String redirectPage = Optional.ofNullable(request.getParameter("from"))
+                .orElse(ON_SUCCESS_REDIRECT);
+        response.sendRedirect(redirectPage);
     }
 
     @Override
