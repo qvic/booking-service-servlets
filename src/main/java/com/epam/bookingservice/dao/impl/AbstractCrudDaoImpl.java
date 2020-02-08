@@ -2,11 +2,11 @@ package com.epam.bookingservice.dao.impl;
 
 import com.epam.bookingservice.dao.CrudDao;
 import com.epam.bookingservice.dao.exception.DatabaseRuntimeException;
+import com.epam.bookingservice.dao.impl.connector.ConnectionWrapper;
 import com.epam.bookingservice.dao.impl.connector.DataSourceConnector;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -41,8 +41,8 @@ abstract class AbstractCrudDaoImpl<E> implements CrudDao<E> {
 
     @Override
     public List<E> findAll() {
-        try (Connection connection = connector.getConnection();
-             PreparedStatement statement = connection.prepareStatement(queries.getFindAllQuery())) {
+        try (ConnectionWrapper connection = connector.getConnection();
+             PreparedStatement statement = connection.getOriginal().prepareStatement(queries.getFindAllQuery())) {
 
             return getResultList(statement);
         } catch (SQLException e) {
@@ -52,8 +52,8 @@ abstract class AbstractCrudDaoImpl<E> implements CrudDao<E> {
 
     @Override
     public void update(E entity) {
-        try (Connection connection = connector.getConnection();
-             PreparedStatement statement = connection.prepareStatement(queries.getUpdateQuery())) {
+        try (ConnectionWrapper connection = connector.getConnection();
+             PreparedStatement statement = connection.getOriginal().prepareStatement(queries.getUpdateQuery())) {
 
             populateUpdateStatement(entity, statement);
 
@@ -66,8 +66,8 @@ abstract class AbstractCrudDaoImpl<E> implements CrudDao<E> {
 
     @Override
     public void deleteById(Integer id) {
-        try (Connection connection = connector.getConnection();
-             PreparedStatement statement = connection.prepareStatement(queries.getDeleteByIdQuery())) {
+        try (ConnectionWrapper connection = connector.getConnection();
+             PreparedStatement statement = connection.getOriginal().prepareStatement(queries.getDeleteByIdQuery())) {
 
             statement.setInt(1, id);
 
@@ -80,8 +80,8 @@ abstract class AbstractCrudDaoImpl<E> implements CrudDao<E> {
 
     @Override
     public long count() {
-        try (Connection connection = connector.getConnection();
-             ResultSet resultSet = connection.prepareStatement(queries.getCountQuery()).executeQuery()) {
+        try (ConnectionWrapper connection = connector.getConnection();
+             ResultSet resultSet = connection.getOriginal().prepareStatement(queries.getCountQuery()).executeQuery()) {
 
             if (resultSet.next()) {
                 return resultSet.getLong(1);
@@ -97,8 +97,8 @@ abstract class AbstractCrudDaoImpl<E> implements CrudDao<E> {
 
     @Override
     public E save(E entity) {
-        try (Connection connection = connector.getConnection();
-             PreparedStatement statement = connection.prepareStatement(queries.getSaveQuery(), Statement.RETURN_GENERATED_KEYS)) {
+        try (ConnectionWrapper connection = connector.getConnection();
+             PreparedStatement statement = connection.getOriginal().prepareStatement(queries.getSaveQuery(), Statement.RETURN_GENERATED_KEYS)) {
 
             populateInsertStatement(entity, statement);
 
@@ -128,6 +128,43 @@ abstract class AbstractCrudDaoImpl<E> implements CrudDao<E> {
         }
     }
 
+    protected <P> Optional<E> findByParam(P parameter, String findByParamQuery, StatementParamSetter<P> paramSetter) {
+        try (ConnectionWrapper connection = connector.getConnection();
+             PreparedStatement statement = connection.getOriginal().prepareStatement(findByParamQuery)) {
+
+            paramSetter.accept(statement, parameter);
+
+            return getResultOptional(statement);
+        } catch (SQLException e) {
+            throw new DatabaseRuntimeException("Error performing findByParam", e);
+        }
+    }
+
+    protected <P> List<E> findAllByParam(P parameter, String findAllByParamQuery, StatementParamSetter<P> paramSetter) {
+        try (ConnectionWrapper connection = connector.getConnection();
+             PreparedStatement statement = connection.getOriginal().prepareStatement(findAllByParamQuery)) {
+
+            paramSetter.accept(statement, parameter);
+
+            return getResultList(statement);
+        } catch (SQLException e) {
+            throw new DatabaseRuntimeException("Error performing findAllByParam", e);
+        }
+    }
+
+    protected <P> List<E> findAllByTwoParams(P parameterA, P parameterB, String findAllByParamQuery, StatementParamSetter<P> paramSetter) {
+        try (ConnectionWrapper connection = connector.getConnection();
+             PreparedStatement statement = connection.getOriginal().prepareStatement(findAllByParamQuery)) {
+
+            paramSetter.accept(statement, parameterA, 1);
+            paramSetter.accept(statement, parameterB, 2);
+
+            return getResultList(statement);
+        } catch (SQLException e) {
+            throw new DatabaseRuntimeException("Error performing findAllByTwoParams", e);
+        }
+    }
+
     protected List<E> getResultList(PreparedStatement statement) throws SQLException {
         try (ResultSet resultSet = statement.executeQuery()) {
             List<E> entities = new ArrayList<>();
@@ -146,43 +183,6 @@ abstract class AbstractCrudDaoImpl<E> implements CrudDao<E> {
             }
         }
         return Optional.empty();
-    }
-
-    protected <P> Optional<E> findByParam(P parameter, String findByParamQuery, StatementParamSetter<P> paramSetter) {
-        try (Connection connection = connector.getConnection();
-             PreparedStatement statement = connection.prepareStatement(findByParamQuery)) {
-
-            paramSetter.accept(statement, parameter);
-
-            return getResultOptional(statement);
-        } catch (SQLException e) {
-            throw new DatabaseRuntimeException("Error performing findByParam", e);
-        }
-    }
-
-    protected <P> List<E> findAllByParam(P parameter, String findAllByParamQuery, StatementParamSetter<P> paramSetter) {
-        try (Connection connection = connector.getConnection();
-             PreparedStatement statement = connection.prepareStatement(findAllByParamQuery)) {
-
-            paramSetter.accept(statement, parameter);
-
-            return getResultList(statement);
-        } catch (SQLException e) {
-            throw new DatabaseRuntimeException("Error performing findAllByParam", e);
-        }
-    }
-
-    protected <P> List<E> findAllByTwoParams(P parameterA, P parameterB, String findAllByParamQuery, StatementParamSetter<P> paramSetter) {
-        try (Connection connection = connector.getConnection();
-             PreparedStatement statement = connection.prepareStatement(findAllByParamQuery)) {
-
-            paramSetter.accept(statement, parameterA, 1);
-            paramSetter.accept(statement, parameterB, 2);
-
-            return getResultList(statement);
-        } catch (SQLException e) {
-            throw new DatabaseRuntimeException("Error performing findAllByTwoParams", e);
-        }
     }
 
     /**

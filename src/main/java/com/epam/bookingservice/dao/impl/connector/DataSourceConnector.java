@@ -5,5 +5,5 @@ import java.sql.SQLException;
 
 public interface DataSourceConnector {
 
-    Connection getConnection() throws SQLException;
+    ConnectionWrapper getConnection() throws SQLException;
 }

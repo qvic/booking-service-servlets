@@ -3,23 +3,35 @@ package com.epam.bookingservice.dao.impl.connector;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ResourceBundle;
 
 public class HikariDataSourceConnector implements DataSourceConnector {
 
     private final HikariDataSource dataSource;
+    private final TransactionManager transactionManager;
 
-    public HikariDataSourceConnector(String settingsBundleName) {
-        ResourceBundle resource = ResourceBundle.getBundle(settingsBundleName);
-        HikariConfig hikariConfig = getHikariConfigByResource(resource);
-        dataSource = new HikariDataSource(hikariConfig);
+    public HikariDataSourceConnector(String settingsBundleName, TransactionManager transactionManager) {
+        this.dataSource = getConfiguredHikariDataSource(settingsBundleName);
+        this.transactionManager = transactionManager;
     }
 
     @Override
-    public Connection getConnection() throws SQLException {
-        return dataSource.getConnection();
+    public ConnectionWrapper getConnection() throws SQLException {
+        if (transactionManager.isInTransaction()) {
+            if (!transactionManager.hasConnection()) {
+                transactionManager.assignConnection(dataSource.getConnection());
+            }
+            return transactionManager.getConnection();
+        }
+
+        return new ConnectionWrapper(dataSource.getConnection(), false);
+    }
+
+    private static HikariDataSource getConfiguredHikariDataSource(String settingsBundleName) {
+        ResourceBundle resource = ResourceBundle.getBundle(settingsBundleName);
+        HikariConfig hikariConfig = getHikariConfigByResource(resource);
+        return new HikariDataSource(hikariConfig);
     }
 
     private static HikariConfig getHikariConfigByResource(ResourceBundle resource) {

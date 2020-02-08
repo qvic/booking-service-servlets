@@ -17,6 +17,8 @@ import com.epam.bookingservice.dao.impl.TimeslotDaoImpl;
 import com.epam.bookingservice.dao.impl.UserDaoImpl;
 import com.epam.bookingservice.dao.impl.connector.DataSourceConnector;
 import com.epam.bookingservice.dao.impl.connector.HikariDataSourceConnector;
+import com.epam.bookingservice.dao.impl.connector.TransactionManager;
+import com.epam.bookingservice.dao.impl.connector.TransactionManagerImpl;
 import com.epam.bookingservice.domain.Order;
 import com.epam.bookingservice.domain.Service;
 import com.epam.bookingservice.domain.Timeslot;
@@ -48,7 +50,9 @@ public final class ApplicationInjector {
 
     private static final ApplicationInjector INSTANCE = new ApplicationInjector();
 
-    private static final DataSourceConnector DATABASE_CONNECTOR = new HikariDataSourceConnector("db");
+    private static final TransactionManager TRANSACTION_MANAGER = new TransactionManagerImpl();
+
+    private static final DataSourceConnector DATABASE_CONNECTOR = new HikariDataSourceConnector("db", TRANSACTION_MANAGER);
 
     private static final PasswordEncryptor PASSWORD_ENCRYPTOR = new PasswordEncryptor();
     private static final Validator<String> EMAIL_VALIDATOR = new EmailValidator();
@@ -64,7 +68,7 @@ public final class ApplicationInjector {
     private static final Mapper<TimeslotEntity, Timeslot> TIMESLOT_MAPPER = new TimeslotMapper(ORDER_MAPPER);
 
     private static final UserService USER_SERVICE = new UserServiceImpl(USER_DAO, USER_VALIDATOR, EMAIL_VALIDATOR, PASSWORD_ENCRYPTOR);
-    private static final TimeslotService TIMESLOT_SERVICE = new TimeslotServiceImpl(TIMESLOT_DAO, ORDER_DAO, TIMESLOT_MAPPER);
+    private static final TimeslotService TIMESLOT_SERVICE = new TimeslotServiceImpl(TIMESLOT_DAO, ORDER_DAO, TIMESLOT_MAPPER, TRANSACTION_MANAGER);
     private static final OrderService ORDER_SERVICE = new OrderServiceImpl(ORDER_DAO, ORDER_MAPPER);
 
     private static final Map<String, Command> ROUTE_TO_COMMAND = initializeCommands();

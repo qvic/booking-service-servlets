@@ -2,6 +2,7 @@ package com.epam.bookingservice.service.impl;
 
 import com.epam.bookingservice.dao.OrderDao;
 import com.epam.bookingservice.dao.TimeslotDao;
+import com.epam.bookingservice.dao.impl.connector.TransactionManager;
 import com.epam.bookingservice.domain.Order;
 import com.epam.bookingservice.domain.Timeslot;
 import com.epam.bookingservice.domain.Timetable;
@@ -135,13 +136,16 @@ public class TimeslotServiceImplTest {
     @Mock
     private OrderDao orderDao;
 
+    @Mock
+    private TransactionManager transactionManager;
+
     private Mapper<TimeslotEntity, Timeslot> timeslotMapper = new TimeslotMapper(new OrderMapper(new UserMapper(), new ServiceMapper()));
 
     private TimeslotServiceImpl timeslotService;
 
     @Before
     public void injectMocks() {
-        timeslotService = new TimeslotServiceImpl(timeslotDao, orderDao, timeslotMapper);
+        timeslotService = new TimeslotServiceImpl(timeslotDao, orderDao, timeslotMapper, transactionManager);
     }
 
     @Test
