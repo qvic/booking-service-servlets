@@ -9,16 +9,14 @@ body {
     background-color: #f5f5f5;
 }
 
-.form-signin {
-    width: 100%;
-    max-width: 400px;
-    margin: 30% auto 0;
+.radio-label {
+    transition: all .1s ease-out;
 }
 
-input[type=checkbox]:checked + .print-label {
+input[type=radio]:checked + .radio-label {
     color: #fff;
-    background-color: #007bff;
-    border-color: #007bff;
+    background-color: #0069d9;
+    border-color: #0062cc;
 }
 
 .fixed-alert {

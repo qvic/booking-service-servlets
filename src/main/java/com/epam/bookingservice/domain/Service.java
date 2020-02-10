@@ -9,11 +9,11 @@ public class Service {
     private final Integer durationInTimeslots;
     private final Integer price;
 
-    public Service(Integer id, String name, Integer durationInTimeslots, Integer price) {
-        this.id = id;
-        this.name = name;
-        this.durationInTimeslots = durationInTimeslots;
-        this.price = price;
+    private Service(Builder builder) {
+        id = builder.id;
+        name = builder.name;
+        durationInTimeslots = builder.durationInTimeslots;
+        price = builder.price;
     }
 
     public String getName() {
@@ -60,5 +60,52 @@ public class Service {
     @Override
     public int hashCode() {
         return Objects.hash(id, name, durationInTimeslots, price);
+    }
+
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    public static Builder builder(Service copy) {
+        Builder builder = new Builder();
+        builder.id = copy.getId();
+        builder.name = copy.getName();
+        builder.durationInTimeslots = copy.getDurationInTimeslots();
+        builder.price = copy.getPrice();
+        return builder;
+    }
+
+    public static final class Builder {
+        private Integer id;
+        private String name;
+        private Integer durationInTimeslots;
+        private Integer price;
+
+        private Builder() {
+        }
+
+        public Builder setId(Integer id) {
+            this.id = id;
+            return this;
+        }
+
+        public Builder setName(String name) {
+            this.name = name;
+            return this;
+        }
+
+        public Builder setDurationInTimeslots(Integer durationInTimeslots) {
+            this.durationInTimeslots = durationInTimeslots;
+            return this;
+        }
+
+        public Builder setPrice(Integer price) {
+            this.price = price;
+            return this;
+        }
+
+        public Service build() {
+            return new Service(this);
+        }
     }
 }

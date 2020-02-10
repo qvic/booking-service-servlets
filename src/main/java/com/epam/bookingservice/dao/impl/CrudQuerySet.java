@@ -1,30 +1,17 @@
 package com.epam.bookingservice.dao.impl;
 
-public class CrudQuerySet {
+public class CrudQuerySet extends ReadQuerySet {
 
-    private final String findByIdQuery;
-    private final String findAllQuery;
     private final String saveQuery;
     private final String updateQuery;
     private final String deleteByIdQuery;
-    private final String countQuery;
 
     public CrudQuerySet(String findByIdQuery, String findAllQuery, String saveQuery, String updateQuery,
                         String deleteByIdQuery, String countQuery) {
-        this.findByIdQuery = findByIdQuery;
-        this.findAllQuery = findAllQuery;
+        super(findByIdQuery, findAllQuery, countQuery);
         this.saveQuery = saveQuery;
         this.updateQuery = updateQuery;
         this.deleteByIdQuery = deleteByIdQuery;
-        this.countQuery = countQuery;
-    }
-
-    public String getFindByIdQuery() {
-        return findByIdQuery;
-    }
-
-    public String getFindAllQuery() {
-        return findAllQuery;
     }
 
     public String getSaveQuery() {
@@ -37,9 +24,5 @@ public class CrudQuerySet {
 
     public String getDeleteByIdQuery() {
         return deleteByIdQuery;
-    }
-
-    public String getCountQuery() {
-        return countQuery;
     }
 }

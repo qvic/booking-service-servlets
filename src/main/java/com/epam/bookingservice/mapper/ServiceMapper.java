@@ -25,6 +25,11 @@ public class ServiceMapper implements Mapper<ServiceEntity, Service> {
             return null;
         }
 
-        return new Service(entity.getId(), entity.getName(), entity.getDurationInTimeslots(), entity.getPrice());
+        return Service.builder()
+                .setId(entity.getId())
+                .setName(entity.getName())
+                .setDurationInTimeslots(entity.getDurationInTimeslots())
+                .setPrice(entity.getPrice())
+                .build();
     }
 }

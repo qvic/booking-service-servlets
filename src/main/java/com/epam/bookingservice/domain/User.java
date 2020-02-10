@@ -1,9 +1,5 @@
 package com.epam.bookingservice.domain;
 
-import com.epam.bookingservice.entity.RoleEntity;
-import com.epam.bookingservice.entity.UserEntity;
-import com.epam.bookingservice.entity.UserStatusEntity;
-
 import java.io.Serializable;
 import java.util.Objects;
 
@@ -13,12 +9,14 @@ public class User implements Serializable {
     private final String name;
     private final String email;
     private final String password;
+    private final Role role;
 
     private User(Builder builder) {
         id = builder.id;
         name = builder.name;
         email = builder.email;
         password = builder.password;
+        role = builder.role;
     }
 
     public static Builder builder() {
@@ -31,6 +29,7 @@ public class User implements Serializable {
         builder.name = copy.getName();
         builder.email = copy.getEmail();
         builder.password = copy.getPassword();
+        builder.role = copy.getRole();
         return builder;
     }
 
@@ -50,11 +49,28 @@ public class User implements Serializable {
         return password;
     }
 
+    public Role getRole() {
+        return role;
+    }
+
+    public boolean isClient() {
+        return role == Role.CLIENT;
+    }
+
+    public boolean isWorker() {
+        return role == Role.WORKER;
+    }
+
+    public boolean isAdmin() {
+        return role == Role.ADMIN;
+    }
+
     @Override
     public String toString() {
         return "User{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
+                ", role='" + role + '\'' +
                 ", email='" + email + '\'' +
                 '}';
     }
@@ -67,33 +83,13 @@ public class User implements Serializable {
         return Objects.equals(id, user.id) &&
                 Objects.equals(name, user.name) &&
                 Objects.equals(email, user.email) &&
-                Objects.equals(password, user.password);
+                Objects.equals(password, user.password) &&
+                role == user.role;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, email, password);
-    }
-
-    public UserEntity toEntity() {
-        return UserEntity.builder()
-                .setId(getId())
-                .setName(getName())
-                .setEmail(getEmail())
-                .setPassword(getPassword())
-                .setRole(RoleEntity.CLIENT)
-                .setStatus(UserStatusEntity.ACTIVE)
-                .build();
-    }
-
-
-    public static User fromEntity(UserEntity entity) {
-        return User.builder()
-                .setId(entity.getId())
-                .setName(entity.getName())
-                .setEmail(entity.getEmail())
-                .setPassword(entity.getPassword())
-                .build();
+        return Objects.hash(id, name, email, password, role);
     }
 
     public static final class Builder {
@@ -101,6 +97,7 @@ public class User implements Serializable {
         private String name;
         private String email;
         private String password;
+        private Role role;
 
         private Builder() {
         }
@@ -122,6 +119,11 @@ public class User implements Serializable {
 
         public Builder setPassword(String password) {
             this.password = password;
+            return this;
+        }
+
+        public Builder setRole(Role role) {
+            this.role = role;
             return this;
         }
 

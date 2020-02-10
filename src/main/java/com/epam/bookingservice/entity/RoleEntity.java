@@ -1,10 +1,10 @@
 package com.epam.bookingservice.entity;
 
-import java.util.NoSuchElementException;
+import java.util.Arrays;
+import java.util.Optional;
 
 public enum RoleEntity {
 
-    // todo fetch by id or name
     CLIENT(1), WORKER(2), ADMIN(3);
 
     private final Integer id;
@@ -17,12 +17,10 @@ public enum RoleEntity {
         return id;
     }
 
-    public static RoleEntity getById(int id) {
-        for (RoleEntity role : values()) {
-            if (role.id == id) {
-                return role;
-            }
-        }
-        throw new NoSuchElementException("Not found Role for id " + id);
-    }
+    public static Optional<RoleEntity> findByIdAndName(Integer id, String name) {
+        return Arrays.stream(values())
+                .filter(roleEntity -> roleEntity.getId().equals(id))
+                .filter(roleEntity -> roleEntity.name().equals(name))
+                .findAny();
+    }   
 }

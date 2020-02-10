@@ -1,6 +1,6 @@
 package com.epam.bookingservice.domain;
 
-import com.epam.bookingservice.domain.PageProperties;
+import com.epam.bookingservice.domain.page.PageProperties;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;

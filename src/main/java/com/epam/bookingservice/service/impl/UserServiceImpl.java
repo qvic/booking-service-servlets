@@ -1,16 +1,19 @@
 package com.epam.bookingservice.service.impl;
 
 import com.epam.bookingservice.dao.UserDao;
-import com.epam.bookingservice.domain.Page;
-import com.epam.bookingservice.domain.PageProperties;
+import com.epam.bookingservice.domain.page.Page;
+import com.epam.bookingservice.domain.page.PageProperties;
 import com.epam.bookingservice.domain.User;
 import com.epam.bookingservice.entity.UserEntity;
-import com.epam.bookingservice.service.PasswordEncryptor;
+import com.epam.bookingservice.mapper.Mapper;
+import com.epam.bookingservice.service.encryptor.PasswordEncryptor;
 import com.epam.bookingservice.service.UserService;
 import com.epam.bookingservice.service.exception.UserAlreadyExistsException;
 import com.epam.bookingservice.service.validator.Validator;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class UserServiceImpl implements UserService {
 
@@ -22,13 +25,16 @@ public class UserServiceImpl implements UserService {
 
     private final PasswordEncryptor passwordEncryptor;
 
+    private final Mapper<UserEntity, User> userMapper;
+
     public UserServiceImpl(UserDao userDao,
                            Validator<User> userValidator, Validator<String> emailValidator,
-                           PasswordEncryptor passwordEncryptor) {
+                           PasswordEncryptor passwordEncryptor, Mapper<UserEntity, User> userMapper) {
         this.userDao = userDao;
         this.userValidator = userValidator;
         this.emailValidator = emailValidator;
         this.passwordEncryptor = passwordEncryptor;
+        this.userMapper = userMapper;
     }
 
     @Override
@@ -41,7 +47,7 @@ public class UserServiceImpl implements UserService {
 
             return userEntityByEmail
                     .filter(s -> s.getPassword().equals(hashedPassword))
-                    .map(User::fromEntity);
+                    .map(userMapper::mapEntityToDomain);
         }
 
         return Optional.empty();
@@ -56,8 +62,9 @@ public class UserServiceImpl implements UserService {
         }
 
         User encryptedUser = encryptPassword(user);
-        UserEntity savedEntity = userDao.save(encryptedUser.toEntity());
-        return User.fromEntity(savedEntity);
+        UserEntity savedEntity = userDao.save(userMapper.mapDomainToEntity(encryptedUser));
+
+        return userMapper.mapEntityToDomain(savedEntity);
     }
 
     private User encryptPassword(User user) {
@@ -73,6 +80,15 @@ public class UserServiceImpl implements UserService {
         if (page.getProperties().getPageNumber() >= page.getTotalPages()) {
             page = userDao.findAll(new PageProperties(page.getTotalPages() - 1, properties.getItemsPerPage()));
         }
-        return page.map(User::fromEntity);
+
+        return page.map(userMapper::mapEntityToDomain);
+    }
+
+    @Override
+    public List<User> findAllWorkers() {
+        return userDao.findAllWorkers()
+                .stream()
+                .map(userMapper::mapEntityToDomain)
+                .collect(Collectors.toList());
     }
 }

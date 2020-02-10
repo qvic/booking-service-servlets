@@ -1,6 +1,7 @@
 package com.epam.bookingservice.dao.impl;
 
 import com.epam.bookingservice.dao.FeedbackDao;
+import com.epam.bookingservice.dao.exception.DatabaseRuntimeException;
 import com.epam.bookingservice.dao.impl.connector.DataSourceConnector;
 import com.epam.bookingservice.entity.FeedbackEntity;
 import com.epam.bookingservice.entity.FeedbackStatusEntity;
@@ -13,11 +14,11 @@ import java.util.List;
 
 public class FeedbackDaoImpl extends AbstractPageableCrudDaoImpl<FeedbackEntity> implements FeedbackDao {
 
-    private static final String FIND_BY_ID_QUERY = "SELECT * FROM feedback WHERE id = ?";
-    private static final String FIND_ALL_QUERY = "SELECT * FROM feedback";
-    private static final String FIND_ALL_PAGED_QUERY = "SELECT * FROM feedback OFFSET ? LIMIT ?";
-    private static final String FIND_ALL_BY_WORKER = "SELECT * FROM feedback WHERE worker_id = ?";
-    private static final String FIND_ALL_BY_STATUS = "SELECT * FROM feedback WHERE status_id = ?";
+    private static final String FIND_BY_ID_QUERY = "SELECT f.*, fs.name as status_name FROM feedback f INNER JOIN feedback_status fs ON f.status_id = fs.id WHERE f.id = ?";
+    private static final String FIND_ALL_QUERY = "SELECT f.*, fs.name as status_name FROM feedback f INNER JOIN feedback_status fs ON f.status_id = fs.id";
+    private static final String FIND_ALL_PAGED_QUERY = "SELECT f.*, fs.name as status_name FROM feedback f INNER JOIN feedback_status fs ON f.status_id = fs.id OFFSET ? LIMIT ?";
+    private static final String FIND_ALL_BY_WORKER = "SELECT f.*, fs.name as status_name FROM feedback f INNER JOIN feedback_status fs ON f.status_id = fs.id WHERE f.worker_id = ?";
+    private static final String FIND_ALL_BY_STATUS = "SELECT f.*, fs.name as status_name FROM feedback f INNER JOIN feedback_status fs ON f.status_id = fs.id WHERE f.status_id = ?";
 
     private static final String SAVE_QUERY = "INSERT INTO feedback (status_id, text, worker_id) VALUES (?, ?, ?) RETURNING id";
     private static final String UPDATE_QUERY = "UPDATE feedback SET status_id = ?, text = ?, worker_id = ? WHERE id = ?";
@@ -43,11 +44,18 @@ public class FeedbackDaoImpl extends AbstractPageableCrudDaoImpl<FeedbackEntity>
 
     @Override
     protected FeedbackEntity mapResultSetToEntity(ResultSet resultSet) throws SQLException {
+        int statusId = resultSet.getInt("status_id");
+        String statusName = resultSet.getString("status_name");
+
+        FeedbackStatusEntity status = FeedbackStatusEntity.findByIdAndName(statusId, statusName)
+                .orElseThrow(() -> new DatabaseRuntimeException(
+                        String.format("Mapping exception. Can't find feedback status by id=[%d], name=[%s]", statusId, statusName)));
+
         return FeedbackEntity.builder()
                 .setId(resultSet.getInt("id"))
                 .setText(resultSet.getString("text"))
-                .setStatus(FeedbackStatusEntity.getById(resultSet.getInt("status_id")))
                 .setWorker(UserEntity.builder().setId(resultSet.getInt("worker_id")).build())
+                .setStatus(status)
                 .build();
     }
 

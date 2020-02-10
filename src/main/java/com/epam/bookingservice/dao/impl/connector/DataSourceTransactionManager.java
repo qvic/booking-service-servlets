@@ -1,5 +1,6 @@
 package com.epam.bookingservice.dao.impl.connector;
 
+import com.epam.bookingservice.dao.TransactionManager;
 import com.epam.bookingservice.dao.exception.DatabaseRuntimeException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -7,14 +8,14 @@ import org.apache.logging.log4j.Logger;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-public class TransactionManagerImpl implements TransactionManager {
+public class DataSourceTransactionManager implements TransactionManager {
 
-    private static final Logger LOGGER = LogManager.getLogger(TransactionManagerImpl.class);
+    private static final Logger LOGGER = LogManager.getLogger(DataSourceTransactionManager.class);
 
     private final ThreadLocal<Connection> currentConnection;
     private final ThreadLocal<Boolean> inTransactionContext;
 
-    public TransactionManagerImpl() {
+    public DataSourceTransactionManager() {
         this.currentConnection = new ThreadLocal<>();
         this.inTransactionContext = ThreadLocal.withInitial(() -> false);
     }
@@ -58,8 +59,7 @@ public class TransactionManagerImpl implements TransactionManager {
         LOGGER.info("Rolled back successfully");
     }
 
-    @Override
-    public void assignConnection(Connection connection) {
+    void setConnection(Connection connection) {
         try {
             connection.setAutoCommit(false);
             currentConnection.set(connection);
@@ -68,19 +68,16 @@ public class TransactionManagerImpl implements TransactionManager {
         }
     }
 
-    @Override
-    public boolean isInTransaction() {
+    boolean isInTransaction() {
         return inTransactionContext.get();
     }
 
-    @Override
-    public boolean hasConnection() {
+    boolean hasConnection() {
         return currentConnection.get() != null;
     }
 
-    @Override
-    public ConnectionWrapper getConnection() {
+    DataSourceConnection getConnection() {
         Connection connection = currentConnection.get();
-        return new ConnectionWrapper(connection, true);
+        return new DataSourceConnection(connection, true);
     }
 }

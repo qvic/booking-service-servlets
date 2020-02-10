@@ -1,5 +1,6 @@
 package com.epam.bookingservice.command;
 
+import com.epam.bookingservice.command.exception.HttpForbiddenException;
 import com.epam.bookingservice.domain.User;
 
 import javax.servlet.ServletException;
@@ -24,8 +25,9 @@ public interface Command {
         forward(path, request, response);
     }
 
-   default Optional<User> getUserFromSession(HttpServletRequest request) {
+    default User getUserFromSession(HttpServletRequest request) {
         return Optional.ofNullable(request.getSession(false))
-                .map(session -> (User) session.getAttribute("user"));
+                .map(session -> (User) session.getAttribute("user"))
+                .orElseThrow(HttpForbiddenException::new);
     }
 }

@@ -1,4 +1,4 @@
-package com.epam.bookingservice.command.timetable;
+package com.epam.bookingservice.command.admin;
 
 import com.epam.bookingservice.command.GetCommand;
 import com.epam.bookingservice.domain.Timetable;
@@ -15,13 +15,13 @@ import java.util.List;
 import static com.epam.bookingservice.utility.PageUtility.getViewPathByName;
 import static com.epam.bookingservice.utility.ParseUtility.parseLocalDateOrDefault;
 
-public class ShowTimetablesCommand implements GetCommand {
+public class ShowAdminTimetableCommand implements GetCommand {
 
     private static final Period DEFAULT_TIMETABLE_PERIOD = Period.ofDays(14);
 
     private final TimeslotService timeslotService;
 
-    public ShowTimetablesCommand(TimeslotService timeslotService) {
+    public ShowAdminTimetableCommand(TimeslotService timeslotService) {
         this.timeslotService = timeslotService;
     }
 
@@ -38,6 +38,6 @@ public class ShowTimetablesCommand implements GetCommand {
 
         List<Timetable> timetables = timeslotService.findAllBetween(from, to);
         request.setAttribute("timetables", timetables);
-        forward(getViewPathByName("timetables"), request, response);
+        forward(getViewPathByName("admin-timetables"), request, response);
     }
 }

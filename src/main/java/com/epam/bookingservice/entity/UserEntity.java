@@ -9,7 +9,6 @@ public class UserEntity {
     private final String email;
     private final String password;
     private final RoleEntity role;
-    private final UserStatusEntity status;
 
     private UserEntity(Builder builder) {
         id = builder.id;
@@ -17,7 +16,6 @@ public class UserEntity {
         email = builder.email;
         password = builder.password;
         role = builder.role;
-        status = builder.status;
     }
 
     public Integer getId() {
@@ -40,10 +38,6 @@ public class UserEntity {
         return role;
     }
 
-    public UserStatusEntity getStatus() {
-        return status;
-    }
-
     @Override
     public String toString() {
         return "UserEntity{" +
@@ -51,7 +45,6 @@ public class UserEntity {
                 ", name='" + name + '\'' +
                 ", email='" + email + '\'' +
                 ", role=" + role +
-                ", status=" + status +
                 '}';
     }
 
@@ -68,13 +61,12 @@ public class UserEntity {
                 Objects.equals(name, user.name) &&
                 Objects.equals(email, user.email) &&
                 Objects.equals(password, user.password) &&
-                role == user.role &&
-                status == user.status;
+                role == user.role;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, email, password, role, status);
+        return Objects.hash(id, name, email, password, role);
     }
 
     public static Builder builder() {
@@ -88,7 +80,6 @@ public class UserEntity {
         builder.email = copy.getEmail();
         builder.password = copy.getPassword();
         builder.role = copy.getRole();
-        builder.status = copy.getStatus();
         return builder;
     }
 
@@ -99,7 +90,6 @@ public class UserEntity {
         private String email;
         private String password;
         private RoleEntity role;
-        private UserStatusEntity status;
 
         private Builder() {
         }
@@ -126,11 +116,6 @@ public class UserEntity {
 
         public Builder setRole(RoleEntity role) {
             this.role = role;
-            return this;
-        }
-
-        public Builder setStatus(UserStatusEntity status) {
-            this.status = status;
             return this;
         }
 

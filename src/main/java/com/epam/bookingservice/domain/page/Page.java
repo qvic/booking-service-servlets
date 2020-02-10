@@ -1,4 +1,4 @@
-package com.epam.bookingservice.domain;
+package com.epam.bookingservice.domain.page;
 
 import java.util.List;
 import java.util.function.Function;

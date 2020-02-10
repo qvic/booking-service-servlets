@@ -34,8 +34,12 @@ public class TimeslotMapper implements Mapper<TimeslotEntity, Timeslot> {
             return null;
         }
 
-        return new Timeslot(entity.getId(), entity.getFromTime(), entity.getToTime(),
-                entity.getDate(),
-                orderMapper.mapEntityToDomain(entity.getOrder()));
+        return Timeslot.builder()
+                .setId(entity.getId())
+                .setFromTime(entity.getFromTime())
+                .setToTime(entity.getToTime())
+                .setDate(entity.getDate())
+                .setOrder(orderMapper.mapEntityToDomain(entity.getOrder()))
+                .build();
     }
 }

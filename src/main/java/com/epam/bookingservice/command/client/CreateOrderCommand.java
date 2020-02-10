@@ -1,25 +1,23 @@
 package com.epam.bookingservice.command.client;
 
 import com.epam.bookingservice.command.GetAndPostCommand;
-import com.epam.bookingservice.command.exception.InvalidRequestParameterException;
 import com.epam.bookingservice.domain.Order;
 import com.epam.bookingservice.domain.Service;
 import com.epam.bookingservice.domain.Timeslot;
 import com.epam.bookingservice.domain.User;
 import com.epam.bookingservice.service.TimeslotService;
-import com.epam.bookingservice.utility.PageUtility;
-import com.epam.bookingservice.utility.ParseUtility;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.Optional;
 
-import static com.epam.bookingservice.utility.PageUtility.*;
+import static com.epam.bookingservice.utility.PageUtility.getViewPathByName;
 
 public class CreateOrderCommand implements GetAndPostCommand {
+
+    private static final String REDIRECT_AFTER_SUBMIT = "/app/client/orders";
 
     private final TimeslotService timeslotService;
 
@@ -28,33 +26,39 @@ public class CreateOrderCommand implements GetAndPostCommand {
     }
 
     @Override
-    public void processPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        Optional<User> user = getUserFromSession(request);
-        int timeslotId = ParseUtility.parseIntOrThrow(request.getParameter("timeslot-id"),
-                () -> new InvalidRequestParameterException("timeslot-id is a required parameter"));
-
-        int workerId = ParseUtility.parseIntOrThrow(request.getParameter("worker-id"),
-                () -> new InvalidRequestParameterException("worker-id is a required parameter"));
-
-        int serviceId = ParseUtility.parseIntOrThrow(request.getParameter("service-id"),
-                () -> new InvalidRequestParameterException("worker-id is a required parameter"));
-
-        timeslotService.updateTimeslotWithOrder(new Timeslot(timeslotId, null, null, null, // todo builder
-                Order.builder()
-                        .setDate(LocalDateTime.now())
-                        .setClient(user.orElseThrow(() -> new RuntimeException("No user in the session"))) // todo refactor
-                        .setWorker(User.builder()
-                                .setId(workerId)
-                                .build())
-                        .setService(new Service(serviceId, null, null, null)) // todo builder
-                        .build()
-        ));
-
-        response.sendRedirect("/app/client/orders");
+    public void processGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        forward(getViewPathByName("create-order"),
+                request, response);
     }
 
     @Override
-    public void processGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        forward(getViewPathByName("create-order"), request, response);
+    public void processPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        User user = getUserFromSession(request);
+
+        Integer timeslotId = (Integer) request.getSession().getAttribute("timeslotId");
+        Integer serviceId = (Integer) request.getSession().getAttribute("serviceId");
+        Integer workerId = (Integer) request.getSession().getAttribute("workerId");
+
+        if (timeslotId == null || serviceId == null || workerId == null) { // todo specialized method
+            forwardWithMessage(getViewPathByName("create-order"), "Please, select all parameters",
+                    request, response);
+            return;
+        }
+
+        timeslotService.updateTimeslotWithOrder(Timeslot.builder()
+                .setId(timeslotId)
+                .setOrder(Order.builder()
+                        .setDate(LocalDateTime.now())
+                        .setClient(user)
+                        .setWorker(User.builder()
+                                .setId(workerId)
+                                .build())
+                        .setService(Service.builder()
+                                .setId(serviceId)
+                                .build())
+                        .build())
+                .build());
+
+        response.sendRedirect(REDIRECT_AFTER_SUBMIT);
     }
 }

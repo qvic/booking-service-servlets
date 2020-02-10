@@ -1,6 +1,7 @@
 package com.epam.bookingservice.entity;
 
-import java.util.NoSuchElementException;
+import java.util.Arrays;
+import java.util.Optional;
 
 public enum FeedbackStatusEntity {
 
@@ -16,12 +17,10 @@ public enum FeedbackStatusEntity {
         return id;
     }
 
-    public static FeedbackStatusEntity getById(int id) {
-        for (FeedbackStatusEntity feedbackStatus : values()) {
-            if (feedbackStatus.id == id) {
-                return feedbackStatus;
-            }
-        }
-        throw new NoSuchElementException("Not found ReviewStatus for id " + id);
+    public static Optional<FeedbackStatusEntity> findByIdAndName(Integer id, String name) {
+        return Arrays.stream(values())
+                .filter(feedbackStatus -> feedbackStatus.getId().equals(id))
+                .filter(feedbackStatus -> feedbackStatus.name().equals(name))
+                .findAny();
     }
 }

@@ -1,5 +1,6 @@
 package com.epam.bookingservice.service;
 
+import com.epam.bookingservice.service.encryptor.PasswordEncryptor;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;

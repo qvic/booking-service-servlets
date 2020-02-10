@@ -1,8 +1,8 @@
-package com.epam.bookingservice.command.user;
+package com.epam.bookingservice.command.admin;
 
 import com.epam.bookingservice.command.GetCommand;
-import com.epam.bookingservice.domain.Page;
-import com.epam.bookingservice.domain.PageProperties;
+import com.epam.bookingservice.domain.page.Page;
+import com.epam.bookingservice.domain.page.PageProperties;
 import com.epam.bookingservice.domain.User;
 import com.epam.bookingservice.service.UserService;
 
@@ -13,13 +13,13 @@ import java.io.IOException;
 
 import static com.epam.bookingservice.utility.PageUtility.getViewPathByName;
 
-public class ShowUsersCommand implements GetCommand {
+public class ShowUsersByPagesCommand implements GetCommand {
 
     private static final int DEFAULT_USERS_PER_PAGE = 5;
 
     private final UserService userService;
 
-    public ShowUsersCommand(UserService userService) {
+    public ShowUsersByPagesCommand(UserService userService) {
         this.userService = userService;
     }
 

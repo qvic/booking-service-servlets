@@ -1,4 +1,4 @@
-package com.epam.bookingservice.service;
+package com.epam.bookingservice.service.encryptor;
 
 import com.epam.bookingservice.service.exception.NoSuchAlgorithmRuntimeException;
 

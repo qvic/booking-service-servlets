@@ -3,7 +3,10 @@ package com.epam.bookingservice.service.impl;
 import com.epam.bookingservice.dao.UserDao;
 import com.epam.bookingservice.domain.User;
 import com.epam.bookingservice.entity.UserEntity;
-import com.epam.bookingservice.service.PasswordEncryptor;
+import com.epam.bookingservice.mapper.Mapper;
+import com.epam.bookingservice.mapper.RoleMapper;
+import com.epam.bookingservice.mapper.UserMapper;
+import com.epam.bookingservice.service.encryptor.PasswordEncryptor;
 import com.epam.bookingservice.service.exception.UserAlreadyExistsException;
 import com.epam.bookingservice.service.exception.ValidationException;
 import com.epam.bookingservice.service.validator.Validator;
@@ -11,7 +14,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
@@ -71,11 +73,13 @@ public class UserServiceImplTest {
     @Mock
     private Validator<String> emailValidator;
 
+    private Mapper<UserEntity, User> userMapper = new UserMapper(new RoleMapper());
+
     private UserServiceImpl userService;
 
     @Before
     public void injectMocks() {
-        userService = new UserServiceImpl(userDao, userValidator, emailValidator, passwordEncryptor);
+        userService = new UserServiceImpl(userDao, userValidator, emailValidator, passwordEncryptor, userMapper);
     }
 
     @After

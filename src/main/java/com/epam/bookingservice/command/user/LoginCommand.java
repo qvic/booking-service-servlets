@@ -16,7 +16,7 @@ import static com.epam.bookingservice.utility.PageUtility.getViewPathByName;
 public class LoginCommand implements GetAndPostCommand {
 
     private static final String LOGIN_PAGE_PATH = getViewPathByName("login");
-    private static final String ON_SUCCESS_REDIRECT = "/app/users";
+    private static final String ON_SUCCESS_REDIRECT = "/";
 
     private final UserService userService;
 

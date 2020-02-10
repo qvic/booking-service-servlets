@@ -1,7 +1,7 @@
 package com.epam.bookingservice.dao.impl;
 
 import com.epam.bookingservice.dao.CrudDao;
-import com.epam.bookingservice.dao.impl.connector.ConnectionWrapper;
+import com.epam.bookingservice.dao.impl.connector.DataSourceConnection;
 import com.epam.bookingservice.dao.impl.connector.DataSourceConnector;
 import io.zonky.test.db.postgres.junit.EmbeddedPostgresRules;
 import io.zonky.test.db.postgres.junit.SingleInstancePostgresRule;
@@ -11,7 +11,6 @@ import org.junit.Rule;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Optional;
@@ -28,12 +27,12 @@ public abstract class AbstractDaoImplTest {
     @Rule
     public SingleInstancePostgresRule pg = EmbeddedPostgresRules.singleInstance();
 
-    DataSourceConnector connector = () -> new ConnectionWrapper(pg.getEmbeddedPostgres().getPostgresDatabase().getConnection(), false);
+    DataSourceConnector connector = () -> new DataSourceConnection(pg.getEmbeddedPostgres().getPostgresDatabase().getConnection(), false);
 
     @Before
     public void initializeDatabase() {
         try {
-            try (ConnectionWrapper connection = connector.getConnection()) {
+            try (DataSourceConnection connection = connector.getConnection()) {
                 Statement statement = connection.getOriginal().createStatement();
 
                 statement.executeUpdate(new String(Files.readAllBytes(Paths.get(SQL_SCHEMA_PATH))));

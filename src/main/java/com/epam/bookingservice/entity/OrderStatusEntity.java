@@ -1,6 +1,7 @@
 package com.epam.bookingservice.entity;
 
-import java.util.NoSuchElementException;
+import java.util.Arrays;
+import java.util.Optional;
 
 public enum OrderStatusEntity {
 
@@ -16,12 +17,10 @@ public enum OrderStatusEntity {
         return id;
     }
 
-    public static OrderStatusEntity getById(int id) {
-        for (OrderStatusEntity orderStatus : values()) {
-            if (orderStatus.id == id) {
-                return orderStatus;
-            }
-        }
-        throw new NoSuchElementException("Not found OrderStatus for id " + id);
+    public static Optional<OrderStatusEntity> findByIdAndName(Integer id, String name) {
+        return Arrays.stream(values())
+                .filter(orderStatus -> orderStatus.getId().equals(id))
+                .filter(orderStatus -> orderStatus.name().equals(name))
+                .findAny();
     }
 }

@@ -2,7 +2,7 @@ package com.epam.bookingservice.dao.impl;
 
 import com.epam.bookingservice.dao.TimeslotDao;
 import com.epam.bookingservice.dao.exception.DatabaseRuntimeException;
-import com.epam.bookingservice.dao.impl.connector.ConnectionWrapper;
+import com.epam.bookingservice.dao.impl.connector.DataSourceConnection;
 import com.epam.bookingservice.dao.impl.connector.DataSourceConnector;
 import com.epam.bookingservice.entity.OrderEntity;
 import com.epam.bookingservice.entity.TimeslotEntity;
@@ -74,7 +74,7 @@ public class TimeslotDaoImpl extends AbstractCrudDaoImpl<TimeslotEntity> impleme
 
     @Override
     public void updateOrder(TimeslotEntity entity) {
-        try (ConnectionWrapper connection = connector.getConnection();
+        try (DataSourceConnection connection = connector.getConnection();
              PreparedStatement statement = connection.getOriginal().prepareStatement(UPDATE_TIMESLOT_ORDER_ID_QUERY)) {
 
             statement.setInt(1, entity.getOrder().getId());

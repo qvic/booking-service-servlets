@@ -10,7 +10,7 @@ import java.io.IOException;
 
 public class LogoutCommand implements GetCommand {
 
-    private static final String ON_SUCCESS_REDIRECT = "/app/login";
+    private static final String ON_SUCCESS_REDIRECT = "/";
 
     @Override
     public void processGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {

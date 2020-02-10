@@ -2,10 +2,10 @@ package com.epam.bookingservice.dao.impl;
 
 import com.epam.bookingservice.dao.PageableCrudDao;
 import com.epam.bookingservice.dao.exception.DatabaseRuntimeException;
-import com.epam.bookingservice.dao.impl.connector.ConnectionWrapper;
+import com.epam.bookingservice.dao.impl.connector.DataSourceConnection;
 import com.epam.bookingservice.dao.impl.connector.DataSourceConnector;
-import com.epam.bookingservice.domain.Page;
-import com.epam.bookingservice.domain.PageProperties;
+import com.epam.bookingservice.domain.page.Page;
+import com.epam.bookingservice.domain.page.PageProperties;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -22,7 +22,7 @@ abstract class AbstractPageableCrudDaoImpl<E> extends AbstractCrudDaoImpl<E> imp
 
     @Override
     public Page<E> findAll(PageProperties properties) {
-        try (ConnectionWrapper connection = connector.getConnection();
+        try (DataSourceConnection connection = connector.getConnection();
              PreparedStatement statement = connection.getOriginal().prepareStatement(queries.getFindAllPageableQuery())) {
 
             statement.setLong(1, properties.getOffset());

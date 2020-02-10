@@ -1,10 +1,11 @@
 package com.epam.bookingservice.service.impl;
 
 import com.epam.bookingservice.dao.OrderDao;
+import com.epam.bookingservice.dao.ServiceDao;
 import com.epam.bookingservice.dao.TimeslotDao;
+import com.epam.bookingservice.dao.UserDao;
 import com.epam.bookingservice.dao.exception.DatabaseRuntimeException;
-import com.epam.bookingservice.dao.impl.connector.TransactionManager;
-import com.epam.bookingservice.dao.impl.connector.TransactionManagerImpl;
+import com.epam.bookingservice.dao.TransactionManager;
 import com.epam.bookingservice.domain.Timeslot;
 import com.epam.bookingservice.domain.Timetable;
 import com.epam.bookingservice.entity.OrderEntity;
@@ -28,14 +29,20 @@ public class TimeslotServiceImpl implements TimeslotService {
 
     private final TimeslotDao timeslotDao;
     private final OrderDao orderDao;
+    private final ServiceDao serviceDao;
+    private final UserDao userDao;
+
     private final Mapper<TimeslotEntity, Timeslot> timeslotMapper;
+
     private TransactionManager transactionManager;
 
     public TimeslotServiceImpl(TimeslotDao timeslotDao, OrderDao orderDao,
-                               Mapper<TimeslotEntity, Timeslot> timeslotMapper,
+                               ServiceDao serviceDao, UserDao userDao, Mapper<TimeslotEntity, Timeslot> timeslotMapper,
                                TransactionManager transactionManager) {
         this.timeslotDao = timeslotDao;
         this.orderDao = orderDao;
+        this.serviceDao = serviceDao;
+        this.userDao = userDao;
         this.timeslotMapper = timeslotMapper;
         this.transactionManager = transactionManager;
     }
@@ -49,7 +56,6 @@ public class TimeslotServiceImpl implements TimeslotService {
                 .collect(Collectors.groupingBy(TimeslotEntity::getDate));
 
         for (LocalDate date = fromInclusive; date.isBefore(toExclusive); date = date.plusDays(1)) {
-
             List<TimeslotEntity> timeslotEntities = groupedTimeslots.getOrDefault(date, Collections.emptyList());
 
             List<Timeslot> rows = timeslotEntities
@@ -65,7 +71,8 @@ public class TimeslotServiceImpl implements TimeslotService {
 
     private Timeslot buildTimeslot(TimeslotEntity timeslotEntity) {
         Optional<OrderEntity> order = Optional.ofNullable(timeslotEntity.getOrder())
-                .flatMap(orderEntity -> orderDao.findById(orderEntity.getId()));
+                .flatMap(orderEntity -> orderDao.findById(orderEntity.getId()))
+                .map(this::buildOrderEntity);
 
         TimeslotEntity entityWithOrder = TimeslotEntity.builder(timeslotEntity)
                 .setOrder(order.orElse(null))
@@ -74,18 +81,30 @@ public class TimeslotServiceImpl implements TimeslotService {
         return timeslotMapper.mapEntityToDomain(entityWithOrder);
     }
 
+    private OrderEntity buildOrderEntity(OrderEntity orderEntity) {
+        return OrderEntity.builder(orderEntity)
+                .setWorker(userDao.findById(orderEntity.getWorker().getId())
+                        .orElse(null))
+                .setClient(userDao.findById(orderEntity.getClient().getId())
+                        .orElse(null))
+                .setService(serviceDao.findById(orderEntity.getService().getId())
+                        .orElse(null))
+                .build();
+    }
+
     @Override
     public void updateTimeslotWithOrder(Timeslot timeslot) {
         TimeslotEntity timeslotEntity = timeslotMapper.mapDomainToEntity(timeslot);
 
         try {
             transactionManager.beginTransaction();
-            OrderEntity savedOrder = orderDao.save(timeslotEntity.getOrder());
 
+            OrderEntity savedOrder = orderDao.save(timeslotEntity.getOrder());
             TimeslotEntity updatedTimeslot = TimeslotEntity.builder(timeslotEntity)
                     .setOrder(savedOrder)
                     .build();
             timeslotDao.updateOrder(updatedTimeslot);
+
             transactionManager.commitTransaction();
         } catch (DatabaseRuntimeException e) {
             LOGGER.error(e);

@@ -14,6 +14,7 @@
                     </p>
                 </div>
                 <p class="mb-1"><c:out value="${item.email}"/></p>
+                <p class="mb-1"><c:out value="${item.role}"/></p>
             </div>
         </c:forEach>
     </div>

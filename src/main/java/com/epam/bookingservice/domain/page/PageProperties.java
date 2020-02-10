@@ -1,4 +1,4 @@
-package com.epam.bookingservice.domain;
+package com.epam.bookingservice.domain.page;
 
 import static com.epam.bookingservice.utility.ParseUtility.parseLongOrDefault;
 

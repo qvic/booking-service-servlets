@@ -1,7 +1,7 @@
 package com.epam.bookingservice.dao;
 
-import com.epam.bookingservice.domain.Page;
-import com.epam.bookingservice.domain.PageProperties;
+import com.epam.bookingservice.domain.page.Page;
+import com.epam.bookingservice.domain.page.PageProperties;
 
 public interface PageableCrudDao<E> extends CrudDao<E> {
 

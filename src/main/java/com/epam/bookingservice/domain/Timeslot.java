@@ -12,12 +12,26 @@ public class Timeslot {
     private final LocalDate date;
     private final Order order;
 
-    public Timeslot(Integer id, LocalTime fromTime, LocalTime toTime, LocalDate date, Order order) {
-        this.id = id;
-        this.fromTime = fromTime;
-        this.toTime = toTime;
-        this.date = date;
-        this.order = order;
+    private Timeslot(Builder builder) {
+        id = builder.id;
+        fromTime = builder.fromTime;
+        toTime = builder.toTime;
+        date = builder.date;
+        order = builder.order;
+    }
+
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    public static Builder builder(Timeslot copy) {
+        Builder builder = new Builder();
+        builder.id = copy.getId();
+        builder.fromTime = copy.getFromTime();
+        builder.toTime = copy.getToTime();
+        builder.date = copy.getDate();
+        builder.order = copy.getOrder();
+        return builder;
     }
 
     public LocalTime getFromTime() {
@@ -70,5 +84,45 @@ public class Timeslot {
     @Override
     public int hashCode() {
         return Objects.hash(id, fromTime, toTime, date, order);
+    }
+
+    public static final class Builder {
+        private Integer id;
+        private LocalTime fromTime;
+        private LocalTime toTime;
+        private LocalDate date;
+        private Order order;
+
+        private Builder() {
+        }
+
+        public Builder setId(Integer id) {
+            this.id = id;
+            return this;
+        }
+
+        public Builder setFromTime(LocalTime fromTime) {
+            this.fromTime = fromTime;
+            return this;
+        }
+
+        public Builder setToTime(LocalTime toTime) {
+            this.toTime = toTime;
+            return this;
+        }
+
+        public Builder setDate(LocalDate date) {
+            this.date = date;
+            return this;
+        }
+
+        public Builder setOrder(Order order) {
+            this.order = order;
+            return this;
+        }
+
+        public Timeslot build() {
+            return new Timeslot(this);
+        }
     }
 }

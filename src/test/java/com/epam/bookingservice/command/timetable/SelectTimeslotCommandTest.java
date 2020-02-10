@@ -1,6 +1,7 @@
 package com.epam.bookingservice.command.timetable;
 
 import com.epam.bookingservice.command.AbstractCommandTest;
+import com.epam.bookingservice.command.client.SelectTimeslotCommand;
 import com.epam.bookingservice.domain.Timetable;
 import com.epam.bookingservice.service.TimeslotService;
 import com.epam.bookingservice.utility.PageUtility;
@@ -25,7 +26,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-public class ShowTimetablesCommandTest extends AbstractCommandTest {
+public class SelectTimeslotCommandTest extends AbstractCommandTest {
 
     private static final String FROM_DATE_PARAM = "2020-02-01";
     private static final String TO_DATE_PARAM = "2020-02-20";
@@ -39,7 +40,7 @@ public class ShowTimetablesCommandTest extends AbstractCommandTest {
     private TimeslotService timeslotService;
 
     @InjectMocks
-    private ShowTimetablesCommand showTimetablesCommand;
+    private SelectTimeslotCommand showTimetablesCommand;
 
     @After
     public void resetMocks() {
