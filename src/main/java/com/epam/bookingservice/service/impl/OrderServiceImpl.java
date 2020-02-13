@@ -13,7 +13,6 @@ import com.epam.bookingservice.mapper.Mapper;
 import com.epam.bookingservice.service.OrderService;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class OrderServiceImpl implements OrderService {
@@ -34,8 +33,8 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public List<Order> findAllByClient(User client) {
-        return orderDao.findAllByClientId(client.getId())
+    public List<Order> findAllByClientId(Integer clientId) {
+        return orderDao.findAllByClientId(clientId)
                 .stream()
                 .map(this::buildWithServiceAndWorker)
                 .map(orderMapper::mapEntityToDomain)
@@ -55,8 +54,8 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public List<Order> findAllByWorker(User worker) {
-        return orderDao.findAllByWorkerId(worker.getId())
+    public List<Order> findAllByWorkerId(Integer workerId) {
+        return orderDao.findAllByWorkerId(workerId)
                 .stream()
                 .map(orderMapper::mapEntityToDomain)
                 .collect(Collectors.toList());

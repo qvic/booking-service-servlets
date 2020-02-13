@@ -14,14 +14,14 @@ import java.util.List;
 
 public class FeedbackDaoImpl extends AbstractPageableCrudDaoImpl<FeedbackEntity> implements FeedbackDao {
 
-    private static final String FIND_BY_ID_QUERY = "SELECT f.*, fs.name as status_name FROM feedback f INNER JOIN feedback_status fs ON f.status_id = fs.id WHERE f.id = ?";
-    private static final String FIND_ALL_QUERY = "SELECT f.*, fs.name as status_name FROM feedback f INNER JOIN feedback_status fs ON f.status_id = fs.id";
-    private static final String FIND_ALL_PAGED_QUERY = "SELECT f.*, fs.name as status_name FROM feedback f INNER JOIN feedback_status fs ON f.status_id = fs.id OFFSET ? LIMIT ?";
-    private static final String FIND_ALL_BY_WORKER = "SELECT f.*, fs.name as status_name FROM feedback f INNER JOIN feedback_status fs ON f.status_id = fs.id WHERE f.worker_id = ?";
-    private static final String FIND_ALL_BY_STATUS = "SELECT f.*, fs.name as status_name FROM feedback f INNER JOIN feedback_status fs ON f.status_id = fs.id WHERE f.status_id = ?";
+    private static final String FIND_BY_ID_QUERY = "SELECT f.* FROM feedback f WHERE f.id = ?";
+    private static final String FIND_ALL_QUERY = "SELECT f.* FROM feedback f";
+    private static final String FIND_ALL_PAGED_QUERY = "SELECT f.* FROM feedback f OFFSET ? LIMIT ?";
+    private static final String FIND_ALL_BY_WORKER = "SELECT f.* FROM feedback f WHERE f.worker_id = ?";
+    private static final String FIND_ALL_BY_STATUS = "SELECT f.* FROM feedback f WHERE f.status = ?";
 
-    private static final String SAVE_QUERY = "INSERT INTO feedback (status_id, text, worker_id) VALUES (?, ?, ?) RETURNING id";
-    private static final String UPDATE_QUERY = "UPDATE feedback SET status_id = ?, text = ?, worker_id = ? WHERE id = ?";
+    private static final String SAVE_QUERY = "INSERT INTO feedback (text, worker_id, status) VALUES (?, ?, ?) RETURNING id";
+    private static final String UPDATE_QUERY = "UPDATE feedback SET text = ?, worker_id = ?, status = ? WHERE id = ?";
     private static final String DELETE_QUERY = "DELETE FROM feedback WHERE id = ?";
     private static final String COUNT_QUERY = "SELECT count(*) FROM feedback";
 
@@ -39,23 +39,16 @@ public class FeedbackDaoImpl extends AbstractPageableCrudDaoImpl<FeedbackEntity>
 
     @Override
     public List<FeedbackEntity> findAllByStatus(FeedbackStatusEntity status) {
-        return findAllByParam(status.getId(), FIND_ALL_BY_STATUS, INT_SETTER);
+        return findAllByParam(status.name(), FIND_ALL_BY_STATUS, STRING_SETTER);
     }
 
     @Override
     protected FeedbackEntity mapResultSetToEntity(ResultSet resultSet) throws SQLException {
-        int statusId = resultSet.getInt("status_id");
-        String statusName = resultSet.getString("status_name");
-
-        FeedbackStatusEntity status = FeedbackStatusEntity.findByIdAndName(statusId, statusName)
-                .orElseThrow(() -> new DatabaseRuntimeException(
-                        String.format("Mapping exception. Can't find feedback status by id=[%d], name=[%s]", statusId, statusName)));
-
         return FeedbackEntity.builder()
                 .setId(resultSet.getInt("id"))
                 .setText(resultSet.getString("text"))
                 .setWorker(UserEntity.builder().setId(resultSet.getInt("worker_id")).build())
-                .setStatus(status)
+                .setStatus(FeedbackStatusEntity.findByName(resultSet.getString("status")).orElse(null))
                 .build();
     }
 
@@ -78,8 +71,8 @@ public class FeedbackDaoImpl extends AbstractPageableCrudDaoImpl<FeedbackEntity>
     }
 
     private void populateNonIdFields(FeedbackEntity entity, PreparedStatement statement) throws SQLException {
-        statement.setInt(1, entity.getStatus().getId());
-        statement.setString(2, entity.getText());
-        statement.setInt(3, entity.getWorker().getId());
+        statement.setString(1, entity.getText());
+        statement.setInt(2, entity.getWorker().getId());
+        statement.setString(3, entity.getStatus().name());
     }
 }

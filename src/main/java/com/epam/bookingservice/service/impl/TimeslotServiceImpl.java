@@ -9,7 +9,9 @@ import com.epam.bookingservice.dao.TransactionManager;
 import com.epam.bookingservice.domain.Timeslot;
 import com.epam.bookingservice.domain.Timetable;
 import com.epam.bookingservice.entity.OrderEntity;
+import com.epam.bookingservice.entity.ServiceEntity;
 import com.epam.bookingservice.entity.TimeslotEntity;
+import com.epam.bookingservice.entity.UserEntity;
 import com.epam.bookingservice.mapper.Mapper;
 import com.epam.bookingservice.service.TimeslotService;
 import org.apache.logging.log4j.LogManager;
@@ -55,7 +57,8 @@ public class TimeslotServiceImpl implements TimeslotService {
         Map<LocalDate, List<TimeslotEntity>> groupedTimeslots = timeslots.stream()
                 .collect(Collectors.groupingBy(TimeslotEntity::getDate));
 
-        for (LocalDate date = fromInclusive; date.isBefore(toExclusive); date = date.plusDays(1)) {
+        LocalDate date = fromInclusive;
+        while (date.isBefore(toExclusive)) {
             List<TimeslotEntity> timeslotEntities = groupedTimeslots.getOrDefault(date, Collections.emptyList());
 
             List<Timeslot> rows = timeslotEntities
@@ -64,6 +67,7 @@ public class TimeslotServiceImpl implements TimeslotService {
                     .collect(Collectors.toList());
 
             timetables.add(new Timetable(date, rows));
+            date = date.plusDays(1);
         }
 
         return timetables;
@@ -83,13 +87,25 @@ public class TimeslotServiceImpl implements TimeslotService {
 
     private OrderEntity buildOrderEntity(OrderEntity orderEntity) {
         return OrderEntity.builder(orderEntity)
-                .setWorker(userDao.findById(orderEntity.getWorker().getId())
-                        .orElse(null))
-                .setClient(userDao.findById(orderEntity.getClient().getId())
-                        .orElse(null))
-                .setService(serviceDao.findById(orderEntity.getService().getId())
-                        .orElse(null))
+                .setWorker(getWorker(orderEntity))
+                .setClient(getClient(orderEntity))
+                .setService(getService(orderEntity))
                 .build();
+    }
+
+    private ServiceEntity getService(OrderEntity orderEntity) {
+        return serviceDao.findById(orderEntity.getService().getId())
+                .orElse(null);
+    }
+
+    private UserEntity getClient(OrderEntity orderEntity) {
+        return userDao.findById(orderEntity.getClient().getId())
+                .orElse(null);
+    }
+
+    private UserEntity getWorker(OrderEntity orderEntity) {
+        return userDao.findById(orderEntity.getWorker().getId())
+                .orElse(null);
     }
 
     @Override

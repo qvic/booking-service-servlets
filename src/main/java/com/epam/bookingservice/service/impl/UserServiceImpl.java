@@ -1,12 +1,13 @@
 package com.epam.bookingservice.service.impl;
 
 import com.epam.bookingservice.dao.UserDao;
+import com.epam.bookingservice.domain.Role;
 import com.epam.bookingservice.domain.page.Page;
 import com.epam.bookingservice.domain.page.PageProperties;
 import com.epam.bookingservice.domain.User;
 import com.epam.bookingservice.entity.UserEntity;
 import com.epam.bookingservice.mapper.Mapper;
-import com.epam.bookingservice.service.encryptor.PasswordEncryptor;
+import com.epam.bookingservice.service.encoder.PasswordEncoder;
 import com.epam.bookingservice.service.UserService;
 import com.epam.bookingservice.service.exception.UserAlreadyExistsException;
 import com.epam.bookingservice.service.validator.Validator;
@@ -17,36 +18,31 @@ import java.util.stream.Collectors;
 
 public class UserServiceImpl implements UserService {
 
-    private static final String PASSWORD_SALT = "salt";
-
     private final UserDao userDao;
     private final Validator<User> userValidator;
     private final Validator<String> emailValidator;
 
-    private final PasswordEncryptor passwordEncryptor;
+    private final PasswordEncoder passwordEncoder;
 
     private final Mapper<UserEntity, User> userMapper;
 
     public UserServiceImpl(UserDao userDao,
                            Validator<User> userValidator, Validator<String> emailValidator,
-                           PasswordEncryptor passwordEncryptor, Mapper<UserEntity, User> userMapper) {
+                           PasswordEncoder passwordEncoder, Mapper<UserEntity, User> userMapper) {
         this.userDao = userDao;
         this.userValidator = userValidator;
         this.emailValidator = emailValidator;
-        this.passwordEncryptor = passwordEncryptor;
+        this.passwordEncoder = passwordEncoder;
         this.userMapper = userMapper;
     }
 
     @Override
     public Optional<User> login(String email, String password) {
         emailValidator.validate(email);
-        Optional<UserEntity> userEntityByEmail = userDao.findByEmail(email);
+        Optional<UserEntity> user = userDao.findByEmail(email);
 
-        if (userEntityByEmail.isPresent()) {
-            String hashedPassword = passwordEncryptor.encrypt(password, PASSWORD_SALT);
-
-            return userEntityByEmail
-                    .filter(s -> s.getPassword().equals(hashedPassword))
+        if (user.isPresent()) {
+            return user.filter(u -> passwordEncoder.verify(password, u.getPassword()))
                     .map(userMapper::mapEntityToDomain);
         }
 
@@ -61,15 +57,16 @@ public class UserServiceImpl implements UserService {
             throw new UserAlreadyExistsException();
         }
 
-        User encryptedUser = encryptPassword(user);
-        UserEntity savedEntity = userDao.save(userMapper.mapDomainToEntity(encryptedUser));
+        User encodedUser = prepareUser(user);
+        UserEntity savedEntity = userDao.save(userMapper.mapDomainToEntity(encodedUser));
 
         return userMapper.mapEntityToDomain(savedEntity);
     }
 
-    private User encryptPassword(User user) {
+    private User prepareUser(User user) {
         return User.builder(user)
-                .setPassword(passwordEncryptor.encrypt(user.getPassword(), PASSWORD_SALT))
+                .setRole(Role.CLIENT)
+                .setPassword(passwordEncoder.encode(user.getPassword()))
                 .build();
     }
 

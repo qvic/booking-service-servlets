@@ -6,20 +6,20 @@ import com.epam.bookingservice.entity.RoleEntity;
 public class RoleMapper implements Mapper<RoleEntity, Role> {
 
     @Override
-    public RoleEntity mapDomainToEntity(Role domain) {
-        if (domain == null) {
+    public RoleEntity mapDomainToEntity(Role role) {
+        if (role == null) {
             return null;
         }
 
-        return RoleEntity.valueOf(domain.name());
+        return RoleEntity.findByName(role.name()).orElse(null);
     }
 
     @Override
-    public Role mapEntityToDomain(RoleEntity entity) {
-        if (entity == null) {
+    public Role mapEntityToDomain(RoleEntity role) {
+        if (role == null) {
             return null;
         }
 
-        return Role.valueOf(entity.name());
+        return Role.findByName(role.name()).orElse(null);
     }
 }

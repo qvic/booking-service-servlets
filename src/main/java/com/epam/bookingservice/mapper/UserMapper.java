@@ -14,32 +14,32 @@ public class UserMapper implements Mapper<UserEntity, User> {
     }
 
     @Override
-    public UserEntity mapDomainToEntity(User domain) {
-        if (domain == null) {
+    public UserEntity mapDomainToEntity(User user) {
+        if (user == null) {
             return null;
         }
 
         return UserEntity.builder()
-                .setId(domain.getId())
-                .setName(domain.getName())
-                .setEmail(domain.getEmail())
-                .setPassword(domain.getPassword())
-                .setRole(roleMapper.mapDomainToEntity(domain.getRole()))
+                .setId(user.getId())
+                .setName(user.getName())
+                .setEmail(user.getEmail())
+                .setPassword(user.getPassword())
+                .setRole(roleMapper.mapDomainToEntity(user.getRole()))
                 .build();
     }
 
     @Override
-    public User mapEntityToDomain(UserEntity entity) {
-        if (entity == null) {
+    public User mapEntityToDomain(UserEntity user) {
+        if (user == null) {
             return null;
         }
 
         return User.builder()
-                .setId(entity.getId())
-                .setName(entity.getName())
-                .setEmail(entity.getEmail())
-                .setPassword(entity.getPassword())
-                .setRole(roleMapper.mapEntityToDomain(entity.getRole()))
+                .setId(user.getId())
+                .setName(user.getName())
+                .setEmail(user.getEmail())
+                .setPassword(user.getPassword())
+                .setRole(roleMapper.mapEntityToDomain(user.getRole()))
                 .build();
     }
 }

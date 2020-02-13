@@ -20,6 +20,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -47,7 +48,7 @@ public class LoginCommandTest extends AbstractCommandTest {
 
     @After
     public void resetMocks() {
-        Mockito.reset(userService);
+        reset(userService);
     }
 
     @Test
@@ -62,8 +63,8 @@ public class LoginCommandTest extends AbstractCommandTest {
 
         loginCommand.processPost(request, response);
 
-        verify(session, times(1)).setAttribute(eq("user"), eq(USER));
-        verify(response, times(1)).sendRedirect(any());
+        verify(session).setAttribute(eq("user"), eq(USER));
+        verify(response).sendRedirect(any());
     }
 
     @Test

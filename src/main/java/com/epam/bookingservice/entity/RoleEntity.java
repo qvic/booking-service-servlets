@@ -5,22 +5,11 @@ import java.util.Optional;
 
 public enum RoleEntity {
 
-    CLIENT(1), WORKER(2), ADMIN(3);
+    CLIENT, WORKER, ADMIN;
 
-    private final Integer id;
-
-    RoleEntity(Integer id) {
-        this.id = id;
-    }
-
-    public Integer getId() {
-        return id;
-    }
-
-    public static Optional<RoleEntity> findByIdAndName(Integer id, String name) {
+    public static Optional<RoleEntity> findByName(String name) {
         return Arrays.stream(values())
-                .filter(roleEntity -> roleEntity.getId().equals(id))
                 .filter(roleEntity -> roleEntity.name().equals(name))
                 .findAny();
-    }   
+    }
 }

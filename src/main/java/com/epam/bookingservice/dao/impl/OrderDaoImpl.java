@@ -4,7 +4,6 @@ import com.epam.bookingservice.dao.OrderDao;
 import com.epam.bookingservice.dao.exception.DatabaseRuntimeException;
 import com.epam.bookingservice.dao.impl.connector.DataSourceConnector;
 import com.epam.bookingservice.entity.OrderEntity;
-import com.epam.bookingservice.entity.OrderStatusEntity;
 import com.epam.bookingservice.entity.ServiceEntity;
 import com.epam.bookingservice.entity.UserEntity;
 
@@ -16,14 +15,14 @@ import java.util.List;
 
 public class OrderDaoImpl extends AbstractPageableCrudDaoImpl<OrderEntity> implements OrderDao {
 
-    private static final String FIND_BY_ID_QUERY = "SELECT o.*, os.name as status_name FROM \"order\" o INNER JOIN order_status os ON o.status_id = os.id WHERE o.id = ?";
-    private static final String FIND_ALL_QUERY = "SELECT o.*, os.name as status_name FROM \"order\" o INNER JOIN order_status os ON o.status_id = os.id";
-    private static final String FIND_ALL_PAGED_QUERY = "SELECT o.*, os.name as status_name FROM \"order\" o INNER JOIN order_status os ON o.status_id = os.id OFFSET ? LIMIT ?";
-    private static final String FIND_ALL_BY_CLIENT = "SELECT o.*, os.name as status_name FROM \"order\" o INNER JOIN order_status os ON o.status_id = os.id WHERE o.client_id = ?";
-    private static final String FIND_ALL_BY_WORKER = "SELECT o.*, os.name as status_name FROM \"order\" o INNER JOIN order_status os ON o.status_id = os.id WHERE o.worker_id = ?";
+    private static final String FIND_BY_ID_QUERY = "SELECT o.* FROM \"order\" o WHERE o.id = ?";
+    private static final String FIND_ALL_QUERY = "SELECT o.* FROM \"order\" o";
+    private static final String FIND_ALL_PAGED_QUERY = "SELECT o.* FROM \"order\" o OFFSET ? LIMIT ?";
+    private static final String FIND_ALL_BY_CLIENT = "SELECT o.* FROM \"order\" o WHERE o.client_id = ?";
+    private static final String FIND_ALL_BY_WORKER = "SELECT o.* FROM \"order\" o WHERE o.worker_id = ?";
 
-    private static final String SAVE_QUERY = "INSERT INTO \"order\" (date, worker_id, client_id, status_id, service_id) VALUES (?, ?, ?, ?, ?) RETURNING id";
-    private static final String UPDATE_QUERY = "UPDATE \"order\" SET date = ?, worker_id = ?, client_id = ?, status_id = ?, service_id = ? WHERE id = ?";
+    private static final String SAVE_QUERY = "INSERT INTO \"order\" (date, worker_id, client_id, service_id) VALUES (?, ?, ?, ?) RETURNING id";
+    private static final String UPDATE_QUERY = "UPDATE \"order\" SET date = ?, worker_id = ?, client_id = ?, service_id = ? WHERE id = ?";
     private static final String DELETE_QUERY = "DELETE FROM \"order\" WHERE id = ?";
     private static final String COUNT_QUERY = "SELECT count(*) FROM order";
 
@@ -45,13 +44,6 @@ public class OrderDaoImpl extends AbstractPageableCrudDaoImpl<OrderEntity> imple
 
     @Override
     protected OrderEntity mapResultSetToEntity(ResultSet resultSet) throws SQLException {
-        int statusId = resultSet.getInt("status_id");
-        String statusName = resultSet.getString("status_name");
-
-        OrderStatusEntity status = OrderStatusEntity.findByIdAndName(statusId, statusName)
-                .orElseThrow(() -> new DatabaseRuntimeException(
-                        String.format("Mapping exception. Can't find order status by id=[%d], name=[%s]", statusId, statusName)));
-
         return OrderEntity.builder()
                 .setId(resultSet.getInt("id"))
                 .setClient(UserEntity.builder()
@@ -64,7 +56,6 @@ public class OrderDaoImpl extends AbstractPageableCrudDaoImpl<OrderEntity> imple
                 .setService(ServiceEntity.builder()
                         .setId(resultSet.getInt("service_id"))
                         .build())
-                .setStatus(status)
                 .build();
     }
 
@@ -83,14 +74,13 @@ public class OrderDaoImpl extends AbstractPageableCrudDaoImpl<OrderEntity> imple
     @Override
     protected void populateUpdateStatement(OrderEntity entity, PreparedStatement statement) throws SQLException {
         populateNonIdFields(entity, statement);
-        statement.setInt(6, entity.getId());
+        statement.setInt(5, entity.getId());
     }
 
     private void populateNonIdFields(OrderEntity entity, PreparedStatement statement) throws SQLException {
         statement.setTimestamp(1, Timestamp.valueOf(entity.getDate()));
         statement.setInt(2, entity.getWorker().getId());
         statement.setInt(3, entity.getClient().getId());
-        statement.setInt(4, entity.getStatus().getId());
-        statement.setInt(5, entity.getService().getId());
+        statement.setInt(4, entity.getService().getId());
     }
 }

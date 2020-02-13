@@ -9,7 +9,6 @@ public class OrderEntity {
     private final LocalDateTime date;
     private final UserEntity worker;
     private final UserEntity client;
-    private final OrderStatusEntity status;
     private final ServiceEntity service;
 
     private OrderEntity(Builder builder) {
@@ -17,7 +16,6 @@ public class OrderEntity {
         date = builder.date;
         worker = builder.worker;
         client = builder.client;
-        status = builder.status;
         service = builder.service;
     }
 
@@ -37,10 +35,6 @@ public class OrderEntity {
         return client;
     }
 
-    public OrderStatusEntity getStatus() {
-        return status;
-    }
-
     public ServiceEntity getService() {
         return service;
     }
@@ -52,7 +46,6 @@ public class OrderEntity {
                 ", date=" + date +
                 ", worker=" + worker +
                 ", client=" + client +
-                ", status=" + status +
                 ", service=" + service +
                 '}';
     }
@@ -70,13 +63,12 @@ public class OrderEntity {
                 Objects.equals(date, order.date) &&
                 Objects.equals(worker, order.worker) &&
                 Objects.equals(client, order.client) &&
-                status == order.status &&
                 Objects.equals(service, order.service);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, date, worker, client, status, service);
+        return Objects.hash(id, date, worker, client, service);
     }
 
     public static Builder builder() {
@@ -89,7 +81,6 @@ public class OrderEntity {
         builder.date = copy.getDate();
         builder.worker = copy.getWorker();
         builder.client = copy.getClient();
-        builder.status = copy.getStatus();
         builder.service = copy.getService();
         return builder;
     }
@@ -100,7 +91,6 @@ public class OrderEntity {
         private LocalDateTime date;
         private UserEntity worker;
         private UserEntity client;
-        private OrderStatusEntity status;
         private ServiceEntity service;
 
         private Builder() {
@@ -123,11 +113,6 @@ public class OrderEntity {
 
         public Builder setClient(UserEntity client) {
             this.client = client;
-            return this;
-        }
-
-        public Builder setStatus(OrderStatusEntity status) {
-            this.status = status;
             return this;
         }
 

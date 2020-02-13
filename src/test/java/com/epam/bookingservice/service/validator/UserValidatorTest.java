@@ -16,17 +16,19 @@ public class UserValidatorTest {
     public void validateShouldThrowValidationExceptionWhenUserEmailLengthIsNotValid() {
         String repeatedSymbol = String.join("", Collections.nCopies(300, "a"));
         User user = User.builder()
+                .setName("name")
                 .setEmail("email@" + repeatedSymbol + ".com")
                 .setPassword("12345")
                 .build();
 
-        assertValidateThrowsInvalidUserExceptionWithReason(user, InvalidUserException.Reason.EMAIL_TOO_LONG,
+        assertValidateThrowsInvalidUserExceptionWithReason(user, InvalidUserException.Reason.INVALID_EMAIL,
                 "Email is too long but exception was not thrown");
     }
 
     @Test
     public void validateShouldThrowValidationExceptionWhenUserPasswordLengthIsNotValid() {
         User user = User.builder()
+                .setName("name")
                 .setEmail("email@site.com")
                 .setPassword("1234")
                 .build();
@@ -38,6 +40,7 @@ public class UserValidatorTest {
     @Test
     public void validateShouldThrowValidationExceptionWhenEmailIsNotValid() {
         User user = User.builder()
+                .setName("name")
                 .setEmail("emailsite.com")
                 .setPassword("12345")
                 .build();
@@ -49,6 +52,7 @@ public class UserValidatorTest {
     @Test
     public void validateShouldThrowValidationExceptionWhenEmailIsEmpty() {
         User user = User.builder()
+                .setName("name")
                 .setEmail("")
                 .setPassword("12345")
                 .build();
@@ -60,6 +64,7 @@ public class UserValidatorTest {
     @Test
     public void validateShouldThrowValidationExceptionWhenEmailIsNull() {
         User user = User.builder()
+                .setName("name")
                 .setEmail(null)
                 .setPassword("12345")
                 .build();
@@ -71,6 +76,7 @@ public class UserValidatorTest {
     @Test
     public void validateShouldThrowValidationExceptionWhenPasswordIsNull() {
         User user = User.builder()
+                .setName("name")
                 .setEmail("email@a.com")
                 .setPassword(null)
                 .build();

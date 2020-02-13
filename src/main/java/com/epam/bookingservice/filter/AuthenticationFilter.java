@@ -44,6 +44,7 @@ public class AuthenticationFilter implements Filter {
         String requestURI = request.getRequestURI();
         Optional<User> user = getUserFromSession(request);
 
+        // refactor
         if (isPublicResourceRequested(requestURI)) {
             chain.doFilter(request, response);
         } else {

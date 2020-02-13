@@ -14,32 +14,32 @@ public class TimeslotMapper implements Mapper<TimeslotEntity, Timeslot> {
     }
 
     @Override
-    public TimeslotEntity mapDomainToEntity(Timeslot domain) {
-        if (domain == null) {
+    public TimeslotEntity mapDomainToEntity(Timeslot timeslot) {
+        if (timeslot == null) {
             return null;
         }
 
         return TimeslotEntity.builder()
-                .setId(domain.getId())
-                .setFromTime(domain.getFromTime())
-                .setToTime(domain.getToTime())
-                .setDate(domain.getDate())
-                .setOrder(orderMapper.mapDomainToEntity(domain.getOrder()))
+                .setId(timeslot.getId())
+                .setFromTime(timeslot.getFromTime())
+                .setToTime(timeslot.getToTime())
+                .setDate(timeslot.getDate())
+                .setOrder(orderMapper.mapDomainToEntity(timeslot.getOrder()))
                 .build();
     }
 
     @Override
-    public Timeslot mapEntityToDomain(TimeslotEntity entity) {
-        if (entity == null) {
+    public Timeslot mapEntityToDomain(TimeslotEntity timeslot) {
+        if (timeslot == null) {
             return null;
         }
 
         return Timeslot.builder()
-                .setId(entity.getId())
-                .setFromTime(entity.getFromTime())
-                .setToTime(entity.getToTime())
-                .setDate(entity.getDate())
-                .setOrder(orderMapper.mapEntityToDomain(entity.getOrder()))
+                .setId(timeslot.getId())
+                .setFromTime(timeslot.getFromTime())
+                .setToTime(timeslot.getToTime())
+                .setDate(timeslot.getDate())
+                .setOrder(orderMapper.mapEntityToDomain(timeslot.getOrder()))
                 .build();
     }
 }

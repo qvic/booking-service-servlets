@@ -6,30 +6,30 @@ import com.epam.bookingservice.entity.ServiceEntity;
 public class ServiceMapper implements Mapper<ServiceEntity, Service> {
 
     @Override
-    public ServiceEntity mapDomainToEntity(Service domain) {
-        if (domain == null) {
+    public ServiceEntity mapDomainToEntity(Service service) {
+        if (service == null) {
             return null;
         }
 
         return ServiceEntity.builder()
-                .setId(domain.getId())
-                .setName(domain.getName())
-                .setDurationInTimeslots(domain.getDurationInTimeslots())
-                .setPrice(domain.getPrice())
+                .setId(service.getId())
+                .setName(service.getName())
+                .setDurationInTimeslots(service.getDurationInTimeslots())
+                .setPrice(service.getPrice())
                 .build();
     }
 
     @Override
-    public Service mapEntityToDomain(ServiceEntity entity) {
-        if (entity == null) {
+    public Service mapEntityToDomain(ServiceEntity service) {
+        if (service == null) {
             return null;
         }
 
         return Service.builder()
-                .setId(entity.getId())
-                .setName(entity.getName())
-                .setDurationInTimeslots(entity.getDurationInTimeslots())
-                .setPrice(entity.getPrice())
+                .setId(service.getId())
+                .setName(service.getName())
+                .setDurationInTimeslots(service.getDurationInTimeslots())
+                .setPrice(service.getPrice())
                 .build();
     }
 }

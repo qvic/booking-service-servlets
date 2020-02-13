@@ -24,7 +24,7 @@ public class ShowOrdersCommand implements GetCommand {
     @Override
     public void processGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         User user = getUserFromSession(request);
-        List<Order> orders = orderService.findAllByClient(user);
+        List<Order> orders = orderService.findAllByClientId(user.getId());
         request.setAttribute("orders", orders);
         forward(getViewPathByName("client-orders"), request, response);
     }

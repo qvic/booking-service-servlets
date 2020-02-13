@@ -34,7 +34,7 @@ public class SelectTimeslotCommandTest extends AbstractCommandTest {
     private static final LocalDate TO_DATE = LocalDate.of(2020, 2, 20);
     private static final List<Timetable> TIMETABLES = Collections.emptyList();
 
-    private static final String TIMETABLES_PAGE_PATH = PageUtility.getViewPathByName("timetables");
+    private static final String TIMETABLES_PAGE_PATH = PageUtility.getViewPathByName("client-timetables");
 
     @Mock
     private TimeslotService timeslotService;

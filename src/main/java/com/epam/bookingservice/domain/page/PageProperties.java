@@ -1,5 +1,7 @@
 package com.epam.bookingservice.domain.page;
 
+import java.util.Objects;
+
 import static com.epam.bookingservice.utility.ParseUtility.parseLongOrDefault;
 
 public class PageProperties {
@@ -41,6 +43,20 @@ public class PageProperties {
     @Override
     public String toString() {
         return String.format("Page %d (%d - %d)", pageNumber, getOffset(), getUpperBound());
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        PageProperties that = (PageProperties) o;
+        return pageNumber == that.pageNumber &&
+                itemsPerPage == that.itemsPerPage;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(pageNumber, itemsPerPage);
     }
 
     public static PageProperties buildByParameters(String pageNumber, String itemsPerPage, long defaultItemsPerPage) {

@@ -25,7 +25,7 @@ public class LogoutCommandTest extends AbstractCommandTest {
     public void userShouldBeRedirectedWhenLoggedOutAndSessionIsNull() throws ServletException, IOException {
         when(request.getSession(eq(false))).thenReturn(null);
 
-        logoutCommand.execute(request, response);
+        logoutCommand.processGet(request, response);
 
         verify(response, times(1)).sendRedirect(anyString());
     }
@@ -34,7 +34,7 @@ public class LogoutCommandTest extends AbstractCommandTest {
     public void userShouldBeRedirectedWhenLoggedOutAndSessionIsNotNull() throws ServletException, IOException {
         when(request.getSession(eq(false))).thenReturn(session);
 
-        logoutCommand.execute(request, response);
+        logoutCommand.processGet(request, response);
 
         verify(session, times(1)).invalidate();
         verify(response, times(1)).sendRedirect(anyString());

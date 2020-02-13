@@ -5,22 +5,11 @@ import java.util.Optional;
 
 public enum FeedbackStatusEntity {
 
-    CREATED(1), APPROVED(2);
+    CREATED, APPROVED;
 
-    private final Integer id;
-
-    FeedbackStatusEntity(Integer id) {
-        this.id = id;
-    }
-
-    public Integer getId() {
-        return id;
-    }
-
-    public static Optional<FeedbackStatusEntity> findByIdAndName(Integer id, String name) {
+    public static Optional<FeedbackStatusEntity> findByName(String name) {
         return Arrays.stream(values())
-                .filter(feedbackStatus -> feedbackStatus.getId().equals(id))
-                .filter(feedbackStatus -> feedbackStatus.name().equals(name))
+                .filter(status -> status.name().equals(name))
                 .findAny();
     }
 }

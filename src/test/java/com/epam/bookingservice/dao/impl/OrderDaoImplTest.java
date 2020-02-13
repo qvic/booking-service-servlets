@@ -1,7 +1,6 @@
 package com.epam.bookingservice.dao.impl;
 
 import com.epam.bookingservice.entity.OrderEntity;
-import com.epam.bookingservice.entity.OrderStatusEntity;
 import com.epam.bookingservice.entity.ServiceEntity;
 import com.epam.bookingservice.entity.UserEntity;
 import org.junit.Test;
@@ -29,7 +28,6 @@ public class OrderDaoImplTest extends AbstractDaoImplTest {
 
     private static final OrderEntity TEST_ORDER = OrderEntity.builder()
             .setDate(TEST_DATE)
-            .setStatus(OrderStatusEntity.CREATED)
             .setClient(TEST_CLIENT)
             .setWorker(TEST_WORKER)
             .setService(TEST_SERVICE)

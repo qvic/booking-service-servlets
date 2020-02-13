@@ -4,7 +4,6 @@ import com.epam.bookingservice.domain.Order;
 import com.epam.bookingservice.domain.Service;
 import com.epam.bookingservice.domain.User;
 import com.epam.bookingservice.entity.OrderEntity;
-import com.epam.bookingservice.entity.OrderStatusEntity;
 import com.epam.bookingservice.entity.ServiceEntity;
 import com.epam.bookingservice.entity.UserEntity;
 
@@ -19,31 +18,30 @@ public class OrderMapper implements Mapper<OrderEntity, Order> {
     }
 
     @Override
-    public OrderEntity mapDomainToEntity(Order domain) {
-        if (domain == null) {
+    public OrderEntity mapDomainToEntity(Order order) {
+        if (order == null) {
             return null;
         }
 
         return OrderEntity.builder()
-                .setDate(domain.getDate())
-                .setClient(userMapper.mapDomainToEntity(domain.getClient()))
-                .setWorker(userMapper.mapDomainToEntity(domain.getWorker()))
-                .setStatus(OrderStatusEntity.CREATED)
-                .setService(serviceMapper.mapDomainToEntity(domain.getService()))
+                .setDate(order.getDate())
+                .setClient(userMapper.mapDomainToEntity(order.getClient()))
+                .setWorker(userMapper.mapDomainToEntity(order.getWorker()))
+                .setService(serviceMapper.mapDomainToEntity(order.getService()))
                 .build();
     }
 
     @Override
-    public Order mapEntityToDomain(OrderEntity entity) {
-        if (entity == null) {
+    public Order mapEntityToDomain(OrderEntity order) {
+        if (order == null) {
             return null;
         }
 
         return Order.builder()
-                .setDate(entity.getDate())
-                .setWorker(userMapper.mapEntityToDomain(entity.getWorker()))
-                .setClient(userMapper.mapEntityToDomain(entity.getClient()))
-                .setService(serviceMapper.mapEntityToDomain(entity.getService()))
+                .setDate(order.getDate())
+                .setWorker(userMapper.mapEntityToDomain(order.getWorker()))
+                .setClient(userMapper.mapEntityToDomain(order.getClient()))
+                .setService(serviceMapper.mapEntityToDomain(order.getService()))
                 .build();
     }
 }

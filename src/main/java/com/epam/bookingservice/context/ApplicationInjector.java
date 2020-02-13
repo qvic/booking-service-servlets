@@ -47,7 +47,7 @@ import com.epam.bookingservice.mapper.UserMapper;
 import com.epam.bookingservice.service.FeedbackService;
 import com.epam.bookingservice.service.OrderService;
 import com.epam.bookingservice.service.impl.OrderServiceImpl;
-import com.epam.bookingservice.service.encryptor.PasswordEncryptor;
+import com.epam.bookingservice.service.encoder.PasswordEncoder;
 import com.epam.bookingservice.service.TimeslotService;
 import com.epam.bookingservice.service.UserService;
 import com.epam.bookingservice.service.impl.TimeslotServiceImpl;
@@ -67,7 +67,7 @@ public final class ApplicationInjector {
 
     private static final DataSourceConnector DATABASE_CONNECTOR = new HikariDataSourceConnector("db", TRANSACTION_MANAGER);
 
-    private static final PasswordEncryptor PASSWORD_ENCRYPTOR = new PasswordEncryptor();
+    private static final PasswordEncoder PASSWORD_ENCRYPTOR = new PasswordEncoder();
     private static final Validator<String> EMAIL_VALIDATOR = new EmailValidator();
     private static final Validator<User> USER_VALIDATOR = new UserValidator();
 

@@ -8,30 +8,34 @@ import com.epam.bookingservice.entity.UserEntity;
 
 public class FeedbackMapper implements Mapper<FeedbackEntity, Feedback> {
 
-    private Mapper<UserEntity, User> userMapper;
+    private final Mapper<UserEntity, User> userMapper;
+
+    public FeedbackMapper(Mapper<UserEntity, User> userMapper) {
+        this.userMapper = userMapper;
+    }
 
     @Override
-    public FeedbackEntity mapDomainToEntity(Feedback domain) {
-        if (domain == null) {
+    public FeedbackEntity mapDomainToEntity(Feedback feedback) {
+        if (feedback == null) {
             return null;
         }
 
         return FeedbackEntity.builder()
-                .setText(domain.getText())
+                .setText(feedback.getText())
                 .setStatus(FeedbackStatusEntity.CREATED)
-                .setWorker(userMapper.mapDomainToEntity(domain.getWorker()))
+                .setWorker(userMapper.mapDomainToEntity(feedback.getWorker()))
                 .build();
     }
 
     @Override
-    public Feedback mapEntityToDomain(FeedbackEntity entity) {
-        if (entity == null) {
+    public Feedback mapEntityToDomain(FeedbackEntity feedback) {
+        if (feedback == null) {
             return null;
         }
 
         return new Feedback(
-                entity.getText(),
-                userMapper.mapEntityToDomain(entity.getWorker())
+                feedback.getText(),
+                userMapper.mapEntityToDomain(feedback.getWorker())
         );
     }
 }

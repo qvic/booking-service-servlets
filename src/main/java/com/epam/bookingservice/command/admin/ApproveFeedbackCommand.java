@@ -11,6 +11,6 @@ public class ApproveFeedbackCommand implements PostCommand {
 
     @Override
     public void processPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        
+        response.sendRedirect("/app/admin/feedback");
     }
 }

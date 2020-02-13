@@ -6,6 +6,7 @@ import com.epam.bookingservice.service.exception.InvalidUserException;
 import static com.epam.bookingservice.utility.StringUtility.longerThan;
 import static com.epam.bookingservice.utility.StringUtility.nullOrEmpty;
 import static com.epam.bookingservice.utility.StringUtility.shorterThan;
+import static java.util.Objects.isNull;
 
 public class UserValidator implements Validator<User> {
 
@@ -26,11 +27,13 @@ public class UserValidator implements Validator<User> {
     }
 
     private static void validatePassword(String password) {
+        throwWithReasonIf(isNull(password), InvalidUserException.Reason.EMPTY_PASSWORD);
         throwWithReasonIf(nullOrEmpty(password), InvalidUserException.Reason.EMPTY_PASSWORD);
         throwWithReasonIf(shorterThan(password, PASSWORD_MIN_LENGTH), InvalidUserException.Reason.PASSWORD_TOO_SHORT);
     }
 
     private static void validateName(String name) {
+        throwWithReasonIf(isNull(name), InvalidUserException.Reason.EMPTY_NAME);
         throwWithReasonIf(longerThan(name, NAME_MAX_LENGTH), InvalidUserException.Reason.NAME_TOO_LONG);
     }
 

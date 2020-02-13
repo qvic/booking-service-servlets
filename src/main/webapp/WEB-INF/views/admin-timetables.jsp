@@ -1,7 +1,7 @@
 <%@ include file="includes/header.jsp" %>
 
 <div class="container my-5">
-    <h3 class="mb-5 text-center"><fmt:message key="label.client.select_timeslot"/></h3>
+    <h3 class="mb-5 text-center"><fmt:message key="label.admin.timetable"/></h3>
 
     <div class="list-group">
         <c:forEach items="${requestScope.timetables}" var="timetable">

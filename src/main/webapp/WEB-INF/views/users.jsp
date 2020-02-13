@@ -18,12 +18,7 @@
             </div>
         </c:forEach>
     </div>
-    <div class="my-2 text-center">
-        <p><c:out value="${requestScope.page.properties}"/></p>
-        <p><c:out value="${fn:length(requestScope.page.items)}"/> of total
-            <c:out value="${requestScope.page.totalItems}"/> users
-            (<c:out value="${requestScope.page.totalPages}"/> pages)</p>
-
+    <div class="my-3 text-center">
         <c:forEach begin="0" end="${requestScope.page.totalPages - 1}" varStatus="loop">
             <c:choose>
                 <c:when test="${requestScope.page.properties.pageNumber == loop.index}">
