@@ -26,14 +26,13 @@ create table if not exists feedback
 
 create table if not exists service
 (
-    id                    serial       not null
+    id               serial       not null
         constraint service_type_pk
             primary key,
-    name                  varchar(100) not null,
-    duration_timeslots    integer      not null,
-    price                 integer      not null,
-    workspaces            integer      not null,
-    duration_in_timeslots integer
+    name             varchar(100) not null,
+    duration_minutes integer      not null,
+    price            integer      not null,
+    workspaces       integer      not null
 );
 
 create table if not exists "order"
@@ -53,15 +52,36 @@ create table if not exists "order"
             references service
 );
 
+create table if not exists duration
+(
+    id      serial  not null
+        constraint duration_pk
+            primary key,
+    minutes integer not null
+);
+
 create table if not exists timeslot
 (
-    id        serial  not null
+    id          serial  not null
         constraint timeslot_pk
             primary key,
-    from_time time(0) not null,
-    to_time   time(0) not null,
-    date      date    not null,
-    order_id  integer
+    from_time   time(0) not null,
+    date        date    not null,
+    order_id    integer
         constraint timeslot_order_id_fk
-            references "order"
+            references "order",
+    duration_id integer not null
+        constraint timeslot_duration_id_fk
+            references duration
+);
+
+create table if not exists notification
+(
+    id      serial      not null
+        constraint notification_pk
+            primary key,
+    user_id integer     not null
+        constraint notification_user_id_fk
+            references "user",
+    type    varchar(20) not null
 );

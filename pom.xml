@@ -22,7 +22,7 @@
         <HikariCP.version>3.4.1</HikariCP.version>
         <log4j.version>2.12.1</log4j.version>
 
-        <junit.version>4.13</junit.version>
+        <junit.version>4.12</junit.version>
         <mockito-core.version>2.28.2</mockito-core.version>
         <jacoco-maven-plugin.version>0.8.5</jacoco-maven-plugin.version>
         <jacoco-maven-plugin.covered-ratio>0.50</jacoco-maven-plugin.covered-ratio>

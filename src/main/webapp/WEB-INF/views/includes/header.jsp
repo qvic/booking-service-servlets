@@ -22,7 +22,7 @@
     <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
         <a class="navbar-brand" href="<c:url value="/"/>"><fmt:message key="label.app_name"/>
             <c:choose>
-                <c:when test="${sessionScope.user.isWorker()}">
+                <c:when test="$ {sessionScope.user.isWorker()}">
                     <span class="badge badge-success">Worker</span>
                 </c:when>
                 <c:when test="${sessionScope.user.isAdmin()}">
@@ -117,6 +117,6 @@
 </header>
 <c:if test="${requestScope.message ne null}">
     <div class="alert alert-warning text-center fixed-alert" role="alert">
-            ${requestScope.message}
+        <fmt:message key="${requestScope.message}"/>
     </div>
 </c:if>
