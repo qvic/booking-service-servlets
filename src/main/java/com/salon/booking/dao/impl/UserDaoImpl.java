@@ -19,8 +19,9 @@ public class UserDaoImpl extends AbstractPageableCrudDaoImpl<UserEntity> impleme
     private static final String FIND_BY_EMAIL_QUERY = "SELECT u.* FROM \"user\" u WHERE u.email = ?";
     private static final String FIND_ALL_QUERY = "SELECT u.* FROM \"user\" u";
     private static final String FIND_ALL_PAGED_QUERY = "SELECT u.* FROM \"user\" u OFFSET ? LIMIT ?";
-    private static final String FIND_ALL_BY_ROLE_QUERY = "SELECT u.* FROM \"user\" u WHERE u.role = ?";
-    private static final String COUNT_QUERY = "SELECT count(*) FROM \"user\"";
+    private static final String FIND_ALL_BY_ROLE_QUERY = "SELECT u.* FROM \"user\" u WHERE u.role = ? OFFSET ? LIMIT ?";
+    private static final String COUNT_QUERY = "SELECT count(*) FROM \"user\" u";
+    private static final String COUNT_BY_ROLE_QUERY = "SELECT count(*) FROM \"user\" u WHERE u.role = ?";
 
     private static final String SAVE_QUERY = "INSERT INTO \"user\" (name, email, password, role) VALUES (?, ?, ?, ?) RETURNING id";
     private static final String UPDATE_QUERY = "UPDATE \"user\" SET name = ?, email = ?, password = ?, role = ? WHERE id = ?";
@@ -38,8 +39,8 @@ public class UserDaoImpl extends AbstractPageableCrudDaoImpl<UserEntity> impleme
     }
 
     @Override
-    public Page<UserEntity> findAllWorkers(PageProperties properties) {
-        return findPageByParam(RoleEntity.WORKER.name(), FIND_ALL_BY_ROLE_QUERY, STRING_SETTER, properties);
+    public Page<UserEntity> findAllByRole(RoleEntity role, PageProperties properties) {
+        return findPageByParam(role.name(), FIND_ALL_BY_ROLE_QUERY, COUNT_BY_ROLE_QUERY, STRING_SETTER, properties);
     }
 
     @Override

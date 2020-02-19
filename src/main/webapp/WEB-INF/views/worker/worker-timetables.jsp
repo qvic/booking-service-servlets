@@ -1,4 +1,4 @@
-<%@ include file="includes/header.jsp" %>
+<%@ include file="../includes/header.jsp" %>
 
 <div class="container my-5">
     <h3 class="mb-5 text-center"><fmt:message key="label.client.select_timeslot"/></h3>
@@ -48,4 +48,4 @@
     </div>
 </div>
 
-<%@ include file="includes/footer.jsp" %>
+<%@ include file="../includes/footer.jsp" %>

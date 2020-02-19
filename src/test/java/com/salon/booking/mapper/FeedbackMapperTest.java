@@ -45,7 +45,7 @@ public class FeedbackMapperTest {
 
         when(userMapper.mapDomainToEntity(eq(user))).thenReturn(userEntity);
 
-        Feedback feedback = new Feedback("text", user);
+        Feedback feedback = new Feedback(1, "text", user);
 
         FeedbackEntity expectedFeedbackEntity = FeedbackEntity.builder()
                 .setStatus(FeedbackStatusEntity.CREATED)
@@ -74,7 +74,7 @@ public class FeedbackMapperTest {
                 .setWorker(userEntity)
                 .build();
 
-        Feedback expectedFeedback = new Feedback("text", user);
+        Feedback expectedFeedback = new Feedback(1, "text", user);
 
         TestCase.assertEquals(expectedFeedback, feedbackMapper.mapEntityToDomain(feedbackEntity));
     }

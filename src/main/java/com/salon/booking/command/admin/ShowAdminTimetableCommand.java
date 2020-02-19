@@ -28,16 +28,17 @@ public class ShowAdminTimetableCommand implements GetCommand {
     @Override
     public void processGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         LocalDate from = parseLocalDateOrDefault(
-                request.getParameter("from_date"),
+                request.getParameter("from-date"),
                 LocalDate.now());
 
         LocalDate toDefault = from.plus(DEFAULT_TIMETABLE_PERIOD);
         LocalDate to = parseLocalDateOrDefault(
-                request.getParameter("to_date"),
+                request.getParameter("to-date"),
                 toDefault);
 
         List<Timetable> timetables = timeslotService.findAllBetween(from, to);
         request.setAttribute("timetables", timetables);
-        forward(getViewPathByName("admin-timetables"), request, response);
+
+        forward(getViewPathByName("admin/timetables"), request, response);
     }
 }

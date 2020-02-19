@@ -1,20 +1,14 @@
-<%@ include file="includes/header.jsp" %>
+<%@ include file="../includes/header.jsp" %>
 
 <div class="container mt-5">
-    <h3 class="mb-5 text-center"><fmt:message key="label.users"/></h3>
+    <h3 class="mb-5 text-center"><fmt:message key="label.admin.workers"/></h3>
     <div class="list-group">
         <c:forEach items="${requestScope.page.items}" var="item">
             <div class="form-check-label list-group-item list-group-item-action flex-column align-items-start">
-                <div class="d-flex w-100 justify-content-between">
-                    <h5 class="mb-1">
-                        <c:out value="${item.name}"/>
-                    </h5>
-                    <p>
-                        id <c:out value="${item.id}"/>
-                    </p>
-                </div>
+                <h5 class="mb-1">
+                    <c:out value="${item.name}"/>
+                </h5>
                 <p class="mb-1"><c:out value="${item.email}"/></p>
-                <p class="mb-1"><c:out value="${item.role}"/></p>
             </div>
         </c:forEach>
     </div>
@@ -33,4 +27,4 @@
     </div>
 </div>
 
-<%@ include file="includes/footer.jsp" %>
+<%@ include file="../includes/footer.jsp" %>

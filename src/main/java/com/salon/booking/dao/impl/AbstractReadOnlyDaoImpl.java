@@ -52,13 +52,23 @@ abstract class AbstractReadOnlyDaoImpl<E> implements ReadOnlyDao<E> {
     @Override
     public long count() {
         try (DataSourceConnection connection = connector.getConnection();
-             ResultSet resultSet = connection.getOriginal().prepareStatement(queries.getCountQuery()).executeQuery()) {
+             PreparedStatement preparedStatement = connection.getOriginal().prepareStatement(queries.getCountQuery())) {
 
-            if (resultSet.next()) {
-                return resultSet.getLong(1);
-            } else {
-                throw new DatabaseRuntimeException("Error performing count, no results found");
-            }
+            return getResultLong(preparedStatement)
+                    .orElseThrow(() -> new DatabaseRuntimeException("Error performing count, no results found"));
+        } catch (SQLException e) {
+            throw new DatabaseRuntimeException("Error performing count", e);
+        }
+    }
+
+    protected <P> long countByParam(P parameter, String countByParamQuery, StatementParameterSetter<P> paramSetter) {
+        try (DataSourceConnection connection = connector.getConnection();
+             PreparedStatement preparedStatement = connection.getOriginal().prepareStatement(countByParamQuery)) {
+
+            paramSetter.accept(preparedStatement, parameter);
+
+            return getResultLong(preparedStatement)
+                    .orElseThrow(() -> new DatabaseRuntimeException("Error performing count, no results found"));
         } catch (SQLException e) {
             throw new DatabaseRuntimeException("Error performing count", e);
         }
@@ -116,6 +126,15 @@ abstract class AbstractReadOnlyDaoImpl<E> implements ReadOnlyDao<E> {
         try (ResultSet resultSet = statement.executeQuery()) {
             if (resultSet.next()) {
                 return Optional.of(mapResultSetToEntity(resultSet));
+            }
+        }
+        return Optional.empty();
+    }
+
+    protected Optional<Long> getResultLong(PreparedStatement statement) throws SQLException {
+        try (ResultSet resultSet = statement.executeQuery()) {
+            if (resultSet.next()) {
+                return Optional.of(resultSet.getLong(1));
             }
         }
         return Optional.empty();

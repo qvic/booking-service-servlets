@@ -75,8 +75,12 @@
                             </c:when>
                             <c:when test="${sessionScope.user.isAdmin()}">
                                 <li class="nav-item">
-                                    <a class="nav-link" href="<c:url value="/app/admin/users"/>"><fmt:message
-                                            key="label.admin.list_users"/></a>
+                                    <a class="nav-link" href="<c:url value="/app/admin/clients"/>"><fmt:message
+                                            key="label.admin.list_clients"/></a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="<c:url value="/app/admin/workers"/>"><fmt:message
+                                            key="label.admin.list_workers"/></a>
                                 </li>
                                 <li class="nav-item">
                                     <a class="nav-link" href="<c:url value="/app/admin/timetable"/>"><fmt:message

@@ -1,5 +1,7 @@
 package com.salon.booking.service.impl;
 
+import com.salon.booking.dao.OrderDao;
+import com.salon.booking.dao.TransactionManager;
 import com.salon.booking.dao.UserDao;
 import com.salon.booking.domain.Role;
 import com.salon.booking.domain.User;
@@ -47,7 +49,13 @@ public class UserServiceImplTest {
     private UserDao userDao;
 
     @Mock
+    private OrderDao orderDao;
+
+    @Mock
     private PasswordEncoder passwordEncoder;
+
+    @Mock
+    private TransactionManager transactionManager;
 
     @Mock
     private Validator<User> userValidator;
@@ -65,7 +73,7 @@ public class UserServiceImplTest {
 
     @Before
     public void injectMocks() {
-        userService = new UserServiceImpl(userDao, userMapper);
+        userService = new UserServiceImpl(userDao, orderDao, userMapper, transactionManager);
     }
 
     @After
@@ -83,7 +91,7 @@ public class UserServiceImplTest {
         PageProperties properties = new PageProperties(0, 1);
         Page<UserEntity> workersPage = new Page<>(Collections.singletonList(workerEntity),
                 properties, 1);
-        when(userDao.findAllWorkers(eq(properties))).thenReturn(workersPage);
+        when(userDao.findAllByRole(eq(RoleEntity.WORKER), eq(properties))).thenReturn(workersPage);
 
         Page<User> workers = userService.findAllWorkers(properties);
 
@@ -91,17 +99,17 @@ public class UserServiceImplTest {
     }
 
     @Test
-    public void findAllShouldReturnLastPageIfPageNumberIsTooBig() {
+    public void findAllWorkersShouldReturnLastPageIfPageNumberIsTooBig() {
         PageProperties requestedProperties = new PageProperties(2, 1);
         Page<UserEntity> daoPage = new Page<>(Collections.emptyList(), requestedProperties, 2);
         Page<UserEntity> lastPage = new Page<>(Collections.singletonList(USER_ENTITY), new PageProperties(1, 1), 2);
         Page<User> mappedLastPage = new Page<>(Collections.singletonList(USER), new PageProperties(1, 1), 2);
 
         when(userMapper.mapEntityToDomain(eq(USER_ENTITY))).thenReturn(USER);
-        when(userDao.findAll(eq(requestedProperties))).thenReturn(daoPage);
-        when(userDao.findAll(eq(lastPage.getProperties()))).thenReturn(lastPage);
+        when(userDao.findAllByRole(eq(RoleEntity.WORKER), eq(requestedProperties))).thenReturn(daoPage);
+        when(userDao.findAllByRole(eq(RoleEntity.WORKER), eq(lastPage.getProperties()))).thenReturn(lastPage);
 
-        Page<User> page = userService.findAll(requestedProperties);
+        Page<User> page = userService.findAllWorkers(requestedProperties);
 
         assertThat(page.getItems(), is(mappedLastPage.getItems()));
         assertEquals(page.getProperties(), mappedLastPage.getProperties());

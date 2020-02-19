@@ -19,9 +19,11 @@ public class FeedbackDaoImpl extends AbstractPageableCrudDaoImpl<FeedbackEntity>
     private static final String FIND_BY_ID_QUERY = "SELECT f.* FROM feedback f WHERE f.id = ?";
     private static final String FIND_ALL_QUERY = "SELECT f.* FROM feedback f";
     private static final String FIND_ALL_PAGED_QUERY = "SELECT f.* FROM feedback f OFFSET ? LIMIT ?";
-    private static final String FIND_ALL_BY_WORKER = "SELECT f.* FROM feedback f WHERE f.worker_id = ? OFFSET ? LIMIT ?";
-    private static final String FIND_ALL_BY_STATUS = "SELECT f.* FROM feedback f WHERE f.status = ? OFFSET ? LIMIT ?";
-    private static final String COUNT_QUERY = "SELECT count(*) FROM feedback";
+    private static final String FIND_ALL_BY_WORKER_QUERY = "SELECT f.*, u.name AS worker_name FROM feedback f INNER JOIN \"user\" u ON f.worker_id = u.id WHERE f.worker_id = ? OFFSET ? LIMIT ?";
+    private static final String FIND_ALL_BY_STATUS_QUERY = "SELECT f.*, u.name AS worker_name FROM feedback f INNER JOIN \"user\" u ON f.worker_id = u.id WHERE f.status = ? OFFSET ? LIMIT ?";
+    private static final String COUNT_QUERY = "SELECT count(*) FROM feedback f";
+    private static final String COUNT_BY_WORKER_QUERY = "SELECT count(*) FROM feedback f WHERE f.worker_id = ?";
+    private static final String COUNT_BY_STATUS_QUERY = "SELECT count(*) FROM feedback f WHERE f.status = ?";
 
     private static final String SAVE_QUERY = "INSERT INTO feedback (text, worker_id, status) VALUES (?, ?, ?) RETURNING id";
     private static final String UPDATE_QUERY = "UPDATE feedback SET text = ?, worker_id = ?, status = ? WHERE id = ?";
@@ -36,12 +38,12 @@ public class FeedbackDaoImpl extends AbstractPageableCrudDaoImpl<FeedbackEntity>
 
     @Override
     public Page<FeedbackEntity> findAllByWorkerId(Integer workerId, PageProperties properties) {
-        return findPageByParam(workerId, FIND_ALL_BY_WORKER, INT_SETTER, properties);
+        return findPageByParam(workerId, FIND_ALL_BY_WORKER_QUERY, COUNT_BY_WORKER_QUERY, INT_SETTER, properties);
     }
 
     @Override
     public Page<FeedbackEntity> findAllByStatus(FeedbackStatusEntity status, PageProperties properties) {
-        return findPageByParam(status.name(), FIND_ALL_BY_STATUS, STRING_SETTER, properties);
+        return findPageByParam(status.name(), FIND_ALL_BY_STATUS_QUERY, COUNT_BY_STATUS_QUERY, STRING_SETTER, properties);
     }
 
     @Override
@@ -66,6 +68,7 @@ public class FeedbackDaoImpl extends AbstractPageableCrudDaoImpl<FeedbackEntity>
                 .setText(resultSet.getString("text"))
                 .setWorker(UserEntity.builder()
                         .setId(resultSet.getInt("worker_id"))
+                        .setName(resultSet.getString("worker_name"))
                         .build())
                 .setStatus(mapStatus(resultSet))
                 .build();

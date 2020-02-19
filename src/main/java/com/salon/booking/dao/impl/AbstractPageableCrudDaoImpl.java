@@ -28,13 +28,13 @@ abstract class AbstractPageableCrudDaoImpl<E> extends AbstractCrudDaoImpl<E> imp
             statement.setLong(1, properties.getOffset());
             statement.setLong(2, properties.getItemsPerPage());
 
-            return getResultPage(statement, properties);
+            return getResultPage(statement, properties, count());
         } catch (SQLException e) {
             throw new DatabaseRuntimeException("Error performing findAll", e);
         }
     }
 
-    protected <P> Page<E> findPageByParam(P parameter, String findByParamQuery, StatementParameterSetter<P> paramSetter, PageProperties properties) {
+    protected <P> Page<E> findPageByParam(P parameter, String findByParamQuery, String countByParamQuery, StatementParameterSetter<P> paramSetter, PageProperties properties) {
         try (DataSourceConnection connection = connector.getConnection();
              PreparedStatement statement = connection.getOriginal().prepareStatement(findByParamQuery)) {
 
@@ -42,14 +42,14 @@ abstract class AbstractPageableCrudDaoImpl<E> extends AbstractCrudDaoImpl<E> imp
             statement.setLong(2, properties.getOffset());
             statement.setLong(3, properties.getItemsPerPage());
 
-            return getResultPage(statement, properties);
+            long totalItemsCount = countByParam(parameter, countByParamQuery, paramSetter);
+            return getResultPage(statement, properties, totalItemsCount);
         } catch (SQLException e) {
             throw new DatabaseRuntimeException("Error performing findByParam", e);
         }
     }
 
-    protected Page<E> getResultPage(PreparedStatement statement, PageProperties properties) throws SQLException {
-        long totalItemsCount = count();
+    protected Page<E> getResultPage(PreparedStatement statement, PageProperties properties, long totalItemsCount) throws SQLException {
         List<E> items = getResultList(statement);
         return new Page<>(items, properties, totalItemsCount);
     }

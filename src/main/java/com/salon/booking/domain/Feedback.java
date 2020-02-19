@@ -4,12 +4,18 @@ import java.util.Objects;
 
 public class Feedback {
 
+    private final Integer id;
     private final String text;
     private final User worker;
 
-    public Feedback(String text, User worker) {
+    public Feedback(Integer id, String text, User worker) {
+        this.id = id;
         this.text = text;
         this.worker = worker;
+    }
+
+    public Integer getId() {
+        return id;
     }
 
     public String getText() {

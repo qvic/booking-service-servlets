@@ -13,13 +13,13 @@ import java.io.IOException;
 
 import static com.salon.booking.utility.PageUtility.getViewPathByName;
 
-public class ShowUsersByPagesCommand implements GetCommand {
+public class ShowClientsByPagesCommand implements GetCommand {
 
-    private static final int DEFAULT_USERS_PER_PAGE = 5;
+    private static final int DEFAULT_USERS_PER_PAGE = 10;
 
     private final UserService userService;
 
-    public ShowUsersByPagesCommand(UserService userService) {
+    public ShowClientsByPagesCommand(UserService userService) {
         this.userService = userService;
     }
 
@@ -27,12 +27,11 @@ public class ShowUsersByPagesCommand implements GetCommand {
     public void processGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String pageNumber = request.getParameter("page");
         String itemsPerPage = request.getParameter("limit");
-
         PageProperties pageProperties = PageProperties.buildByParameters(pageNumber, itemsPerPage, DEFAULT_USERS_PER_PAGE);
 
-        Page<User> page = userService.findAll(pageProperties);
+        Page<User> page = userService.findAllClients(pageProperties);
         request.setAttribute("page", page);
 
-        forward(getViewPathByName("users"), request, response);
+        forward(getViewPathByName("admin/clients"), request, response);
     }
 }

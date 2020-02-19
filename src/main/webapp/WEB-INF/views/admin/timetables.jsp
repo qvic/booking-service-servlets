@@ -1,7 +1,17 @@
-<%@ include file="includes/header.jsp" %>
+<%@ include file="../includes/header.jsp" %>
 
 <div class="container my-5">
     <h3 class="mb-5 text-center"><fmt:message key="label.admin.timetable"/></h3>
+
+    <hr>
+
+    <form method="get">
+        <input type="date" name="from-date">
+        <input type="date" name="to-date">
+        <input type="submit" value="Go">
+    </form>
+
+    <hr>
 
     <div class="list-group">
         <c:forEach items="${requestScope.timetables}" var="timetable">
@@ -18,7 +28,7 @@
                 <c:forEach items="${timetable.rows}" var="row">
                     <div class="list-group-item list-group-item-action flex-column align-items-start">
                         <h5 class="mb-1">
-                            <c:out value="${row.fromTime}"/> to <c:out value="${row.toTime}"/>
+                            <c:out value="${row.fromTime}"/> to <c:out value="${row.fromTime.plus(row.duration)}"/>
                         </h5>
                         <c:choose>
                             <c:when test="${row.order eq null}">
@@ -41,4 +51,4 @@
     </div>
 </div>
 
-<%@ include file="includes/footer.jsp" %>
+<%@ include file="../includes/footer.jsp" %>

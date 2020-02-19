@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface OrderDao extends PageableCrudDao<OrderEntity> {
 
-    List<OrderEntity> findAllByClientId(Integer id);
+    List<OrderEntity> findAllByClientId(Integer id); /// todo pagination
 
     List<OrderEntity> findAllByWorkerId(Integer id);
 }

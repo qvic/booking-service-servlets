@@ -4,6 +4,7 @@ import java.util.Objects;
 
 public class FeedbackEntity {
 
+    // todo maybe add date
     private final Integer id;
     private final String text;
     private final FeedbackStatusEntity status;

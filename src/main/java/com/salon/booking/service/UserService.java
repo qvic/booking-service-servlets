@@ -6,7 +6,9 @@ import com.salon.booking.domain.page.PageProperties;
 
 public interface UserService {
 
-    Page<User> findAll(PageProperties pageable);
-
     Page<User> findAllWorkers(PageProperties properties);
+
+    Page<User> findAllClients(PageProperties properties);
+
+    void promoteToWorker(Integer clientId);
 }

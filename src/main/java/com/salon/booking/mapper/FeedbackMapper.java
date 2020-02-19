@@ -34,6 +34,7 @@ public class FeedbackMapper implements Mapper<FeedbackEntity, Feedback> {
         }
 
         return new Feedback(
+                feedback.getId(),
                 feedback.getText(),
                 userMapper.mapEntityToDomain(feedback.getWorker())
         );

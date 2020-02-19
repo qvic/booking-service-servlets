@@ -1,4 +1,4 @@
-<%@ include file="includes/header.jsp" %>
+<%@ include file="../includes/header.jsp" %>
 
 <div class="container my-5">
     <h3 class="mb-5 text-center"><fmt:message key="label.client.select_timeslot"/></h3>
@@ -26,7 +26,7 @@
                                 <label for="timeslot-<c:out value="${row.id}"/>"
                                        class="radio-label form-check-label list-group-item list-group-item-action flex-column align-items-start">
                                     <h5 class="mb-1">
-                                        <c:out value="${row.fromTime}"/> to <c:out value="${row.toTime}"/>
+                                        <c:out value="${row.fromTime}"/> to <c:out value="${row.fromTime.plus(row.duration)}"/>
                                     </h5>
                                     <p class="text-success">
                                         Available
@@ -36,7 +36,7 @@
                             <c:otherwise>
                                 <div class="list-group-item flex-column align-items-start">
                                     <h5 class="mb-1">
-                                        <c:out value="${row.fromTime}"/> to <c:out value="${row.toTime}"/>
+                                        <c:out value="${row.fromTime}"/> to <c:out value="${row.fromTime.plus(row.duration)}"/>
                                     </h5>
                                     <p class="text-secondary">
                                         Booked
@@ -52,4 +52,4 @@
     </form>
 </div>
 
-<%@ include file="includes/footer.jsp" %>
+<%@ include file="../includes/footer.jsp" %>

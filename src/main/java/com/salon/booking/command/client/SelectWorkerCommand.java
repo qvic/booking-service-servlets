@@ -32,8 +32,8 @@ public class SelectWorkerCommand implements GetAndPostCommand {
 
         PageProperties pageProperties = PageProperties.buildByParameters(pageNumber, itemsPerPage, DEFAULT_WORKERS_PER_PAGE);
 
-        Page<User> workers = userService.findAllWorkers(pageProperties);
-        request.setAttribute("page", workers);
+        Page<User> workersPage = userService.findAllWorkers(pageProperties);
+        request.setAttribute("page", workersPage);
 
         forward(getViewPathByName("workers"), request, response);
     }

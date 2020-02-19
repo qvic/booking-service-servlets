@@ -36,6 +36,6 @@ public class FeedbackServiceImpl implements FeedbackService {
 
     @Override
     public void approveFeedbackById(Integer feedbackId) {
-
+        feedbackDao.updateStatus(feedbackId, FeedbackStatusEntity.APPROVED);
     }
 }
