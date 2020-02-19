@@ -10,7 +10,7 @@
 
     <servlet>
         <servlet-name>frontServlet</servlet-name>
-        <servlet-class>com.bookingservice.controller.FrontController</servlet-class>
+        <servlet-class>com.salon.booking.controller.FrontController</servlet-class>
     </servlet>
 
     <servlet-mapping>
@@ -28,17 +28,17 @@
 
     <filter>
         <filter-name>encodingFilter</filter-name>
-        <filter-class>com.bookingservice.filter.EncodingFilter</filter-class>
+        <filter-class>com.salon.booking.filter.EncodingFilter</filter-class>
     </filter>
 
     <filter>
         <filter-name>localeFilter</filter-name>
-        <filter-class>com.bookingservice.filter.LocaleFilter</filter-class>
+        <filter-class>com.salon.booking.filter.LocaleFilter</filter-class>
     </filter>
 
     <filter>
         <filter-name>authenticationFilter</filter-name>
-        <filter-class>com.bookingservice.filter.AuthenticationFilter</filter-class>
+        <filter-class>com.salon.booking.filter.AuthenticationFilter</filter-class>
     </filter>
 
     <filter-mapping>
@@ -69,12 +69,12 @@
     </error-page>
 
     <error-page>
-        <exception-type>com.bookingservice.command.exception.HttpMethodNotAllowedException</exception-type>
+        <exception-type>com.salon.booking.command.exception.HttpMethodNotAllowedException</exception-type>
         <location>/WEB-INF/views/errors/405.jsp</location>
     </error-page>
 
     <error-page>
-        <exception-type>com.bookingservice.command.exception.HttpForbiddenException</exception-type>
+        <exception-type>com.salon.booking.command.exception.HttpForbiddenException</exception-type>
         <location>/WEB-INF/views/errors/403.jsp</location>
     </error-page>
 </web-app>

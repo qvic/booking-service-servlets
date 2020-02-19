@@ -4,12 +4,12 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.epam</groupId>
-    <artifactId>booking_service</artifactId>
-    <version>0.1-SNAPSHOT</version>
+    <groupId>com.salon</groupId>
+    <artifactId>booking-service</artifactId>
+    <version>0.1</version>
     <packaging>war</packaging>
 
-    <name>Salon booking service</name>
+    <name>BookingService</name>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -84,7 +84,6 @@
             <artifactId>jbcrypt</artifactId>
             <version>0.4</version>
         </dependency>
-
     </dependencies>
 
     <build>
@@ -157,6 +156,18 @@
             <plugin>
                 <artifactId>maven-deploy-plugin</artifactId>
                 <version>2.8.2</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.tomcat.maven</groupId>
+                <artifactId>tomcat7-maven-plugin</artifactId>
+                <version>2.2</version>
+                <configuration>
+                    <url>http://localhost:8080/manager/text</url>
+                    <server>TomcatServer</server>
+                    <username>manager</username>
+                    <password>password</password>
+                    <path>/</path>
+                </configuration>
             </plugin>
         </plugins>
     </build>
