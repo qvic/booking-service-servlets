@@ -98,7 +98,7 @@ public class TimeslotDaoImpl extends AbstractCrudDaoImpl<TimeslotEntity> impleme
     }
 
     @Override
-    public List<TimeslotEntity> findAllTimeslotsOfTheSameDaySorted(Integer timeslotId) {
+    public List<TimeslotEntity> findSameDayTimeslotsSorted(Integer timeslotId) {
         return findAllByParam(timeslotId, FIND_ALL_SAME_DAY, INT_SETTER);
     }
 

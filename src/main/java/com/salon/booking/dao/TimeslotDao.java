@@ -9,7 +9,7 @@ public interface TimeslotDao extends CrudDao<TimeslotEntity> {
 
     List<TimeslotEntity> findAllBetweenDatesSorted(LocalDate from, LocalDate to);
 
-    List<TimeslotEntity> findAllTimeslotsOfTheSameDaySorted(Integer timeslotId);
+    List<TimeslotEntity> findSameDayTimeslotsSorted(Integer timeslotId);
 
     void saveOrderTimeslot(Integer timeslotId, Integer orderId);
 }

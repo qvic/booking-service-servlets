@@ -14,7 +14,7 @@ public interface TimeslotService {
 
     List<Timetable> findTimetablesForServiceWithWorker(Integer serviceId, Integer workerId);
 
-    List<Timeslot> findTimeslotsForServiceWithWorker(Integer startingTimeslotId, Service service, User worker);
+    List<Timeslot> findTimeslotsForOrder(Integer selectedTimeslotId, Service service, User worker);
 
     void saveOrderTimeslot(Integer timeslotId, Integer orderId);
 }

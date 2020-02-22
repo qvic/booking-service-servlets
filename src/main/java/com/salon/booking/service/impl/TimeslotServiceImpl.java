@@ -16,6 +16,7 @@ import com.salon.booking.mapper.Mapper;
 import com.salon.booking.service.TimeslotService;
 import com.salon.booking.utility.StreamUtility;
 
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.Period;
@@ -47,6 +48,61 @@ public class TimeslotServiceImpl implements TimeslotService {
         this.timeslotMapper = timeslotMapper;
     }
 
+    /**
+     * @param serviceId selected service id
+     * @param workerId  selected worker id
+     * @return timetables for defined as DEFAULT_TIMETABLE_PERIOD period of days with timeslots
+     * where order with such service id and worker id can be placed
+     */
+    @Override
+    public List<Timetable> findTimetablesForServiceWithWorker(Integer serviceId, Integer workerId) {
+        LocalDate from = LocalDate.now();
+        LocalDate to = from.plus(DEFAULT_TIMETABLE_PERIOD);
+        List<Timetable> timetablesBetween = findAllBetween(from, to);
+
+        Service service = Service.builder()
+                .setId(serviceId)
+                .build();
+
+        User worker = User.builder()
+                .setId(serviceId)
+                .build();
+
+        List<Timetable> viewTimetables = new ArrayList<>();
+        for (Timetable timetable : timetablesBetween) {
+
+            List<Timeslot> viewTimeslots = new ArrayList<>();
+            for (Timeslot timeslot : timetable.getRows()) {
+
+                List<Timeslot> freeTimeslots = findTimeslotsForOrder(timeslot.getId(), service, worker);
+
+                if (!freeTimeslots.isEmpty()) {
+                    Timeslot viewTimeslot = Timeslot.builder(timeslot)
+                            .setDuration(getTotalDuration(freeTimeslots))
+                            .build();
+
+                    viewTimeslots.add(viewTimeslot);
+                }
+            }
+
+            viewTimetables.add(new Timetable(timetable.getDate(), viewTimeslots));
+        }
+
+        return viewTimetables;
+    }
+
+    private Duration getTotalDuration(List<Timeslot> timeslots) {
+        return Duration.ofMinutes(
+                timeslots.stream()
+                        .mapToLong(t -> t.getDuration().toMinutes())
+                        .sum());
+    }
+
+    /**
+     * @param fromInclusive first day in timetable
+     * @param toExclusive   day after the last day in timetable
+     * @return timetables for each day from fromInclusive to toExclusive
+     */
     @Override
     public List<Timetable> findAllBetween(LocalDate fromInclusive, LocalDate toExclusive) {
         List<TimeslotEntity> timeslots = timeslotDao.findAllBetweenDatesSorted(fromInclusive, toExclusive);
@@ -73,31 +129,17 @@ public class TimeslotServiceImpl implements TimeslotService {
         return timetables;
     }
 
-    @Override
-    public List<Timetable> findTimetablesForServiceWithWorker(Integer serviceId, Integer workerId) {
-        LocalDate from = LocalDate.now();
-        LocalDate to = from.plus(DEFAULT_TIMETABLE_PERIOD);
-
-        return findAllBetween(from, to);
-    }
-
     private Timeslot buildTimeslot(TimeslotEntity timeslotEntity) {
-        long servicesCount = serviceDao.count();
-
         List<OrderEntity> orders = timeslotEntity.getOrders().stream()
                 .map(orderEntity -> orderDao.findById(orderEntity.getId()))
                 .flatMap(StreamUtility::toStream)
                 .map(this::buildOrderEntity)
                 .collect(Collectors.toList());
 
-        Timeslot timeslot = timeslotMapper.mapEntityToDomain(
+        return timeslotMapper.mapEntityToDomain(
                 TimeslotEntity.builder(timeslotEntity)
                         .setOrders(orders)
                         .build());
-
-        return Timeslot.builder(timeslot)
-                .setAvailable(orders.size() < servicesCount)
-                .build();
     }
 
     private OrderEntity buildOrderEntity(OrderEntity orderEntity) {
@@ -123,58 +165,105 @@ public class TimeslotServiceImpl implements TimeslotService {
                 .orElseThrow(() -> new IllegalArgumentException("Can't find UserEntity with such id"));
     }
 
+    /**
+     * Service can have duration of more than 1 timeslot.
+     * With passed selected timeslot id, service and worker searches for consecutive timeslots
+     * where order with such service can be placed. If it can't, returns empty list.
+     *
+     * @param selectedTimeslotId timeslot id, selected on order creation
+     * @param service            selected service
+     * @param worker             selected worker
+     * @return list of timeslots where order can be placed
+     */
     @Override
-    public List<Timeslot> findTimeslotsForServiceWithWorker(Integer startingTimeslotId,
-                                                            Service service, User worker) {
+    public List<Timeslot> findTimeslotsForOrder(Integer selectedTimeslotId,
+                                                Service service, User worker) {
 
-        List<TimeslotEntity> timeslots = timeslotDao.findAllTimeslotsOfTheSameDaySorted(startingTimeslotId);
-        ServiceEntity serviceEntity = serviceDao.findById(service.getId())
-                .orElseThrow(() -> new IllegalArgumentException("Can't find service with such id"));
-        int serviceDuration = serviceEntity.getDurationMinutes();
+        List<TimeslotEntity> timeslots = timeslotDao.findSameDayTimeslotsSorted(selectedTimeslotId);
 
-        List<Timeslot> freeTimeslots = new ArrayList<>();
-        int currentFreeDuration = 0;
-
-        OptionalInt startingTimeslotIndex = getIndexOfFirstMatch(timeslots, t -> t.getId().equals(startingTimeslotId));
+        OptionalInt startingTimeslotIndex = getIndexOfFirstMatch(timeslots, t -> t.getId().equals(selectedTimeslotId));
 
         if (!startingTimeslotIndex.isPresent()) {
-            return freeTimeslots;
+            return Collections.emptyList();
         }
 
-        for (int i = startingTimeslotIndex.getAsInt(); i < timeslots.size(); i++) {
-            TimeslotEntity timeslot = timeslots.get(i);
+        List<TimeslotEntity> timeslotsAfterStartingId = timeslots.subList(startingTimeslotIndex.getAsInt(), timeslots.size());
 
-            boolean isValidTimeslot = isConsecutiveTimeslot(timeslots, i) &&
-                    isValidTimeslot(timeslot, service.getId(), worker.getId());
+        Duration serviceDuration = getServiceDuration(service);
+        Duration currentFreeDuration = Duration.ZERO;
 
-            if (currentFreeDuration < serviceEntity.getDurationMinutes() && isValidTimeslot) {
-                freeTimeslots.add(timeslotMapper.mapEntityToDomain(timeslot));
-                currentFreeDuration += timeslot.getDuration().getMinutes();
+        List<Timeslot> freeTimeslots = new ArrayList<>();
+        Timeslot previousTimeslot = null;
+
+        for (TimeslotEntity timeslotEntity : timeslotsAfterStartingId) {
+            Timeslot timeslot = timeslotMapper.mapEntityToDomain(timeslotEntity);
+
+            boolean isValidTimeslot = isConsecutiveTimeslot(previousTimeslot, timeslot) &&
+                    areServiceAndWorkerAvailable(timeslot, service.getId(), worker.getId());
+
+            if (currentFreeDuration.compareTo(serviceDuration) < 0 && isValidTimeslot) {
+                freeTimeslots.add(timeslot);
+                currentFreeDuration = currentFreeDuration.plus(timeslot.getDuration());
             } else {
                 break;
             }
+
+            previousTimeslot = timeslot;
         }
 
-        if (currentFreeDuration < serviceDuration) {
+        if (currentFreeDuration.compareTo(serviceDuration) < 0) {
             return Collections.emptyList();
         }
 
         return freeTimeslots;
     }
 
-    private boolean isConsecutiveTimeslot(List<TimeslotEntity> timeslots, int i) {
-        if (i < 1) {
+    private List<Timeslot> findFirstAcceptableTimeslotsForOrder(List<Timeslot> timeslots, Service service, User worker) {
+        Duration serviceDuration = getServiceDuration(service);
+        Duration currentFreeDuration = Duration.ZERO;
+
+        List<Timeslot> freeTimeslots = new ArrayList<>();
+        Timeslot previousTimeslot = null;
+
+        for (Timeslot timeslot : timeslots) {
+            boolean isValidTimeslot = isConsecutiveTimeslot(previousTimeslot, timeslot) &&
+                    areServiceAndWorkerAvailable(timeslot, service.getId(), worker.getId());
+
+            if (currentFreeDuration.compareTo(serviceDuration) < 0 && isValidTimeslot) {
+                freeTimeslots.add(timeslot);
+                currentFreeDuration = currentFreeDuration.plus(timeslot.getDuration());
+            } else {
+                break;
+            }
+
+            previousTimeslot = timeslot;
+        }
+
+        if (currentFreeDuration.compareTo(serviceDuration) < 0) {
+            return Collections.emptyList();
+        }
+
+        return freeTimeslots;
+    }
+
+    private Duration getServiceDuration(Service service) {
+        return Duration.ofMinutes(serviceDao.findById(service.getId())
+                .orElseThrow(() -> new IllegalArgumentException("Can't find service with such id"))
+                .getDurationMinutes());
+    }
+
+    private boolean isConsecutiveTimeslot(Timeslot previous, Timeslot current) {
+        if (previous == null) {
             return true;
         }
 
-        TimeslotEntity previousTimeslot = timeslots.get(i - 1);
-        LocalTime previousTimeslotEndTime = previousTimeslot.getFromTime().plusMinutes(previousTimeslot.getDuration().getMinutes());
-        LocalTime currentTimeslotStartTime = timeslots.get(i).getFromTime();
+        LocalTime previousTimeslotEndTime = previous.getFromTime().plus(previous.getDuration());
+        LocalTime currentTimeslotStartTime = current.getFromTime();
 
         return previousTimeslotEndTime.equals(currentTimeslotStartTime);
     }
 
-    private boolean isValidTimeslot(TimeslotEntity timeslot, Integer serviceId, Integer workerId) {
+    private boolean areServiceAndWorkerAvailable(Timeslot timeslot, Integer serviceId, Integer workerId) {
         return timeslot.getOrders().stream()
                 .map(o -> orderDao.findById(o.getId()))
                 .flatMap(StreamUtility::toStream)

@@ -87,7 +87,7 @@ public class OrderServiceImpl implements OrderService {
 
             OrderEntity savedOrder = orderDao.save(orderEntity);
 
-            List<Timeslot> freeTimeslots = timeslotService.findTimeslotsForServiceWithWorker(
+            List<Timeslot> freeTimeslots = timeslotService.findTimeslotsForOrder(
                     selectedTimeslotId, order.getService(), order.getWorker());
 
             assignOrderToTimeslots(freeTimeslots, savedOrder.getId());

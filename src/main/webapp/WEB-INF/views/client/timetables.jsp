@@ -17,33 +17,19 @@
                     </c:if>
 
                     <c:forEach items="${timetable.rows}" var="row">
-                        <c:choose>
-                            <c:when test="${row.available eq true}">
-                                <input name="timeslot-id" type="radio"
-                                       class="d-none" id="timeslot-<c:out value="${row.id}"/>"
-                                       value="<c:out value="${row.id}"/>">
+                        <input name="timeslot-id" type="radio"
+                               class="d-none" id="timeslot-<c:out value="${row.id}"/>"
+                               value="<c:out value="${row.id}"/>">
 
-                                <label for="timeslot-<c:out value="${row.id}"/>"
-                                       class="radio-label form-check-label list-group-item list-group-item-action flex-column align-items-start">
-                                    <h5 class="mb-1">
-                                        <c:out value="${row.fromTime}"/>
-                                    </h5>
-                                    <p class="text-success">
-                                        Available
-                                    </p>
-                                </label>
-                            </c:when>
-                            <c:otherwise>
-                                <div class="list-group-item flex-column align-items-start">
-                                    <h5 class="mb-1">
-                                        <c:out value="${row.fromTime}"/>
-                                    </h5>
-                                    <p class="text-secondary">
-                                        Booked
-                                    </p>
-                                </div>
-                            </c:otherwise>
-                        </c:choose>
+                        <label for="timeslot-<c:out value="${row.id}"/>"
+                               class="radio-label form-check-label list-group-item list-group-item-action flex-column align-items-start">
+                            <h5 class="mb-1">
+                                <c:out value="${row.fromTime}"/> (<c:out value="${row.duration.toMinutes()}"/> min)
+                            </h5>
+                            <p class="text-success">
+                                Available
+                            </p>
+                        </label>
                     </c:forEach>
                 </div>
             </c:forEach>

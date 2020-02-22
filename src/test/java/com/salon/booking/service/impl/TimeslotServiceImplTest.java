@@ -46,6 +46,7 @@ public class TimeslotServiceImplTest {
     private static final LocalDate TO_DATE = LocalDate.of(2020, 2, 9);
 
     private static final List<OrderEntity> ORDER_ENTITIES = initOrderEntities();
+    private static final List<Order> ORDERS = initOrders();
 
     private static final List<TimeslotEntity> TIMESLOT_ENTITIES = initTimeslotEntities();
     private static final List<Timetable> TIMETABLES = initTimetables();
@@ -105,72 +106,86 @@ public class TimeslotServiceImplTest {
         assertThat(timetables, equalTo(TIMETABLES));
     }
 
-    private static List<Order> mapTestOrderEntities(List<OrderEntity> orderEntities) {
-        return orderEntities.stream()
-                .map(orderEntity -> Order.builder().build())
-                .collect(Collectors.toList());
-    }
-
     @Test
-    public void findFreeTimeslotsForServiceWithWorkerShouldReturnEmptyListWhenWorkerIsBusy() {
-        when(timeslotDao.findAllTimeslotsOfTheSameDaySorted(anyInt())).thenReturn(TIMESLOT_ENTITIES_BY_DAY);
+    public void findTimeslotsForServiceWithWorkerShouldReturnEmptyListWhenWorkerIsBusy() {
+        when(timeslotDao.findSameDayTimeslotsSorted(anyInt())).thenReturn(TIMESLOT_ENTITIES_BY_DAY);
+        when(serviceDao.findById(anyInt())).thenReturn(Optional.of(ServiceEntity.builder()
+                .setDurationMinutes(30)
+                .build()));
         when(orderDao.findById(anyInt())).thenAnswer(
-                invocation -> Optional.of(ORDER_ENTITIES.get(invocation.getArgument(0, Integer.class))));
-
+                invocation -> Optional.of(ORDER_ENTITIES.get(invocation.getArgument(0))));
         when(timeslotMapper.mapEntityToDomain(any())).thenAnswer(
-                invocation -> Timeslot.builder()
-                        .setId(invocation.getArgument(0, TimeslotEntity.class).getId())
-                        .build());
+                invocation -> {
+                    TimeslotEntity t = invocation.getArgument(0);
+                    return Timeslot.builder()
+                            .setId(t.getId())
+                            .setOrders(mapTestOrderEntities(t.getOrders()))
+                            .setDuration(Duration.ofMinutes(t.getDuration().getMinutes()))
+                            .build();
+                });
 
         Service service = Service.builder()
                 .setId(2)
-                .setDuration(Duration.ofMinutes(30))
                 .build();
         User worker = User.builder()
                 .setId(1)
                 .build();
 
-        List<Timeslot> consecutiveFreeTimeslots = timeslotService.findTimeslotsForServiceWithWorker(
+        List<Timeslot> consecutiveFreeTimeslots = timeslotService.findTimeslotsForOrder(
                 122, service, worker);
 
         assertThat(consecutiveFreeTimeslots, equalTo(Collections.emptyList()));
     }
 
     @Test
-    public void findFreeTimeslotsForServiceWithWorkerShouldReturnEmptyListWhenServiceIsUnavailable() {
-        when(timeslotDao.findAllTimeslotsOfTheSameDaySorted(anyInt())).thenReturn(TIMESLOT_ENTITIES_BY_DAY);
+    public void findTimeslotsForServiceWithWorkerShouldReturnEmptyListWhenServiceIsUnavailable() {
+        when(timeslotDao.findSameDayTimeslotsSorted(anyInt())).thenReturn(TIMESLOT_ENTITIES_BY_DAY);
+        when(serviceDao.findById(anyInt())).thenReturn(Optional.of(ServiceEntity.builder()
+                .setDurationMinutes(30)
+                .build()));
         when(orderDao.findById(anyInt())).thenAnswer(
-                invocation -> Optional.of(ORDER_ENTITIES.get(invocation.getArgument(0, Integer.class))));
-
+                invocation -> Optional.of(ORDER_ENTITIES.get(invocation.getArgument(0))));
         when(timeslotMapper.mapEntityToDomain(any())).thenAnswer(
-                invocation -> Timeslot.builder()
-                        .setId(invocation.getArgument(0, TimeslotEntity.class).getId())
-                        .build());
+                invocation -> {
+                    TimeslotEntity t = invocation.getArgument(0);
+                    return Timeslot.builder()
+                            .setId(t.getId())
+                            .setOrders(mapTestOrderEntities(t.getOrders()))
+                            .setDuration(Duration.ofMinutes(t.getDuration().getMinutes()))
+                            .build();
+                });
 
         Service service = Service.builder()
                 .setId(1)
-                .setDuration(Duration.ofMinutes(30))
                 .build();
         User worker = User.builder()
                 .setId(2)
                 .build();
 
-        List<Timeslot> consecutiveFreeTimeslots = timeslotService.findTimeslotsForServiceWithWorker(
+        List<Timeslot> consecutiveFreeTimeslots = timeslotService.findTimeslotsForOrder(
                 122, service, worker);
 
         assertThat(consecutiveFreeTimeslots, equalTo(Collections.emptyList()));
     }
 
     @Test
-    public void findFreeTimeslotsForServiceWithWorkerShouldReturnCorrectListIfServiceAndWorkerAreAvailable() {
-        when(timeslotDao.findAllTimeslotsOfTheSameDaySorted(anyInt())).thenReturn(TIMESLOT_ENTITIES_BY_DAY);
+    public void findTimeslotsForServiceWithWorkerShouldReturnCorrectListIfServiceAndWorkerAreAvailable() {
+        when(timeslotDao.findSameDayTimeslotsSorted(anyInt())).thenReturn(TIMESLOT_ENTITIES_BY_DAY);
+        when(serviceDao.findById(anyInt())).thenReturn(Optional.of(ServiceEntity.builder()
+                .setDurationMinutes(30)
+                .build()));
         when(orderDao.findById(anyInt())).thenAnswer(
-                invocation -> Optional.of(ORDER_ENTITIES.get(invocation.getArgument(0, Integer.class))));
-
+                invocation -> Optional.of(ORDER_ENTITIES.get(invocation.getArgument(0))));
         when(timeslotMapper.mapEntityToDomain(any())).thenAnswer(
-                invocation -> Timeslot.builder()
-                        .setId(invocation.getArgument(0, TimeslotEntity.class).getId())
-                        .build());
+                invocation -> {
+                    TimeslotEntity t = invocation.getArgument(0);
+                    return Timeslot.builder()
+                            .setId(t.getId())
+                            .setOrders(mapTestOrderEntities(t.getOrders()))
+                            .setFromTime(t.getFromTime())
+                            .setDuration(Duration.ofMinutes(t.getDuration().getMinutes()))
+                            .build();
+                });
 
         Service service = Service.builder()
                 .setId(3)
@@ -180,7 +195,7 @@ public class TimeslotServiceImplTest {
                 .setId(3)
                 .build();
 
-        List<Timeslot> consecutiveFreeTimeslots = timeslotService.findTimeslotsForServiceWithWorker(
+        List<Timeslot> consecutiveFreeTimeslots = timeslotService.findTimeslotsForOrder(
                 122, service, worker);
 
         List<Integer> timeslotIds = consecutiveFreeTimeslots.stream()
@@ -191,25 +206,32 @@ public class TimeslotServiceImplTest {
     }
 
     @Test
-    public void findFreeTimeslotsForServiceWithWorkerShouldReturnEmptyListIfServiceIntersectsOther() {
-        when(timeslotDao.findAllTimeslotsOfTheSameDaySorted(anyInt())).thenReturn(TIMESLOT_ENTITIES_BY_DAY);
+    public void findTimeslotsForServiceWithWorkerShouldReturnEmptyListIfServiceIntersectsOther() {
+        when(timeslotDao.findSameDayTimeslotsSorted(anyInt())).thenReturn(TIMESLOT_ENTITIES_BY_DAY);
+        when(serviceDao.findById(anyInt())).thenReturn(Optional.of(ServiceEntity.builder()
+                .setDurationMinutes(90)
+                .build()));
         when(orderDao.findById(anyInt())).thenAnswer(
-                invocation -> Optional.of(ORDER_ENTITIES.get(invocation.getArgument(0, Integer.class))));
-
+                invocation -> Optional.of(ORDER_ENTITIES.get(invocation.getArgument(0))));
         when(timeslotMapper.mapEntityToDomain(any())).thenAnswer(
-                invocation -> Timeslot.builder()
-                        .setId(invocation.getArgument(0, TimeslotEntity.class).getId())
-                        .build());
+                invocation -> {
+                    TimeslotEntity t = invocation.getArgument(0);
+                    return Timeslot.builder()
+                            .setId(t.getId())
+                            .setOrders(mapTestOrderEntities(t.getOrders()))
+                            .setFromTime(t.getFromTime())
+                            .setDuration(Duration.ofMinutes(t.getDuration().getMinutes()))
+                            .build();
+                });
 
         Service service = Service.builder()
                 .setId(3)
-                .setDuration(Duration.ofMinutes(90))
                 .build();
         User worker = User.builder()
                 .setId(3)
                 .build();
 
-        List<Timeslot> consecutiveFreeTimeslots = timeslotService.findTimeslotsForServiceWithWorker(
+        List<Timeslot> consecutiveFreeTimeslots = timeslotService.findTimeslotsForOrder(
                 122, service, worker);
 
         List<Integer> timeslotIds = consecutiveFreeTimeslots.stream()
@@ -220,25 +242,32 @@ public class TimeslotServiceImplTest {
     }
 
     @Test
-    public void findFreeTimeslotsForServiceWithWorkerShouldReturnCorrectListIfServiceTakesSeveralTimeslots() {
-        when(timeslotDao.findAllTimeslotsOfTheSameDaySorted(anyInt())).thenReturn(TIMESLOT_ENTITIES_BY_DAY);
+    public void findTimeslotsForServiceWithWorkerShouldReturnCorrectListIfServiceTakesSeveralTimeslots() {
+        when(timeslotDao.findSameDayTimeslotsSorted(anyInt())).thenReturn(TIMESLOT_ENTITIES_BY_DAY);
+        when(serviceDao.findById(anyInt())).thenReturn(Optional.of(ServiceEntity.builder()
+                .setDurationMinutes(50)
+                .build()));
         when(orderDao.findById(anyInt())).thenAnswer(
-                invocation -> Optional.of(ORDER_ENTITIES.get(invocation.getArgument(0, Integer.class))));
-
+                invocation -> Optional.of(ORDER_ENTITIES.get(invocation.getArgument(0))));
         when(timeslotMapper.mapEntityToDomain(any())).thenAnswer(
-                invocation -> Timeslot.builder()
-                        .setId(invocation.getArgument(0, TimeslotEntity.class).getId())
-                        .build());
+                invocation -> {
+                    TimeslotEntity t = invocation.getArgument(0);
+                    return Timeslot.builder()
+                            .setId(t.getId())
+                            .setFromTime(t.getFromTime())
+                            .setOrders(mapTestOrderEntities(t.getOrders()))
+                            .setDuration(Duration.ofMinutes(t.getDuration().getMinutes()))
+                            .build();
+                });
 
         Service service = Service.builder()
                 .setId(3)
-                .setDuration(Duration.ofMinutes(50))
                 .build();
         User worker = User.builder()
                 .setId(3)
                 .build();
 
-        List<Timeslot> consecutiveFreeTimeslots = timeslotService.findTimeslotsForServiceWithWorker(
+        List<Timeslot> consecutiveFreeTimeslots = timeslotService.findTimeslotsForOrder(
                 122, service, worker);
 
         List<Integer> timeslotIds = consecutiveFreeTimeslots.stream()
@@ -249,28 +278,41 @@ public class TimeslotServiceImplTest {
     }
 
     @Test
-    public void findFreeTimeslotsForServiceWithWorkerShouldReturnEmptyListIfThereIsPauseBetweenTimeslots() {
-        when(timeslotDao.findAllTimeslotsOfTheSameDaySorted(anyInt())).thenReturn(TIMESLOT_ENTITIES_BY_DAY);
+    public void findTimeslotsForServiceWithWorkerShouldReturnEmptyListIfThereIsPauseBetweenTimeslots() {
+        when(timeslotDao.findSameDayTimeslotsSorted(anyInt())).thenReturn(TIMESLOT_ENTITIES_BY_DAY);
+        when(serviceDao.findById(anyInt())).thenReturn(Optional.of(ServiceEntity.builder()
+                .setDurationMinutes(60)
+                .build()));
         when(orderDao.findById(anyInt())).thenAnswer(
-                invocation -> Optional.of(ORDER_ENTITIES.get(invocation.getArgument(0, Integer.class))));
-
+                invocation -> Optional.of(ORDER_ENTITIES.get(invocation.getArgument(0))));
         when(timeslotMapper.mapEntityToDomain(any())).thenAnswer(
-                invocation -> Timeslot.builder()
-                        .setId(invocation.getArgument(0, TimeslotEntity.class).getId())
-                        .build());
+                invocation -> {
+                    TimeslotEntity t = invocation.getArgument(0);
+                    return Timeslot.builder()
+                            .setId(t.getId())
+                            .setFromTime(t.getFromTime())
+                            .setOrders(mapTestOrderEntities(t.getOrders()))
+                            .setDuration(Duration.ofMinutes(t.getDuration().getMinutes()))
+                            .build();
+                });
 
         Service service = Service.builder()
                 .setId(1)
-                .setDuration(Duration.ofMinutes(60))
                 .build();
         User user = User.builder()
                 .setId(1)
                 .build();
 
-        List<Timeslot> consecutiveFreeTimeslots = timeslotService.findTimeslotsForServiceWithWorker(
+        List<Timeslot> consecutiveFreeTimeslots = timeslotService.findTimeslotsForOrder(
                 125, service, user);
 
         assertThat(consecutiveFreeTimeslots, equalTo(Collections.emptyList()));
+    }
+
+    private static List<Order> mapTestOrderEntities(List<OrderEntity> orderEntities) {
+        return orderEntities.stream()
+                .map(orderEntity -> Order.builder().setId(orderEntity.getId()).build())
+                .collect(Collectors.toList());
     }
 
     private static List<OrderEntity> initOrderEntities() {
@@ -439,13 +481,11 @@ public class TimeslotServiceImplTest {
                         Arrays.asList(
                                 Timeslot.builder()
                                         .setId(122)
-                                        .setAvailable(true)
                                         .setDate(LocalDate.of(2020, 2, 5))
                                         .setOrders(Collections.singletonList(order))
                                         .build(),
                                 Timeslot.builder()
                                         .setId(123)
-                                        .setAvailable(true)
                                         .setDate(LocalDate.of(2020, 2, 5))
                                         .build())
                 ),
@@ -453,7 +493,6 @@ public class TimeslotServiceImplTest {
                 new Timetable(LocalDate.of(2020, 2, 7),
                         Collections.singletonList(Timeslot.builder()
                                 .setId(124)
-                                .setAvailable(false)
                                 .setDate(LocalDate.of(2020, 2, 7))
                                 .setOrders(Arrays.asList(order, order))
                                 .build())
