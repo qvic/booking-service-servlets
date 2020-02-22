@@ -14,8 +14,8 @@ public class ServiceDaoImpl extends AbstractCrudDaoImpl<ServiceEntity> implement
     private static final String FIND_ALL_QUERY = "SELECT * FROM service";
     private static final String COUNT_QUERY = "SELECT count(*) FROM service";
 
-    private static final String INSERT_QUERY = "INSERT INTO service (name, duration_minutes, price, workspaces) VALUES (?, ?, ?, ?) RETURNING id";
-    private static final String UPDATE_QUERY = "UPDATE service SET name = ?, duration_timeslots = ?, price = ?, workspaces = ? WHERE id = ?";
+    private static final String INSERT_QUERY = "INSERT INTO service (name, duration_minutes, price) VALUES (?, ?, ?) RETURNING id";
+    private static final String UPDATE_QUERY = "UPDATE service SET name = ?, duration_timeslots = ?, price = ? WHERE id = ?";
     private static final String DELETE_QUERY = "DELETE FROM service WHERE id = ?";
 
     public ServiceDaoImpl(DataSourceConnector connector) {
@@ -29,7 +29,6 @@ public class ServiceDaoImpl extends AbstractCrudDaoImpl<ServiceEntity> implement
         return ServiceEntity.builder().setId(resultSet.getInt("id"))
                 .setName(resultSet.getString("name"))
                 .setDurationMinutes(resultSet.getInt("duration_minutes"))
-                .setWorkspaces(resultSet.getInt("workspaces"))
                 .setPrice(resultSet.getInt("price"))
                 .build();
 
@@ -50,13 +49,12 @@ public class ServiceDaoImpl extends AbstractCrudDaoImpl<ServiceEntity> implement
     @Override
     protected void populateUpdateStatement(ServiceEntity entity, PreparedStatement statement) throws SQLException {
         populateNonIdFields(entity, statement);
-        statement.setInt(5, entity.getId());
+        statement.setInt(4, entity.getId());
     }
 
     private void populateNonIdFields(ServiceEntity entity, PreparedStatement statement) throws SQLException {
         statement.setString(1, entity.getName());
         statement.setInt(2, entity.getDurationMinutes());
         statement.setInt(3, entity.getPrice());
-        statement.setInt(4, entity.getWorkspaces());
     }
 }

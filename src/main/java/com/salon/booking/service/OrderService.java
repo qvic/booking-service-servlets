@@ -11,7 +11,9 @@ public interface OrderService {
 
     List<Order> findAllByWorkerId(Integer workerId);
 
-    List<Service> findAvailableServices(Integer selectedTimeslotId);
-
     void saveOrderUpdatingTimeslots(Integer selectedTimeslotId, Order order);
+
+    List<Order> findLastFinishedOrders();
+
+    List<Service> findAllServices();
 }

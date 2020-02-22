@@ -18,7 +18,7 @@
 
                     <c:forEach items="${timetable.rows}" var="row">
                         <c:choose>
-                            <c:when test="${row.order eq null}">
+                            <c:when test="${row.available eq true}">
                                 <input name="timeslot-id" type="radio"
                                        class="d-none" id="timeslot-<c:out value="${row.id}"/>"
                                        value="<c:out value="${row.id}"/>">
@@ -26,7 +26,7 @@
                                 <label for="timeslot-<c:out value="${row.id}"/>"
                                        class="radio-label form-check-label list-group-item list-group-item-action flex-column align-items-start">
                                     <h5 class="mb-1">
-                                        <c:out value="${row.fromTime}"/> to <c:out value="${row.fromTime.plus(row.duration)}"/>
+                                        <c:out value="${row.fromTime}"/>
                                     </h5>
                                     <p class="text-success">
                                         Available
@@ -36,7 +36,7 @@
                             <c:otherwise>
                                 <div class="list-group-item flex-column align-items-start">
                                     <h5 class="mb-1">
-                                        <c:out value="${row.fromTime}"/> to <c:out value="${row.fromTime.plus(row.duration)}"/>
+                                        <c:out value="${row.fromTime}"/>
                                     </h5>
                                     <p class="text-secondary">
                                         Booked
@@ -48,7 +48,7 @@
                 </div>
             </c:forEach>
         </div>
-        <button class="w-25 mx-auto my-5 btn btn-primary btn-lg btn-block" type="submit">Next</button>
+        <button class="w-25 mx-auto my-5 btn btn-primary btn-lg btn-block" type="submit">Go to checkout</button>
     </form>
 </div>
 

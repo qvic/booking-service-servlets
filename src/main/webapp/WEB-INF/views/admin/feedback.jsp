@@ -13,7 +13,7 @@
                 <label for="feedback-<c:out value="${item.id}"/>"
                        class="radio-label form-check-label list-group-item list-group-item-action flex-column align-items-start">
                     <h5 class="mb-1">
-                        <span class="text-muted">To</span> <c:out value="${item.worker.name}"/>
+                        <span class="text-muted">To worker</span> <c:out value="${item.worker.name}"/> (<c:out value="${item.worker.email}"/>)
                     </h5>
                     <p class="mb-1"><c:out value="${item.text}"/></p>
                 </label>

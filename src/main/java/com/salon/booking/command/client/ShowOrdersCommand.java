@@ -26,6 +26,7 @@ public class ShowOrdersCommand implements GetCommand {
         User user = getUserFromSession(request);
         List<Order> orders = orderService.findAllByClientId(user.getId());
         request.setAttribute("orders", orders);
-        forward(getViewPathByName("client-orders"), request, response);
+
+        forward(getViewPathByName("client/orders"), request, response);
     }
 }

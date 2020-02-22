@@ -24,6 +24,7 @@ public class OrderMapper implements Mapper<OrderEntity, Order> {
         }
 
         return OrderEntity.builder()
+                .setId(order.getId())
                 .setDate(order.getDate())
                 .setClient(userMapper.mapDomainToEntity(order.getClient()))
                 .setWorker(userMapper.mapDomainToEntity(order.getWorker()))
@@ -38,6 +39,7 @@ public class OrderMapper implements Mapper<OrderEntity, Order> {
         }
 
         return Order.builder()
+                .setId(order.getId())
                 .setDate(order.getDate())
                 .setWorker(userMapper.mapEntityToDomain(order.getWorker()))
                 .setClient(userMapper.mapEntityToDomain(order.getClient()))

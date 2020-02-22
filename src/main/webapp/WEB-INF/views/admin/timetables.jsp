@@ -31,17 +31,18 @@
                             <c:out value="${row.fromTime}"/> to <c:out value="${row.fromTime.plus(row.duration)}"/>
                         </h5>
                         <c:choose>
-                            <c:when test="${row.order eq null}">
+                            <c:when test="${row.available eq true}">
                                 <p class="text-success">
                                     Available
                                 </p>
                             </c:when>
                             <c:otherwise>
-                                <div>
-                                    <p class="mb-0">Worker: ${row.order.worker.name} (${row.order.worker.email})</p>
-                                    <p class="mb-0">Client: ${row.order.client.name} (${row.order.client.email})</p>
-                                    <p class="mb-1">Service: ${row.order.service.name} ($${row.order.service.price})</p>
-                                </div>
+                                <c:out value="${row.orders}"/>
+<%--                                <div>--%>
+<%--                                    <p class="mb-0">Worker: ${row.order.worker.name} (${row.order.worker.email})</p>--%>
+<%--                                    <p class="mb-0">Client: ${row.order.client.name} (${row.order.client.email})</p>--%>
+<%--                                    <p class="mb-1">Service: ${row.order.service.name} ($${row.order.service.price})</p>--%>
+<%--                                </div>--%>
                             </c:otherwise>
                         </c:choose>
                     </div>

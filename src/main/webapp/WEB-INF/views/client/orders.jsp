@@ -12,11 +12,11 @@
                 </div>
                 <div class="mb-1">
                     <h5>Service</h5>
-                    <p><c:out value="${item.service.name}"/> - $<c:out value="${item.service.price}"/></p>
+                    <p><c:out value="${item.service.name}"/> ($<c:out value="${item.service.price}"/>)</p>
                 </div>
                 <div class="mb-1">
                     <h5>Worker</h5>
-                    <p><c:out value="${item.worker.name}"/> - <c:out value="${item.worker.email}"/></p>
+                    <p><c:out value="${item.worker.name}"/> (<c:out value="${item.worker.email}"/>)</p>
                 </div>
             </div>
         </c:forEach>

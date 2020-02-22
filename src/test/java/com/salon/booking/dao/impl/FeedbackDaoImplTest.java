@@ -8,7 +8,8 @@ import org.junit.Test;
 public class FeedbackDaoImplTest extends AbstractDaoImplTest {
 
     private static final UserEntity TEST_USER = UserEntity.builder()
-            .setId(21)
+            .setId(28)
+            .setName("name")
             .build();
 
     private static final FeedbackEntity TEST_FEEDBACK = FeedbackEntity.builder()

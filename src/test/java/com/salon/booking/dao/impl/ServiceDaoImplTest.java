@@ -7,9 +7,8 @@ public class ServiceDaoImplTest extends AbstractDaoImplTest {
 
     private static final ServiceEntity TEST_SERVICE = ServiceEntity.builder()
             .setName("TestName")
-            .setDurationMinutes(2)
+            .setDurationMinutes(30)
             .setPrice(150)
-            .setWorkspaces(3)
             .build();
 
     @Test

@@ -29,26 +29,24 @@ public class Feedback {
     @Override
     public String toString() {
         return "Feedback{" +
-                "text='" + text + '\'' +
+                "id=" + id +
+                ", text='" + text + '\'' +
                 ", worker=" + worker +
                 '}';
     }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
         Feedback feedback = (Feedback) o;
-        return Objects.equals(text, feedback.text) &&
+        return Objects.equals(id, feedback.id) &&
+                Objects.equals(text, feedback.text) &&
                 Objects.equals(worker, feedback.worker);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(text, worker);
+        return Objects.hash(id, text, worker);
     }
 }

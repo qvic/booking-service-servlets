@@ -9,7 +9,9 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -24,6 +26,9 @@ abstract class AbstractReadOnlyDaoImpl<E> implements ReadOnlyDao<E> {
 
     protected static final StatementParameterSetter<LocalDate> LOCAL_DATE_SETTER =
             (statement, param, position) -> statement.setDate(position, Date.valueOf(param));
+
+    protected static final StatementParameterSetter<LocalDateTime> LOCAL_DATE_TIME_SETTER =
+            (statement, param, position) -> statement.setTimestamp(position, Timestamp.valueOf(param));
 
     protected final DataSourceConnector connector;
     private final ReadQuerySet queries;

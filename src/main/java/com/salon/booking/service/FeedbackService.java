@@ -12,4 +12,6 @@ public interface FeedbackService {
     Page<Feedback> findAllByStatus(FeedbackStatus status, PageProperties properties);
 
     void approveFeedbackById(Integer feedbackId);
+
+    void saveFeedback(Integer workerId, String text);
 }

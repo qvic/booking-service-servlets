@@ -51,7 +51,7 @@
                         <c:choose>
                             <c:when test="${sessionScope.user.isClient()}">
                                 <li class="nav-item">
-                                    <a class="nav-link" href="<c:url value="/app/client/order-timeslot"/>"><fmt:message
+                                    <a class="nav-link" href="<c:url value="/app/client/order-service"/>"><fmt:message
                                             key="label.client.create_order"/></a>
                                 </li>
                                 <li class="nav-item">

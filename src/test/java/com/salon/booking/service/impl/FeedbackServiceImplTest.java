@@ -9,6 +9,8 @@ import com.salon.booking.entity.FeedbackEntity;
 import com.salon.booking.entity.FeedbackStatusEntity;
 import com.salon.booking.entity.UserEntity;
 import com.salon.booking.mapper.Mapper;
+import com.salon.booking.service.OrderService;
+import com.salon.booking.service.validator.Validator;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -30,7 +32,13 @@ public class FeedbackServiceImplTest {
     private FeedbackDao feedbackDao;
 
     @Mock
+    private OrderService orderService;
+
+    @Mock
     private Mapper<FeedbackEntity, Feedback> feedbackMapper;
+
+    @Mock
+    private Validator<String> feedbackTextValidator;
 
     @Mock
     private Mapper<FeedbackStatusEntity, FeedbackStatus> feedbackStatusMapper;
@@ -39,7 +47,7 @@ public class FeedbackServiceImplTest {
 
     @Before
     public void injectMocks() {
-        feedbackService = new FeedbackServiceImpl(feedbackDao, feedbackMapper, feedbackStatusMapper);
+        feedbackService = new FeedbackServiceImpl(feedbackDao, orderService, feedbackMapper, feedbackStatusMapper, feedbackTextValidator);
     }
 
     @Test

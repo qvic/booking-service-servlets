@@ -17,12 +17,16 @@ import com.salon.booking.service.TimeslotService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.time.LocalDateTime;
+import java.time.Period;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class OrderServiceImpl implements OrderService {
 
     private static final Logger LOGGER = LogManager.getLogger(OrderServiceImpl.class);
+
+    private static final Period FEEDBACK_THRESHOLD = Period.ofDays(7);
 
     private final TimeslotService timeslotService;
 
@@ -75,40 +79,18 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public List<Service> findAvailableServices(Integer selectedTimeslotId) {
-        List<Timeslot> freeTimeslots = timeslotService.findConsecutiveFreeTimeslots(selectedTimeslotId);
-
-        return serviceDao.findAll().stream()
-                .map(serviceMapper::mapEntityToDomain)
-                .map(service -> buildWithAvailabilityFlag(service, freeTimeslots))
-                .collect(Collectors.toList());
-    }
-
-    private Service buildWithAvailabilityFlag(Service service, List<Timeslot> freeTimeslots) {
-        return Service.builder(service)
-                .setAvailable(isServiceAvailable(service, freeTimeslots))
-                .build();
-    }
-
-    private boolean isServiceAvailable(Service service, List<Timeslot> freeTimeslots) {
-        long freeMinutes = freeTimeslots.stream()
-                .mapToLong(timeslot -> timeslot.getDuration().toMinutes())
-                .sum();
-
-        return freeMinutes >= service.getDuration().toMinutes();
-    }
-
-    @Override
     public void saveOrderUpdatingTimeslots(Integer selectedTimeslotId, Order order) {
         OrderEntity orderEntity = orderMapper.mapDomainToEntity(order);
 
         try {
             transactionManager.beginTransaction();
 
-            Order savedOrder = orderMapper.mapEntityToDomain(orderDao.save(orderEntity));
+            OrderEntity savedOrder = orderDao.save(orderEntity);
 
-            List<Timeslot> freeTimeslots = timeslotService.findConsecutiveFreeTimeslots(selectedTimeslotId);
-            updateAllWithOrder(freeTimeslots, savedOrder);
+            List<Timeslot> freeTimeslots = timeslotService.findTimeslotsForServiceWithWorker(
+                    selectedTimeslotId, order.getService(), order.getWorker());
+
+            assignOrderToTimeslots(freeTimeslots, savedOrder.getId());
 
             transactionManager.commitTransaction();
         } catch (DatabaseRuntimeException e) {
@@ -117,11 +99,22 @@ public class OrderServiceImpl implements OrderService {
         }
     }
 
-    private void updateAllWithOrder(List<Timeslot> timeslots, Order order) {
-        for (Timeslot timeslot : timeslots) {
-            timeslotService.update(Timeslot.builder(timeslot)
-                    .setOrder(order)
-                    .build());
-        }
+    @Override
+    public List<Order> findLastFinishedOrders() {
+        return orderDao.findAllFinishedAfter(LocalDateTime.now().minus(FEEDBACK_THRESHOLD)).stream()
+                .map(orderMapper::mapEntityToDomain)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<Service> findAllServices() {
+        return serviceDao.findAll().stream()
+                .map(serviceMapper::mapEntityToDomain)
+                .map(service -> Service.builder(service).setAvailable(true).build())
+                .collect(Collectors.toList());
+    }
+
+    private void assignOrderToTimeslots(List<Timeslot> timeslots, Integer orderId) {
+        timeslots.forEach(timeslot -> timeslotService.saveOrderTimeslot(timeslot.getId(), orderId));
     }
 }

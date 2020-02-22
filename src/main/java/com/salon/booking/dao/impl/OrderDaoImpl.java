@@ -10,6 +10,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public class OrderDaoImpl extends AbstractPageableCrudDaoImpl<OrderEntity> implements OrderDao {
@@ -19,6 +20,7 @@ public class OrderDaoImpl extends AbstractPageableCrudDaoImpl<OrderEntity> imple
     private static final String FIND_ALL_PAGED_QUERY = "SELECT o.* FROM \"order\" o OFFSET ? LIMIT ?";
     private static final String FIND_ALL_BY_CLIENT = "SELECT o.* FROM \"order\" o WHERE o.client_id = ?";
     private static final String FIND_ALL_BY_WORKER = "SELECT o.* FROM \"order\" o WHERE o.worker_id = ?";
+    private static final String FIND_ALL_FINISHED_AFTER = "SELECT DISTINCT o.* FROM \"order\" o INNER JOIN order_timeslot ot ON o.id = ot.order_id INNER JOIN timeslot t ON ot.timeslot_id = t.id WHERE t.date + t.from_time < ?";
     private static final String COUNT_QUERY = "SELECT count(*) FROM order";
 
     private static final String SAVE_QUERY = "INSERT INTO \"order\" (date, worker_id, client_id, service_id) VALUES (?, ?, ?, ?) RETURNING id";
@@ -39,6 +41,11 @@ public class OrderDaoImpl extends AbstractPageableCrudDaoImpl<OrderEntity> imple
     @Override
     public List<OrderEntity> findAllByWorkerId(Integer id) {
         return findAllByParam(id, FIND_ALL_BY_WORKER, INT_SETTER);
+    }
+
+    @Override
+    public List<OrderEntity> findAllFinishedAfter(LocalDateTime date) {
+        return findAllByParam(date, FIND_ALL_FINISHED_AFTER, LOCAL_DATE_TIME_SETTER);
     }
 
     @Override

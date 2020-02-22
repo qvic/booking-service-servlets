@@ -19,6 +19,7 @@ import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
 
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.same;
 import static org.mockito.Mockito.times;
@@ -56,7 +57,6 @@ public class SelectTimeslotCommandTest extends AbstractCommandTest {
 
         showTimetablesCommand.processGet(request, response);
 
-        verify(request, times(1)).setAttribute(eq("timetables"), same(TIMETABLES));
-        verify(requestDispatcher, times(1)).forward(request, response);
+        verify(response).sendRedirect(anyString());
     }
 }

@@ -18,7 +18,7 @@ public class SelectWorkerCommand implements GetAndPostCommand {
 
     private static final long DEFAULT_WORKERS_PER_PAGE = 5;
 
-    private static final String REDIRECT_AFTER_SUBMIT = "/app/client/create-order";
+    private static final String REDIRECT_AFTER_SUBMIT = "/app/client/order-timeslot";
     private final UserService userService;
 
     public SelectWorkerCommand(UserService userService) {
@@ -31,17 +31,23 @@ public class SelectWorkerCommand implements GetAndPostCommand {
         String itemsPerPage = request.getParameter("limit");
 
         PageProperties pageProperties = PageProperties.buildByParameters(pageNumber, itemsPerPage, DEFAULT_WORKERS_PER_PAGE);
-
         Page<User> workersPage = userService.findAllWorkers(pageProperties);
         request.setAttribute("page", workersPage);
 
-        forward(getViewPathByName("workers"), request, response);
+        forward(getViewPathByName("client/workers"), request, response);
     }
 
     @Override
     public void processPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         int workerId = RequestUtility.getRequiredIntParameter("worker-id", request);
         request.getSession().setAttribute("workerId", workerId);
+        clearCart(request);
+
         response.sendRedirect(REDIRECT_AFTER_SUBMIT);
     }
+
+    private void clearCart(HttpServletRequest request) {
+        RequestUtility.removeSessionAttribute("timeslotId", request);
+    }
+
 }

@@ -8,14 +8,12 @@ public class ServiceEntity {
     private final String name;
     private final Integer durationMinutes;
     private final Integer price;
-    private final Integer workspaces;
 
     private ServiceEntity(Builder builder) {
         id = builder.id;
         name = builder.name;
         durationMinutes = builder.durationMinutes;
         price = builder.price;
-        workspaces = builder.workspaces;
     }
 
     public Integer getId() {
@@ -34,10 +32,6 @@ public class ServiceEntity {
         return price;
     }
 
-    public Integer getWorkspaces() {
-        return workspaces;
-    }
-
     @Override
     public String toString() {
         return "Service{" +
@@ -45,7 +39,6 @@ public class ServiceEntity {
                 ", name='" + name + '\'' +
                 ", durationMinutes=" + durationMinutes +
                 ", price=" + price +
-                ", workspaces=" + workspaces +
                 '}';
     }
 
@@ -61,13 +54,12 @@ public class ServiceEntity {
         return Objects.equals(id, service.id) &&
                 Objects.equals(name, service.name) &&
                 Objects.equals(durationMinutes, service.durationMinutes) &&
-                Objects.equals(price, service.price) &&
-                Objects.equals(workspaces, service.workspaces);
+                Objects.equals(price, service.price);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, durationMinutes, price, workspaces);
+        return Objects.hash(id, name, durationMinutes, price);
     }
 
     public static Builder builder() {
@@ -80,7 +72,6 @@ public class ServiceEntity {
         builder.name = copy.getName();
         builder.durationMinutes = copy.getDurationMinutes();
         builder.price = copy.getPrice();
-        builder.workspaces = copy.getWorkspaces();
         return builder;
     }
 
@@ -90,7 +81,6 @@ public class ServiceEntity {
         private String name;
         private Integer durationMinutes;
         private Integer price;
-        private Integer workspaces;
 
         private Builder() {
         }
@@ -112,11 +102,6 @@ public class ServiceEntity {
 
         public Builder setPrice(Integer price) {
             this.price = price;
-            return this;
-        }
-
-        public Builder setWorkspaces(Integer workspaces) {
-            this.workspaces = workspaces;
             return this;
         }
 

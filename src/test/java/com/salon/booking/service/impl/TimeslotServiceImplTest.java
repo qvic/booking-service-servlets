@@ -4,10 +4,16 @@ import com.salon.booking.dao.OrderDao;
 import com.salon.booking.dao.ServiceDao;
 import com.salon.booking.dao.TimeslotDao;
 import com.salon.booking.dao.UserDao;
+import com.salon.booking.domain.Order;
+import com.salon.booking.domain.Service;
 import com.salon.booking.domain.Timeslot;
 import com.salon.booking.domain.Timetable;
+import com.salon.booking.domain.User;
+import com.salon.booking.entity.DurationEntity;
 import com.salon.booking.entity.OrderEntity;
+import com.salon.booking.entity.ServiceEntity;
 import com.salon.booking.entity.TimeslotEntity;
+import com.salon.booking.entity.UserEntity;
 import com.salon.booking.mapper.Mapper;
 import org.junit.After;
 import org.junit.Before;
@@ -16,14 +22,18 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.IsEqual.equalTo;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.reset;
@@ -35,10 +45,12 @@ public class TimeslotServiceImplTest {
     private static final LocalDate FROM_DATE = LocalDate.of(2020, 2, 4);
     private static final LocalDate TO_DATE = LocalDate.of(2020, 2, 9);
 
+    private static final List<OrderEntity> ORDER_ENTITIES = initOrderEntities();
+
     private static final List<TimeslotEntity> TIMESLOT_ENTITIES = initTimeslotEntities();
     private static final List<Timetable> TIMETABLES = initTimetables();
     private static final List<TimeslotEntity> TIMESLOT_ENTITIES_BY_DAY = initTimeslotEntitiesByDay();
-    private static final List<Timeslot> CONSECUTIVE_TIMESLOTS = initConsecutiveTimeslots();
+
 
     @Mock
     private TimeslotDao timeslotDao;
@@ -68,10 +80,23 @@ public class TimeslotServiceImplTest {
     }
 
     @Test
-    public void findAllBetween() {
-        when(timeslotMapper.mapEntityToDomain(eq(TIMESLOT_ENTITIES.get(0)))).thenReturn(TIMETABLES.get(1).getRows().get(0));
-        when(timeslotMapper.mapEntityToDomain(eq(TIMESLOT_ENTITIES.get(1)))).thenReturn(TIMETABLES.get(1).getRows().get(1));
-        when(timeslotMapper.mapEntityToDomain(eq(TIMESLOT_ENTITIES.get(2)))).thenReturn(TIMETABLES.get(3).getRows().get(0));
+    public void findAllBetweenShouldReturnCorrectList() {
+        when(serviceDao.count()).thenReturn(2L);
+        when(serviceDao.findById(anyInt())).thenAnswer(
+                invocation -> Optional.of(ServiceEntity.builder().setId(invocation.getArgument(0)).build()));
+        when(userDao.findById(anyInt())).thenAnswer(
+                invocation -> Optional.of(UserEntity.builder().setId(invocation.getArgument(0)).build()));
+        when(orderDao.findById(anyInt())).thenAnswer(
+                invocation -> Optional.of(ORDER_ENTITIES.get(0)));
+
+        when(timeslotMapper.mapEntityToDomain(any())).thenAnswer(invocation -> {
+            TimeslotEntity entity = invocation.getArgument(0, TimeslotEntity.class);
+            return Timeslot.builder()
+                    .setId(entity.getId())
+                    .setDate(entity.getDate())
+                    .setOrders(mapTestOrderEntities(entity.getOrders()))
+                    .build();
+        });
 
         when(timeslotDao.findAllBetweenDatesSorted(eq(FROM_DATE), eq(TO_DATE))).thenReturn(TIMESLOT_ENTITIES);
 
@@ -80,82 +105,308 @@ public class TimeslotServiceImplTest {
         assertThat(timetables, equalTo(TIMETABLES));
     }
 
-    @Test
-    public void findConsecutiveFreeTimeslotsShouldReturnCorrectList() {
-        when(timeslotDao.findAllTimeslotsOfTheSameDaySorted(anyInt())).thenReturn(TIMESLOT_ENTITIES_BY_DAY);
-        when(timeslotMapper.mapEntityToDomain(eq(TIMESLOT_ENTITIES_BY_DAY.get(1)))).thenReturn(CONSECUTIVE_TIMESLOTS.get(0));
-        when(timeslotMapper.mapEntityToDomain(eq(TIMESLOT_ENTITIES_BY_DAY.get(2)))).thenReturn(CONSECUTIVE_TIMESLOTS.get(1));
-
-        List<Timeslot> consecutiveFreeTimeslots = timeslotService.findConsecutiveFreeTimeslots(123);
-
-        assertThat(consecutiveFreeTimeslots, equalTo(CONSECUTIVE_TIMESLOTS));
+    private static List<Order> mapTestOrderEntities(List<OrderEntity> orderEntities) {
+        return orderEntities.stream()
+                .map(orderEntity -> Order.builder().build())
+                .collect(Collectors.toList());
     }
 
     @Test
-    public void findConsecutiveFreeTimeslotsShouldReturnCorrectListIfTimeslotPredecessorIsEmpty() {
+    public void findFreeTimeslotsForServiceWithWorkerShouldReturnEmptyListWhenWorkerIsBusy() {
         when(timeslotDao.findAllTimeslotsOfTheSameDaySorted(anyInt())).thenReturn(TIMESLOT_ENTITIES_BY_DAY);
-        when(timeslotMapper.mapEntityToDomain(eq(TIMESLOT_ENTITIES_BY_DAY.get(2)))).thenReturn(CONSECUTIVE_TIMESLOTS.get(1));
+        when(orderDao.findById(anyInt())).thenAnswer(
+                invocation -> Optional.of(ORDER_ENTITIES.get(invocation.getArgument(0, Integer.class))));
 
-        List<Timeslot> consecutiveFreeTimeslots = timeslotService.findConsecutiveFreeTimeslots(124);
+        when(timeslotMapper.mapEntityToDomain(any())).thenAnswer(
+                invocation -> Timeslot.builder()
+                        .setId(invocation.getArgument(0, TimeslotEntity.class).getId())
+                        .build());
 
-        assertThat(consecutiveFreeTimeslots, equalTo(Collections.singletonList(CONSECUTIVE_TIMESLOTS.get(1))));
-    }
+        Service service = Service.builder()
+                .setId(2)
+                .setDuration(Duration.ofMinutes(30))
+                .build();
+        User worker = User.builder()
+                .setId(1)
+                .build();
 
-    @Test
-    public void findConsecutiveFreeTimeslotsShouldReturnEmptyListIfNoFreePlaces() {
-        when(timeslotDao.findAllTimeslotsOfTheSameDaySorted(anyInt())).thenReturn(TIMESLOT_ENTITIES_BY_DAY);
-
-        List<Timeslot> consecutiveFreeTimeslots = timeslotService.findConsecutiveFreeTimeslots(122);
+        List<Timeslot> consecutiveFreeTimeslots = timeslotService.findTimeslotsForServiceWithWorker(
+                122, service, worker);
 
         assertThat(consecutiveFreeTimeslots, equalTo(Collections.emptyList()));
     }
 
+    @Test
+    public void findFreeTimeslotsForServiceWithWorkerShouldReturnEmptyListWhenServiceIsUnavailable() {
+        when(timeslotDao.findAllTimeslotsOfTheSameDaySorted(anyInt())).thenReturn(TIMESLOT_ENTITIES_BY_DAY);
+        when(orderDao.findById(anyInt())).thenAnswer(
+                invocation -> Optional.of(ORDER_ENTITIES.get(invocation.getArgument(0, Integer.class))));
+
+        when(timeslotMapper.mapEntityToDomain(any())).thenAnswer(
+                invocation -> Timeslot.builder()
+                        .setId(invocation.getArgument(0, TimeslotEntity.class).getId())
+                        .build());
+
+        Service service = Service.builder()
+                .setId(1)
+                .setDuration(Duration.ofMinutes(30))
+                .build();
+        User worker = User.builder()
+                .setId(2)
+                .build();
+
+        List<Timeslot> consecutiveFreeTimeslots = timeslotService.findTimeslotsForServiceWithWorker(
+                122, service, worker);
+
+        assertThat(consecutiveFreeTimeslots, equalTo(Collections.emptyList()));
+    }
+
+    @Test
+    public void findFreeTimeslotsForServiceWithWorkerShouldReturnCorrectListIfServiceAndWorkerAreAvailable() {
+        when(timeslotDao.findAllTimeslotsOfTheSameDaySorted(anyInt())).thenReturn(TIMESLOT_ENTITIES_BY_DAY);
+        when(orderDao.findById(anyInt())).thenAnswer(
+                invocation -> Optional.of(ORDER_ENTITIES.get(invocation.getArgument(0, Integer.class))));
+
+        when(timeslotMapper.mapEntityToDomain(any())).thenAnswer(
+                invocation -> Timeslot.builder()
+                        .setId(invocation.getArgument(0, TimeslotEntity.class).getId())
+                        .build());
+
+        Service service = Service.builder()
+                .setId(3)
+                .setDuration(Duration.ofMinutes(30))
+                .build();
+        User worker = User.builder()
+                .setId(3)
+                .build();
+
+        List<Timeslot> consecutiveFreeTimeslots = timeslotService.findTimeslotsForServiceWithWorker(
+                122, service, worker);
+
+        List<Integer> timeslotIds = consecutiveFreeTimeslots.stream()
+                .map(Timeslot::getId)
+                .collect(Collectors.toList());
+
+        assertThat(timeslotIds, equalTo(Collections.singletonList(122)));
+    }
+
+    @Test
+    public void findFreeTimeslotsForServiceWithWorkerShouldReturnEmptyListIfServiceIntersectsOther() {
+        when(timeslotDao.findAllTimeslotsOfTheSameDaySorted(anyInt())).thenReturn(TIMESLOT_ENTITIES_BY_DAY);
+        when(orderDao.findById(anyInt())).thenAnswer(
+                invocation -> Optional.of(ORDER_ENTITIES.get(invocation.getArgument(0, Integer.class))));
+
+        when(timeslotMapper.mapEntityToDomain(any())).thenAnswer(
+                invocation -> Timeslot.builder()
+                        .setId(invocation.getArgument(0, TimeslotEntity.class).getId())
+                        .build());
+
+        Service service = Service.builder()
+                .setId(3)
+                .setDuration(Duration.ofMinutes(90))
+                .build();
+        User worker = User.builder()
+                .setId(3)
+                .build();
+
+        List<Timeslot> consecutiveFreeTimeslots = timeslotService.findTimeslotsForServiceWithWorker(
+                122, service, worker);
+
+        List<Integer> timeslotIds = consecutiveFreeTimeslots.stream()
+                .map(Timeslot::getId)
+                .collect(Collectors.toList());
+
+        assertThat(timeslotIds, equalTo(Collections.emptyList()));
+    }
+
+    @Test
+    public void findFreeTimeslotsForServiceWithWorkerShouldReturnCorrectListIfServiceTakesSeveralTimeslots() {
+        when(timeslotDao.findAllTimeslotsOfTheSameDaySorted(anyInt())).thenReturn(TIMESLOT_ENTITIES_BY_DAY);
+        when(orderDao.findById(anyInt())).thenAnswer(
+                invocation -> Optional.of(ORDER_ENTITIES.get(invocation.getArgument(0, Integer.class))));
+
+        when(timeslotMapper.mapEntityToDomain(any())).thenAnswer(
+                invocation -> Timeslot.builder()
+                        .setId(invocation.getArgument(0, TimeslotEntity.class).getId())
+                        .build());
+
+        Service service = Service.builder()
+                .setId(3)
+                .setDuration(Duration.ofMinutes(50))
+                .build();
+        User worker = User.builder()
+                .setId(3)
+                .build();
+
+        List<Timeslot> consecutiveFreeTimeslots = timeslotService.findTimeslotsForServiceWithWorker(
+                122, service, worker);
+
+        List<Integer> timeslotIds = consecutiveFreeTimeslots.stream()
+                .map(Timeslot::getId)
+                .collect(Collectors.toList());
+
+        assertThat(timeslotIds, equalTo(Arrays.asList(122, 123)));
+    }
+
+    @Test
+    public void findFreeTimeslotsForServiceWithWorkerShouldReturnEmptyListIfThereIsPauseBetweenTimeslots() {
+        when(timeslotDao.findAllTimeslotsOfTheSameDaySorted(anyInt())).thenReturn(TIMESLOT_ENTITIES_BY_DAY);
+        when(orderDao.findById(anyInt())).thenAnswer(
+                invocation -> Optional.of(ORDER_ENTITIES.get(invocation.getArgument(0, Integer.class))));
+
+        when(timeslotMapper.mapEntityToDomain(any())).thenAnswer(
+                invocation -> Timeslot.builder()
+                        .setId(invocation.getArgument(0, TimeslotEntity.class).getId())
+                        .build());
+
+        Service service = Service.builder()
+                .setId(1)
+                .setDuration(Duration.ofMinutes(60))
+                .build();
+        User user = User.builder()
+                .setId(1)
+                .build();
+
+        List<Timeslot> consecutiveFreeTimeslots = timeslotService.findTimeslotsForServiceWithWorker(
+                125, service, user);
+
+        assertThat(consecutiveFreeTimeslots, equalTo(Collections.emptyList()));
+    }
+
+    private static List<OrderEntity> initOrderEntities() {
+        return Arrays.asList(
+                OrderEntity.builder()
+                        .setId(0)
+                        .setClient(UserEntity.builder()
+                                .setId(1)
+                                .build())
+                        .setService(ServiceEntity.builder()
+                                .setId(1)
+                                .build())
+                        .setWorker(UserEntity.builder()
+                                .setId(1)
+                                .build())
+                        .build(),
+                OrderEntity.builder()
+                        .setId(1)
+                        .setService(ServiceEntity.builder()
+                                .setId(1)
+                                .build())
+                        .setWorker(UserEntity.builder()
+                                .setId(2)
+                                .build())
+                        .build(),
+                OrderEntity.builder()
+                        .setId(2)
+                        .setService(ServiceEntity.builder()
+                                .setId(2)
+                                .build())
+                        .setWorker(UserEntity.builder()
+                                .setId(1)
+                                .build())
+                        .build(),
+                OrderEntity.builder()
+                        .setId(3)
+                        .setService(ServiceEntity.builder()
+                                .setId(3)
+                                .build())
+                        .setWorker(UserEntity.builder()
+                                .setId(2)
+                                .build())
+                        .build()
+        );
+    }
+
+    private static List<Order> initOrders() {
+        return Arrays.asList(
+                Order.builder()
+                        .setService(Service.builder()
+                                .setId(1)
+                                .setDuration(Duration.ofMinutes(30))
+                                .build())
+                        .setWorker(User.builder()
+                                .setId(1)
+                                .build())
+                        .build(),
+                Order.builder()
+                        .setService(Service.builder()
+                                .setId(1)
+                                .setDuration(Duration.ofMinutes(30))
+                                .build())
+                        .setWorker(User.builder()
+                                .setId(2)
+                                .build())
+                        .build(),
+                Order.builder()
+                        .setService(Service.builder()
+                                .setId(1)
+                                .setDuration(Duration.ofMinutes(30))
+                                .build())
+                        .setWorker(User.builder()
+                                .setId(1)
+                                .build())
+                        .build(),
+                Order.builder()
+                        .setService(Service.builder()
+                                .setId(3)
+                                .setDuration(Duration.ofMinutes(60))
+                                .build())
+                        .setWorker(User.builder()
+                                .setId(2)
+                                .build())
+                        .build()
+        );
+    }
+
     private static List<TimeslotEntity> initTimeslotEntitiesByDay() {
+        DurationEntity duration = new DurationEntity(1, 30);
+
         return Arrays.asList(
                 TimeslotEntity.builder()
                         .setId(122)
                         .setDate(LocalDate.of(2020, 2, 2))
                         .setFromTime(LocalTime.of(8, 0))
-                        .setOrder(OrderEntity.builder().build())
+                        .setDuration(duration)
+                        .setOrders(Collections.singletonList(ORDER_ENTITIES.get(0)))
                         .build(),
                 TimeslotEntity.builder()
                         .setId(123)
                         .setDate(LocalDate.of(2020, 2, 2))
                         .setFromTime(LocalTime.of(8, 30))
-                        .setOrder(null)
+                        .setDuration(duration)
+                        .setOrders(Arrays.asList(
+                                ORDER_ENTITIES.get(1), ORDER_ENTITIES.get(2)
+                        ))
                         .build(),
                 TimeslotEntity.builder()
                         .setId(124)
                         .setDate(LocalDate.of(2020, 2, 2))
                         .setFromTime(LocalTime.of(9, 0))
-                        .setOrder(null)
+                        .setDuration(duration)
+                        .setOrders(Collections.singletonList(
+                                ORDER_ENTITIES.get(3)
+                        ))
                         .build(),
                 TimeslotEntity.builder()
                         .setId(125)
                         .setDate(LocalDate.of(2020, 2, 2))
                         .setFromTime(LocalTime.of(9, 30))
-                        .setOrder(OrderEntity.builder().build())
+                        .setDuration(duration)
+                        .setOrders(Collections.singletonList(
+                                ORDER_ENTITIES.get(3)
+                        ))
                         .build(),
                 TimeslotEntity.builder()
                         .setId(126)
                         .setDate(LocalDate.of(2020, 2, 2))
-                        .setFromTime(LocalTime.of(10, 0))
-                        .setOrder(null)
-                        .build()
-        );
-    }
-
-    private static List<Timeslot> initConsecutiveTimeslots() {
-        return Arrays.asList(
-                Timeslot.builder()
-                        .setId(123)
-                        .setDate(LocalDate.of(2020, 2, 2))
-                        .setFromTime(LocalTime.of(8, 30))
+                        .setFromTime(LocalTime.of(10, 30))
+                        .setDuration(duration)
                         .build(),
-                Timeslot.builder()
-                        .setId(124)
+                TimeslotEntity.builder()
+                        .setId(126)
                         .setDate(LocalDate.of(2020, 2, 2))
-                        .setFromTime(LocalTime.of(9, 0))
+                        .setFromTime(LocalTime.of(11, 0))
+                        .setDuration(duration)
                         .build()
         );
     }
@@ -165,6 +416,7 @@ public class TimeslotServiceImplTest {
                 TimeslotEntity.builder()
                         .setId(122)
                         .setDate(LocalDate.of(2020, 2, 5))
+                        .setOrders(Collections.singletonList(ORDER_ENTITIES.get(0)))
                         .build(),
                 TimeslotEntity.builder()
                         .setId(123)
@@ -173,21 +425,27 @@ public class TimeslotServiceImplTest {
                 TimeslotEntity.builder()
                         .setId(124)
                         .setDate(LocalDate.of(2020, 2, 7))
+                        .setOrders(Arrays.asList(ORDER_ENTITIES.get(1), ORDER_ENTITIES.get(2)))
                         .build()
         );
     }
 
     private static List<Timetable> initTimetables() {
+        Order order = Order.builder().build();
+
         return Arrays.asList(
                 new Timetable(LocalDate.of(2020, 2, 4), Collections.emptyList()),
                 new Timetable(LocalDate.of(2020, 2, 5),
                         Arrays.asList(
                                 Timeslot.builder()
                                         .setId(122)
+                                        .setAvailable(true)
                                         .setDate(LocalDate.of(2020, 2, 5))
+                                        .setOrders(Collections.singletonList(order))
                                         .build(),
                                 Timeslot.builder()
                                         .setId(123)
+                                        .setAvailable(true)
                                         .setDate(LocalDate.of(2020, 2, 5))
                                         .build())
                 ),
@@ -195,7 +453,9 @@ public class TimeslotServiceImplTest {
                 new Timetable(LocalDate.of(2020, 2, 7),
                         Collections.singletonList(Timeslot.builder()
                                 .setId(124)
+                                .setAvailable(false)
                                 .setDate(LocalDate.of(2020, 2, 7))
+                                .setOrders(Arrays.asList(order, order))
                                 .build())
                 ),
                 new Timetable(LocalDate.of(2020, 2, 8), Collections.emptyList()));

@@ -1,25 +1,22 @@
 package com.salon.booking.command.client;
 
-import com.salon.booking.utility.RequestUtility;
 import com.salon.booking.command.GetAndPostCommand;
 import com.salon.booking.domain.Timetable;
 import com.salon.booking.service.TimeslotService;
+import com.salon.booking.utility.RequestUtility;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.time.LocalDate;
-import java.time.Period;
 import java.util.List;
+import java.util.Optional;
 
 import static com.salon.booking.utility.PageUtility.getViewPathByName;
-import static com.salon.booking.utility.ParseUtility.parseLocalDateOrDefault;
 
 public class SelectTimeslotCommand implements GetAndPostCommand {
 
-    private static final String REDIRECT_AFTER_SUBMIT = "/app/client/order-service";
-    private static final Period DEFAULT_TIMETABLE_PERIOD = Period.ofDays(14);
+    private static final String REDIRECT_AFTER_SUBMIT = "/app/client/create-order";
 
     private final TimeslotService timeslotService;
 
@@ -29,18 +26,18 @@ public class SelectTimeslotCommand implements GetAndPostCommand {
 
     @Override
     public void processGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        LocalDate from = parseLocalDateOrDefault(
-                request.getParameter("from_date"),
-                LocalDate.now());
+        Optional<Integer> serviceId = RequestUtility.getIntSessionAttribute("serviceId", request);
+        Optional<Integer> workerId = RequestUtility.getIntSessionAttribute("workerId", request);
 
-        LocalDate toDefault = from.plus(DEFAULT_TIMETABLE_PERIOD);
-        LocalDate to = parseLocalDateOrDefault(
-                request.getParameter("to_date"),
-                toDefault);
+        if (!serviceId.isPresent() || !workerId.isPresent()) {
+            response.sendRedirect("/app/client/order-service");
+            return;
+        }
 
-        List<Timetable> timetables = timeslotService.findAllBetween(from, to);
+        List<Timetable> timetables = timeslotService.findTimetablesForServiceWithWorker(serviceId.get(), workerId.get());
         request.setAttribute("timetables", timetables);
-        forward(getViewPathByName("client-timetables"), request, response);
+
+        forward(getViewPathByName("client/timetables"), request, response);
     }
 
     @Override

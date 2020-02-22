@@ -5,29 +5,18 @@ import java.util.Objects;
 
 public class Order {
 
+    private final Integer id;
     private final LocalDateTime date;
     private final User worker;
     private final User client;
     private final Service service;
 
     private Order(Builder builder) {
+        id = builder.id;
         date = builder.date;
         worker = builder.worker;
         client = builder.client;
         service = builder.service;
-    }
-
-    public static Builder builder() {
-        return new Builder();
-    }
-
-    public static Builder builder(Order copy) {
-        Builder builder = new Builder();
-        builder.date = copy.getDate();
-        builder.worker = copy.getWorker();
-        builder.client = copy.getClient();
-        builder.service = copy.getService();
-        return builder;
     }
 
     public LocalDateTime getDate() {
@@ -44,6 +33,10 @@ public class Order {
 
     public Service getService() {
         return service;
+    }
+
+    public Integer getId() {
+        return id;
     }
 
     @Override
@@ -72,11 +65,26 @@ public class Order {
         return Objects.hash(date, worker, client, service);
     }
 
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    public static Builder builder(Order copy) {
+        Builder builder = new Builder();
+        builder.id = copy.getId();
+        builder.date = copy.getDate();
+        builder.worker = copy.getWorker();
+        builder.client = copy.getClient();
+        builder.service = copy.getService();
+        return builder;
+    }
+
     public static final class Builder {
         private LocalDateTime date;
         private User worker;
         private User client;
         private Service service;
+        private Integer id;
 
         private Builder() {
         }
@@ -103,6 +111,11 @@ public class Order {
 
         public Order build() {
             return new Order(this);
+        }
+
+        public Builder setId(Integer id) {
+            this.id = id;
+            return this;
         }
     }
 }

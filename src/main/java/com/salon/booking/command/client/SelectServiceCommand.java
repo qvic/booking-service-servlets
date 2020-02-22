@@ -24,17 +24,23 @@ public class SelectServiceCommand implements GetAndPostCommand {
 
     @Override
     public void processGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        Integer timeslotId = (Integer) request.getSession().getAttribute("timeslotId");
-        List<Service> services = orderService.findAvailableServices(timeslotId);
+        List<Service> services = orderService.findAllServices();
         request.setAttribute("services", services);
-        forward(getViewPathByName("services"), request, response);
+
+        forward(getViewPathByName("client/services"), request, response);
     }
 
     @Override
     public void processPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         int serviceId = RequestUtility.getRequiredIntParameter("service-id", request);
         request.getSession().setAttribute("serviceId", serviceId);
+        clearCart(request);
 
         response.sendRedirect(REDIRECT_AFTER_SUBMIT);
+    }
+
+    private void clearCart(HttpServletRequest request) {
+        RequestUtility.removeSessionAttribute("timeslotId", request);
+        RequestUtility.removeSessionAttribute("workerId", request);
     }
 }

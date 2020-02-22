@@ -68,6 +68,7 @@ import com.salon.booking.service.impl.UserServiceImpl;
 import com.salon.booking.service.validator.EmailValidator;
 import com.salon.booking.dao.impl.UserDaoImpl;
 import com.salon.booking.service.AuthService;
+import com.salon.booking.service.validator.FeedbackTextValidator;
 import com.salon.booking.service.validator.PasswordValidator;
 import com.salon.booking.service.validator.UserLoginFormValidator;
 import com.salon.booking.service.validator.UserValidator;
@@ -88,6 +89,7 @@ public final class ApplicationInjector {
     private static final PasswordEncoder PASSWORD_ENCRYPTOR = new PasswordEncoder();
     private static final Validator<String> PASSWORD_VALIDATOR = new PasswordValidator();
     private static final Validator<String> EMAIL_VALIDATOR = new EmailValidator();
+    private static final Validator<String> FEEDBACK_TEXT_VALIDATOR = new FeedbackTextValidator();
     private static final Validator<User> USER_VALIDATOR = new UserValidator(EMAIL_VALIDATOR, PASSWORD_VALIDATOR);
     private static final Validator<UserLoginForm> USER_LOGIN_FORM_VALIDATOR = new UserLoginFormValidator(EMAIL_VALIDATOR);
 
@@ -116,8 +118,8 @@ public final class ApplicationInjector {
     private static final OrderService ORDER_SERVICE = new OrderServiceImpl(TIMESLOT_SERVICE, ORDER_DAO, SERVICE_DAO,
             USER_DAO, ORDER_MAPPER, SERVICE_MAPPER, TRANSACTION_MANAGER);
 
-    private static final FeedbackService FEEDBACK_SERVICE = new FeedbackServiceImpl(FEEDBACK_DAO, FEEDBACK_MAPPER,
-            FEEDBACK_STATUS_MAPPER);
+    private static final FeedbackService FEEDBACK_SERVICE = new FeedbackServiceImpl(FEEDBACK_DAO, ORDER_SERVICE, FEEDBACK_MAPPER,
+            FEEDBACK_STATUS_MAPPER, FEEDBACK_TEXT_VALIDATOR);
 
     private static final Map<String, Command> ROUTE_TO_COMMAND = initializeCommands();
 
@@ -142,7 +144,7 @@ public final class ApplicationInjector {
         commands.put("/app/client/create-order", new CreateOrderCommand(ORDER_SERVICE));
         commands.put("/app/client/orders", new ShowOrdersCommand(ORDER_SERVICE));
         commands.put("/app/client/feedback", new ShowClientFeedbackByPagesCommand(FEEDBACK_SERVICE));
-        commands.put("/app/client/leave-feedback", new LeaveFeedbackCommand(FEEDBACK_SERVICE));
+        commands.put("/app/client/leave-feedback", new LeaveFeedbackCommand(FEEDBACK_SERVICE, ORDER_SERVICE));
 
         commands.put("/app/worker/timetable", new ShowWorkerTimetableCommand(TIMESLOT_SERVICE));
         commands.put("/app/worker/feedback", new ShowWorkerFeedbackByPagesCommand());

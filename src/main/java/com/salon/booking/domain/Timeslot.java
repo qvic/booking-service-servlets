@@ -3,6 +3,8 @@ package com.salon.booking.domain;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 public class Timeslot {
@@ -11,28 +13,24 @@ public class Timeslot {
     private final LocalTime fromTime;
     private final Duration duration;
     private final LocalDate date;
-    private final Order order;
+    private final List<Order> orders;
+    private final Boolean available;
 
     private Timeslot(Builder builder) {
         id = builder.id;
         fromTime = builder.fromTime;
         duration = builder.duration;
         date = builder.date;
-        order = builder.order;
+        orders = builder.orders;
+        available = builder.available;
     }
 
-    public static Builder builder() {
-        return new Builder();
+    public Boolean getAvailable() {
+        return available;
     }
 
-    public static Builder builder(Timeslot copy) {
-        Builder builder = new Builder();
-        builder.id = copy.getId();
-        builder.fromTime = copy.getFromTime();
-        builder.duration = copy.getDuration();
-        builder.date = copy.getDate();
-        builder.order = copy.getOrder();
-        return builder;
+    public List<Order> getOrders() {
+        return orders;
     }
 
     public LocalTime getFromTime() {
@@ -47,10 +45,6 @@ public class Timeslot {
         return date;
     }
 
-    public Order getOrder() {
-        return order;
-    }
-
     public Integer getId() {
         return id;
     }
@@ -62,37 +56,52 @@ public class Timeslot {
                 ", fromTime=" + fromTime +
                 ", duration=" + duration +
                 ", date=" + date +
-                ", order=" + order +
+                ", orders=" + orders +
+                ", available=" + available +
                 '}';
     }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
         Timeslot timeslot = (Timeslot) o;
         return Objects.equals(id, timeslot.id) &&
                 Objects.equals(fromTime, timeslot.fromTime) &&
                 Objects.equals(duration, timeslot.duration) &&
                 Objects.equals(date, timeslot.date) &&
-                Objects.equals(order, timeslot.order);
+                Objects.equals(orders, timeslot.orders) &&
+                Objects.equals(available, timeslot.available);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, fromTime, duration, date, order);
+        return Objects.hash(id, fromTime, duration, date, orders, available);
     }
+
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    public static Builder builder(Timeslot copy) {
+        Builder builder = new Builder();
+        builder.id = copy.getId();
+        builder.fromTime = copy.getFromTime();
+        builder.duration = copy.getDuration();
+        builder.date = copy.getDate();
+        builder.orders = copy.getOrders();
+        builder.available = copy.getAvailable();
+        return builder;
+    }
+
 
     public static final class Builder {
         private Integer id;
         private LocalTime fromTime;
         private Duration duration;
         private LocalDate date;
-        private Order order;
+        private List<Order> orders = new ArrayList<>();
+        private Boolean available;
 
         private Builder() {
         }
@@ -117,8 +126,13 @@ public class Timeslot {
             return this;
         }
 
-        public Builder setOrder(Order order) {
-            this.order = order;
+        public Builder setOrders(List<Order> orders) {
+            this.orders = orders;
+            return this;
+        }
+
+        public Builder setAvailable(Boolean available) {
+            this.available = available;
             return this;
         }
 

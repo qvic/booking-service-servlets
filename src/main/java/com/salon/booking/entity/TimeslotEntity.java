@@ -2,6 +2,8 @@ package com.salon.booking.entity;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 public class TimeslotEntity {
@@ -9,7 +11,7 @@ public class TimeslotEntity {
     private final Integer id;
     private final LocalDate date;
     private final LocalTime fromTime;
-    private final OrderEntity order;
+    private final List<OrderEntity> orders;
     private final DurationEntity duration;
 
     private TimeslotEntity(Builder builder) {
@@ -17,7 +19,7 @@ public class TimeslotEntity {
         date = builder.date;
         fromTime = builder.fromTime;
         duration = builder.duration;
-        order = builder.order;
+        orders = builder.orders;
     }
 
     public Integer getId() {
@@ -36,8 +38,8 @@ public class TimeslotEntity {
         return duration;
     }
 
-    public OrderEntity getOrder() {
-        return order;
+    public List<OrderEntity> getOrders() {
+        return orders;
     }
 
     @Override
@@ -47,28 +49,25 @@ public class TimeslotEntity {
                 ", date=" + date +
                 ", fromTime=" + fromTime +
                 ", duration=" + duration +
-                ", order=" + order +
+                ", orders=" + orders +
                 '}';
     }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        TimeslotEntity timeslot = (TimeslotEntity) o;
-        return Objects.equals(id, timeslot.id) &&
-                Objects.equals(date, timeslot.date) &&
-                Objects.equals(fromTime, timeslot.fromTime) &&
-                Objects.equals(duration, timeslot.duration);
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        TimeslotEntity that = (TimeslotEntity) o;
+        return Objects.equals(id, that.id) &&
+                Objects.equals(date, that.date) &&
+                Objects.equals(fromTime, that.fromTime) &&
+                Objects.equals(orders, that.orders) &&
+                Objects.equals(duration, that.duration);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, date, fromTime, duration);
+        return Objects.hash(id, date, fromTime, orders, duration);
     }
 
     public static Builder builder() {
@@ -81,7 +80,7 @@ public class TimeslotEntity {
         builder.date = copy.getDate();
         builder.fromTime = copy.getFromTime();
         builder.duration = copy.getDuration();
-        builder.order = copy.getOrder();
+        builder.orders = copy.getOrders();
         return builder;
     }
 
@@ -91,9 +90,19 @@ public class TimeslotEntity {
         private LocalDate date;
         private LocalTime fromTime;
         private DurationEntity duration;
-        private OrderEntity order;
+        private List<OrderEntity> orders = new ArrayList<>();
 
         private Builder() {
+        }
+
+        public Builder setOrders(List<OrderEntity> orders) {
+            this.orders = orders;
+            return this;
+        }
+
+        public Builder addOrder(OrderEntity orderEntity) {
+            this.orders.add(orderEntity);
+            return this;
         }
 
         public Builder setId(Integer id) {
@@ -113,11 +122,6 @@ public class TimeslotEntity {
 
         public Builder setDuration(DurationEntity duration) {
             this.duration = duration;
-            return this;
-        }
-
-        public Builder setOrder(OrderEntity order) {
-            this.order = order;
             return this;
         }
 

@@ -4,7 +4,6 @@ import java.util.Objects;
 
 public class FeedbackEntity {
 
-    // todo maybe add date
     private final Integer id;
     private final String text;
     private final FeedbackStatusEntity status;
@@ -48,10 +47,11 @@ public class FeedbackEntity {
 
     @Override
     public String toString() {
-        return "Feedback{" +
+        return "FeedbackEntity{" +
                 "id=" + id +
                 ", text='" + text + '\'' +
                 ", status=" + status +
+                ", worker=" + worker +
                 '}';
     }
 

@@ -16,9 +16,9 @@ import java.sql.SQLException;
 
 public class FeedbackDaoImpl extends AbstractPageableCrudDaoImpl<FeedbackEntity> implements FeedbackDao {
 
-    private static final String FIND_BY_ID_QUERY = "SELECT f.* FROM feedback f WHERE f.id = ?";
-    private static final String FIND_ALL_QUERY = "SELECT f.* FROM feedback f";
-    private static final String FIND_ALL_PAGED_QUERY = "SELECT f.* FROM feedback f OFFSET ? LIMIT ?";
+    private static final String FIND_BY_ID_QUERY = "SELECT f.*, u.name AS worker_name FROM feedback f INNER JOIN \"user\" u ON f.worker_id = u.id WHERE f.id = ?";
+    private static final String FIND_ALL_QUERY = "SELECT f.*, u.name AS worker_name FROM feedback f INNER JOIN \"user\" u ON f.worker_id = u.id";
+    private static final String FIND_ALL_PAGED_QUERY = "SELECT f.*, u.name AS worker_name FROM feedback f INNER JOIN \"user\" u ON f.worker_id = u.id OFFSET ? LIMIT ?";
     private static final String FIND_ALL_BY_WORKER_QUERY = "SELECT f.*, u.name AS worker_name FROM feedback f INNER JOIN \"user\" u ON f.worker_id = u.id WHERE f.worker_id = ? OFFSET ? LIMIT ?";
     private static final String FIND_ALL_BY_STATUS_QUERY = "SELECT f.*, u.name AS worker_name FROM feedback f INNER JOIN \"user\" u ON f.worker_id = u.id WHERE f.status = ? OFFSET ? LIMIT ?";
     private static final String COUNT_QUERY = "SELECT count(*) FROM feedback f";
