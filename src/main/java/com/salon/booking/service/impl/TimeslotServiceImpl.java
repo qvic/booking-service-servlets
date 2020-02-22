@@ -15,6 +15,8 @@ import com.salon.booking.entity.UserEntity;
 import com.salon.booking.mapper.Mapper;
 import com.salon.booking.service.TimeslotService;
 import com.salon.booking.utility.StreamUtility;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.time.Duration;
 import java.time.LocalDate;
@@ -24,12 +26,15 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.OptionalInt;
 import java.util.stream.Collectors;
 
 import static com.salon.booking.utility.ListUtility.getIndexOfFirstMatch;
 
 public class TimeslotServiceImpl implements TimeslotService {
+
+    private static final Logger LOGGER = LogManager.getLogger(TimeslotServiceImpl.class);
 
     private static final Period DEFAULT_TIMETABLE_PERIOD = Period.ofDays(14);
 
@@ -51,11 +56,11 @@ public class TimeslotServiceImpl implements TimeslotService {
     /**
      * @param serviceId selected service id
      * @param workerId  selected worker id
-     * @return timetables for defined as DEFAULT_TIMETABLE_PERIOD period of days with timeslots
-     * where order with such service id and worker id can be placed
+     * @return timetables for defined as DEFAULT_TIMETABLE_PERIOD period of days
+     * with timeslots where order with such service id and worker id can be placed
      */
     @Override
-    public List<Timetable> findTimetablesForServiceWithWorker(Integer serviceId, Integer workerId) {
+    public List<Timetable> findTimetablesForOrderWith(Integer serviceId, Integer workerId) {
         LocalDate from = LocalDate.now();
         LocalDate to = from.plus(DEFAULT_TIMETABLE_PERIOD);
         List<Timetable> timetablesBetween = findAllBetween(from, to);
@@ -65,7 +70,7 @@ public class TimeslotServiceImpl implements TimeslotService {
                 .build();
 
         User worker = User.builder()
-                .setId(serviceId)
+                .setId(workerId)
                 .build();
 
         List<Timetable> viewTimetables = new ArrayList<>();
@@ -74,8 +79,7 @@ public class TimeslotServiceImpl implements TimeslotService {
             List<Timeslot> viewTimeslots = new ArrayList<>();
             for (Timeslot timeslot : timetable.getRows()) {
 
-                List<Timeslot> freeTimeslots = findTimeslotsForOrder(timeslot.getId(), service, worker);
-
+                List<Timeslot> freeTimeslots = findFirstAcceptableTimeslotsForOrder(timeslot.getId(), timetable.getRows(), service, worker);
                 if (!freeTimeslots.isEmpty()) {
                     Timeslot viewTimeslot = Timeslot.builder(timeslot)
                             .setDuration(getTotalDuration(freeTimeslots))
@@ -176,18 +180,19 @@ public class TimeslotServiceImpl implements TimeslotService {
      * @return list of timeslots where order can be placed
      */
     @Override
-    public List<Timeslot> findTimeslotsForOrder(Integer selectedTimeslotId,
-                                                Service service, User worker) {
+    public List<Timeslot> findTimeslotsForOrderWith(Integer selectedTimeslotId,
+                                                    Service service, User worker) {
 
-        List<TimeslotEntity> timeslots = timeslotDao.findSameDayTimeslotsSorted(selectedTimeslotId);
+        List<Timeslot> timeslots = getSameDayTimeslots(selectedTimeslotId);
+        return findFirstAcceptableTimeslotsForOrder(selectedTimeslotId, timeslots, service, worker);
+    }
 
-        OptionalInt startingTimeslotIndex = getIndexOfFirstMatch(timeslots, t -> t.getId().equals(selectedTimeslotId));
-
+    private List<Timeslot> findFirstAcceptableTimeslotsForOrder(Integer timeslotId, List<Timeslot> timeslots, Service service, User worker) {
+        OptionalInt startingTimeslotIndex = getIndexOfFirstMatch(timeslots, t -> t.getId().equals(timeslotId));
         if (!startingTimeslotIndex.isPresent()) {
             return Collections.emptyList();
         }
-
-        List<TimeslotEntity> timeslotsAfterStartingId = timeslots.subList(startingTimeslotIndex.getAsInt(), timeslots.size());
+        List<Timeslot> timeslotsAfterSelectedId = timeslots.subList(startingTimeslotIndex.getAsInt(), timeslots.size());
 
         Duration serviceDuration = getServiceDuration(service);
         Duration currentFreeDuration = Duration.ZERO;
@@ -195,15 +200,18 @@ public class TimeslotServiceImpl implements TimeslotService {
         List<Timeslot> freeTimeslots = new ArrayList<>();
         Timeslot previousTimeslot = null;
 
-        for (TimeslotEntity timeslotEntity : timeslotsAfterStartingId) {
-            Timeslot timeslot = timeslotMapper.mapEntityToDomain(timeslotEntity);
+        for (Timeslot timeslot : timeslotsAfterSelectedId) {
 
             boolean isValidTimeslot = isConsecutiveTimeslot(previousTimeslot, timeslot) &&
                     areServiceAndWorkerAvailable(timeslot, service.getId(), worker.getId());
 
-            if (currentFreeDuration.compareTo(serviceDuration) < 0 && isValidTimeslot) {
-                freeTimeslots.add(timeslot);
-                currentFreeDuration = currentFreeDuration.plus(timeslot.getDuration());
+            if (currentFreeDuration.compareTo(serviceDuration) < 0) {
+                if (isValidTimeslot) {
+                    freeTimeslots.add(timeslot);
+                    currentFreeDuration = currentFreeDuration.plus(timeslot.getDuration());
+                } else {
+                    return Collections.emptyList();
+                }
             } else {
                 break;
             }
@@ -218,32 +226,10 @@ public class TimeslotServiceImpl implements TimeslotService {
         return freeTimeslots;
     }
 
-    private List<Timeslot> findFirstAcceptableTimeslotsForOrder(List<Timeslot> timeslots, Service service, User worker) {
-        Duration serviceDuration = getServiceDuration(service);
-        Duration currentFreeDuration = Duration.ZERO;
-
-        List<Timeslot> freeTimeslots = new ArrayList<>();
-        Timeslot previousTimeslot = null;
-
-        for (Timeslot timeslot : timeslots) {
-            boolean isValidTimeslot = isConsecutiveTimeslot(previousTimeslot, timeslot) &&
-                    areServiceAndWorkerAvailable(timeslot, service.getId(), worker.getId());
-
-            if (currentFreeDuration.compareTo(serviceDuration) < 0 && isValidTimeslot) {
-                freeTimeslots.add(timeslot);
-                currentFreeDuration = currentFreeDuration.plus(timeslot.getDuration());
-            } else {
-                break;
-            }
-
-            previousTimeslot = timeslot;
-        }
-
-        if (currentFreeDuration.compareTo(serviceDuration) < 0) {
-            return Collections.emptyList();
-        }
-
-        return freeTimeslots;
+    private List<Timeslot> getSameDayTimeslots(Integer timeslotId) {
+        return timeslotDao.findSameDayTimeslotsSorted(timeslotId).stream()
+                .map(timeslotMapper::mapEntityToDomain)
+                .collect(Collectors.toList());
     }
 
     private Duration getServiceDuration(Service service) {
@@ -273,5 +259,11 @@ public class TimeslotServiceImpl implements TimeslotService {
     @Override
     public void saveOrderTimeslot(Integer timeslotId, Integer orderId) {
         timeslotDao.saveOrderTimeslot(timeslotId, orderId);
+    }
+
+    @Override
+    public Optional<Timeslot> findById(Integer id) {
+        return timeslotDao.findById(id)
+                .map(timeslotMapper::mapEntityToDomain);
     }
 }

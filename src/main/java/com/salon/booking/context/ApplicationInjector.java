@@ -141,7 +141,7 @@ public final class ApplicationInjector {
         commands.put("/app/client/order-timeslot", new SelectTimeslotCommand(TIMESLOT_SERVICE));
         commands.put("/app/client/order-service", new SelectServiceCommand(ORDER_SERVICE));
         commands.put("/app/client/order-worker", new SelectWorkerCommand(USER_SERVICE));
-        commands.put("/app/client/create-order", new CreateOrderCommand(ORDER_SERVICE));
+        commands.put("/app/client/create-order", new CreateOrderCommand(ORDER_SERVICE, TIMESLOT_SERVICE, USER_SERVICE));
         commands.put("/app/client/orders", new ShowOrdersCommand(ORDER_SERVICE));
         commands.put("/app/client/feedback", new ShowClientFeedbackByPagesCommand(FEEDBACK_SERVICE));
         commands.put("/app/client/leave-feedback", new LeaveFeedbackCommand(FEEDBACK_SERVICE, ORDER_SERVICE));

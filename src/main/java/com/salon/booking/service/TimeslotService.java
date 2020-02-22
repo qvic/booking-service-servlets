@@ -7,14 +7,17 @@ import com.salon.booking.domain.User;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 public interface TimeslotService {
 
     List<Timetable> findAllBetween(LocalDate fromInclusive, LocalDate toExclusive);
 
-    List<Timetable> findTimetablesForServiceWithWorker(Integer serviceId, Integer workerId);
+    List<Timetable> findTimetablesForOrderWith(Integer serviceId, Integer workerId);
 
-    List<Timeslot> findTimeslotsForOrder(Integer selectedTimeslotId, Service service, User worker);
+    List<Timeslot> findTimeslotsForOrderWith(Integer selectedTimeslotId, Service service, User worker);
 
     void saveOrderTimeslot(Integer timeslotId, Integer orderId);
+
+    Optional<Timeslot> findById(Integer id);
 }

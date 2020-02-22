@@ -34,7 +34,7 @@ public class SelectTimeslotCommand implements GetAndPostCommand {
             return;
         }
 
-        List<Timetable> timetables = timeslotService.findTimetablesForServiceWithWorker(serviceId.get(), workerId.get());
+        List<Timetable> timetables = timeslotService.findTimetablesForOrderWith(serviceId.get(), workerId.get());
         request.setAttribute("timetables", timetables);
 
         forward(getViewPathByName("client/timetables"), request, response);

@@ -3,8 +3,11 @@ package com.salon.booking.command.client;
 import com.salon.booking.command.GetAndPostCommand;
 import com.salon.booking.domain.Order;
 import com.salon.booking.domain.Service;
+import com.salon.booking.domain.Timeslot;
 import com.salon.booking.domain.User;
 import com.salon.booking.service.OrderService;
+import com.salon.booking.service.TimeslotService;
+import com.salon.booking.service.UserService;
 import com.salon.booking.utility.RequestUtility;
 
 import javax.servlet.ServletException;
@@ -15,28 +18,49 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 
 import static com.salon.booking.utility.PageUtility.getViewPathByName;
+import static com.salon.booking.utility.RequestUtility.*;
 
 public class CreateOrderCommand implements GetAndPostCommand {
 
     private static final String REDIRECT_AFTER_SUBMIT = "/app/client/orders";
 
     private final OrderService orderService;
+    private final TimeslotService timeslotService;
+    private final UserService userService;
 
-    public CreateOrderCommand(OrderService orderService) {
+    public CreateOrderCommand(OrderService orderService, TimeslotService timeslotService, UserService userService) {
         this.orderService = orderService;
+        this.timeslotService = timeslotService;
+        this.userService = userService;
     }
 
     @Override
     public void processGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        setOrderAttributes(request);
+
         forward(getViewPathByName("client/create-order"),
                 request, response);
     }
 
+    private void setOrderAttributes(HttpServletRequest request) {
+        getIntSessionAttribute("timeslotId", request)
+                .flatMap(timeslotService::findById)
+                .ifPresent(timeslot -> request.setAttribute("timeslot", timeslot));
+
+        getIntSessionAttribute("serviceId", request)
+                .flatMap(orderService::findServiceById)
+                .ifPresent(service -> request.setAttribute("service", service));
+
+        getIntSessionAttribute("workerId", request)
+                .flatMap(userService::findById)
+                .ifPresent(worker -> request.setAttribute("worker", worker));
+    }
+
     @Override
     public void processPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        Optional<Integer> timeslotId = RequestUtility.getIntSessionAttribute("timeslotId", request);
-        Optional<Integer> serviceId = RequestUtility.getIntSessionAttribute("serviceId", request);
-        Optional<Integer> workerId = RequestUtility.getIntSessionAttribute("workerId", request);
+        Optional<Integer> timeslotId = getIntSessionAttribute("timeslotId", request);
+        Optional<Integer> serviceId = getIntSessionAttribute("serviceId", request);
+        Optional<Integer> workerId = getIntSessionAttribute("workerId", request);
 
         if (!timeslotId.isPresent() || !serviceId.isPresent() || !workerId.isPresent()) {
             forwardWithMessage(getViewPathByName("client/create-order"), "message.select_all_parameters",

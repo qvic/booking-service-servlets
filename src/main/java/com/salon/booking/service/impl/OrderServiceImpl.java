@@ -20,6 +20,7 @@ import org.apache.logging.log4j.Logger;
 import java.time.LocalDateTime;
 import java.time.Period;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class OrderServiceImpl implements OrderService {
@@ -87,7 +88,7 @@ public class OrderServiceImpl implements OrderService {
 
             OrderEntity savedOrder = orderDao.save(orderEntity);
 
-            List<Timeslot> freeTimeslots = timeslotService.findTimeslotsForOrder(
+            List<Timeslot> freeTimeslots = timeslotService.findTimeslotsForOrderWith(
                     selectedTimeslotId, order.getService(), order.getWorker());
 
             assignOrderToTimeslots(freeTimeslots, savedOrder.getId());
@@ -112,6 +113,12 @@ public class OrderServiceImpl implements OrderService {
                 .map(serviceMapper::mapEntityToDomain)
                 .map(service -> Service.builder(service).setAvailable(true).build())
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public Optional<Service> findServiceById(Integer id) {
+        return serviceDao.findById(id)
+                .map(serviceMapper::mapEntityToDomain);
     }
 
     private void assignOrderToTimeslots(List<Timeslot> timeslots, Integer orderId) {

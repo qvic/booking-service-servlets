@@ -16,6 +16,8 @@ import com.salon.booking.service.exception.ValidationException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.Optional;
+
 public class UserServiceImpl implements UserService {
 
     private static final Logger LOGGER = LogManager.getLogger(UserServiceImpl.class);
@@ -75,5 +77,11 @@ public class UserServiceImpl implements UserService {
             LOGGER.error(e);
             transactionManager.rollbackTransaction();
         }
+    }
+
+    @Override
+    public Optional<User> findById(Integer id) {
+        return userDao.findById(id)
+                .map(userMapper::mapEntityToDomain);
     }
 }

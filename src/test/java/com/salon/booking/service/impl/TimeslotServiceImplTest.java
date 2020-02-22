@@ -131,7 +131,7 @@ public class TimeslotServiceImplTest {
                 .setId(1)
                 .build();
 
-        List<Timeslot> consecutiveFreeTimeslots = timeslotService.findTimeslotsForOrder(
+        List<Timeslot> consecutiveFreeTimeslots = timeslotService.findTimeslotsForOrderWith(
                 122, service, worker);
 
         assertThat(consecutiveFreeTimeslots, equalTo(Collections.emptyList()));
@@ -162,7 +162,7 @@ public class TimeslotServiceImplTest {
                 .setId(2)
                 .build();
 
-        List<Timeslot> consecutiveFreeTimeslots = timeslotService.findTimeslotsForOrder(
+        List<Timeslot> consecutiveFreeTimeslots = timeslotService.findTimeslotsForOrderWith(
                 122, service, worker);
 
         assertThat(consecutiveFreeTimeslots, equalTo(Collections.emptyList()));
@@ -195,7 +195,7 @@ public class TimeslotServiceImplTest {
                 .setId(3)
                 .build();
 
-        List<Timeslot> consecutiveFreeTimeslots = timeslotService.findTimeslotsForOrder(
+        List<Timeslot> consecutiveFreeTimeslots = timeslotService.findTimeslotsForOrderWith(
                 122, service, worker);
 
         List<Integer> timeslotIds = consecutiveFreeTimeslots.stream()
@@ -231,7 +231,7 @@ public class TimeslotServiceImplTest {
                 .setId(3)
                 .build();
 
-        List<Timeslot> consecutiveFreeTimeslots = timeslotService.findTimeslotsForOrder(
+        List<Timeslot> consecutiveFreeTimeslots = timeslotService.findTimeslotsForOrderWith(
                 122, service, worker);
 
         List<Integer> timeslotIds = consecutiveFreeTimeslots.stream()
@@ -267,7 +267,7 @@ public class TimeslotServiceImplTest {
                 .setId(3)
                 .build();
 
-        List<Timeslot> consecutiveFreeTimeslots = timeslotService.findTimeslotsForOrder(
+        List<Timeslot> consecutiveFreeTimeslots = timeslotService.findTimeslotsForOrderWith(
                 122, service, worker);
 
         List<Integer> timeslotIds = consecutiveFreeTimeslots.stream()
@@ -303,7 +303,7 @@ public class TimeslotServiceImplTest {
                 .setId(1)
                 .build();
 
-        List<Timeslot> consecutiveFreeTimeslots = timeslotService.findTimeslotsForOrder(
+        List<Timeslot> consecutiveFreeTimeslots = timeslotService.findTimeslotsForOrderWith(
                 125, service, user);
 
         assertThat(consecutiveFreeTimeslots, equalTo(Collections.emptyList()));

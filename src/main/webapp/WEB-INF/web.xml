@@ -77,4 +77,9 @@
         <exception-type>com.salon.booking.command.exception.HttpForbiddenException</exception-type>
         <location>/WEB-INF/views/errors/403.jsp</location>
     </error-page>
+
+    <error-page>
+        <exception-type>com.salon.booking.command.exception.InvalidRequestParameterException</exception-type>
+        <location>/WEB-INF/views/errors/400.jsp</location>
+    </error-page>
 </web-app>

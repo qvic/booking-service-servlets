@@ -8,7 +8,7 @@
             <c:forEach items="${requestScope.services}" var="item">
                 <c:choose>
                     <c:when test="${item.available}">
-                        <input name="service-id" class="d-none" type="radio"
+                        <input name="service-id" class="d-none" type="radio" required
                                id="service-<c:out value="${item.id}"/>"
                                value="<c:out value="${item.id}"/>">
 

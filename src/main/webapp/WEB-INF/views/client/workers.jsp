@@ -6,7 +6,7 @@
     <form method="post">
         <div class="list-group">
             <c:forEach items="${requestScope.page.items}" var="item">
-                <input name="worker-id" class="d-none" type="radio"
+                <input name="worker-id" class="d-none" type="radio" required
                        id="worker-<c:out value="${item.id}"/>"
                        value="<c:out value="${item.id}"/>">
 
