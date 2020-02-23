@@ -4,6 +4,8 @@ import com.salon.booking.dao.ReadOnlyDao;
 import com.salon.booking.dao.exception.DatabaseRuntimeException;
 import com.salon.booking.dao.impl.connector.DataSourceConnection;
 import com.salon.booking.dao.impl.connector.DataSourceConnector;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.sql.Date;
 import java.sql.PreparedStatement;
@@ -18,22 +20,24 @@ import java.util.Optional;
 
 abstract class AbstractReadOnlyDaoImpl<E> implements ReadOnlyDao<E> {
 
-    protected static final StatementParameterSetter<String> STRING_SETTER =
+    private static final Logger LOGGER = LogManager.getLogger(AbstractReadOnlyDaoImpl.class);
+
+    static final StatementParameterSetter<String> STRING_SETTER =
             (statement, param, position) -> statement.setString(position, param);
 
-    protected static final StatementParameterSetter<Integer> INT_SETTER =
+    static final StatementParameterSetter<Integer> INT_SETTER =
             (statement, param, position) -> statement.setInt(position, param);
 
-    protected static final StatementParameterSetter<LocalDate> LOCAL_DATE_SETTER =
+    static final StatementParameterSetter<LocalDate> LOCAL_DATE_SETTER =
             (statement, param, position) -> statement.setDate(position, Date.valueOf(param));
 
-    protected static final StatementParameterSetter<LocalDateTime> LOCAL_DATE_TIME_SETTER =
+    static final StatementParameterSetter<LocalDateTime> LOCAL_DATE_TIME_SETTER =
             (statement, param, position) -> statement.setTimestamp(position, Timestamp.valueOf(param));
 
     protected final DataSourceConnector connector;
     private final ReadQuerySet queries;
 
-    public AbstractReadOnlyDaoImpl(DataSourceConnector connector, ReadQuerySet queries) {
+    AbstractReadOnlyDaoImpl(DataSourceConnector connector, ReadQuerySet queries) {
         this.connector = connector;
         this.queries = queries;
     }
@@ -50,6 +54,7 @@ abstract class AbstractReadOnlyDaoImpl<E> implements ReadOnlyDao<E> {
 
             return getResultList(statement);
         } catch (SQLException e) {
+            LOGGER.error(e);
             throw new DatabaseRuntimeException("Error performing findAll", e);
         }
     }
@@ -62,11 +67,12 @@ abstract class AbstractReadOnlyDaoImpl<E> implements ReadOnlyDao<E> {
             return getResultLong(preparedStatement)
                     .orElseThrow(() -> new DatabaseRuntimeException("Error performing count, no results found"));
         } catch (SQLException e) {
+            LOGGER.error(e);
             throw new DatabaseRuntimeException("Error performing count", e);
         }
     }
 
-    protected <P> long countByParam(P parameter, String countByParamQuery, StatementParameterSetter<P> paramSetter) {
+    <P> long countByParam(P parameter, String countByParamQuery, StatementParameterSetter<P> paramSetter) {
         try (DataSourceConnection connection = connector.getConnection();
              PreparedStatement preparedStatement = connection.getOriginal().prepareStatement(countByParamQuery)) {
 
@@ -75,11 +81,12 @@ abstract class AbstractReadOnlyDaoImpl<E> implements ReadOnlyDao<E> {
             return getResultLong(preparedStatement)
                     .orElseThrow(() -> new DatabaseRuntimeException("Error performing count, no results found"));
         } catch (SQLException e) {
+            LOGGER.error(e);
             throw new DatabaseRuntimeException("Error performing count", e);
         }
     }
 
-    protected <P> Optional<E> findByParam(P parameter, String findByParamQuery, StatementParameterSetter<P> paramSetter) {
+    <P> Optional<E> findByParam(P parameter, String findByParamQuery, StatementParameterSetter<P> paramSetter) {
         try (DataSourceConnection connection = connector.getConnection();
              PreparedStatement statement = connection.getOriginal().prepareStatement(findByParamQuery)) {
 
@@ -87,11 +94,12 @@ abstract class AbstractReadOnlyDaoImpl<E> implements ReadOnlyDao<E> {
 
             return getResultOptional(statement);
         } catch (SQLException e) {
+            LOGGER.error(e);
             throw new DatabaseRuntimeException("Error performing findByParam", e);
         }
     }
 
-    protected <P> List<E> findAllByParam(P parameter, String findAllByParamQuery, StatementParameterSetter<P> paramSetter) {
+    <P> List<E> findAllByParam(P parameter, String findAllByParamQuery, StatementParameterSetter<P> paramSetter) {
         try (DataSourceConnection connection = connector.getConnection();
              PreparedStatement statement = connection.getOriginal().prepareStatement(findAllByParamQuery)) {
 
@@ -99,11 +107,12 @@ abstract class AbstractReadOnlyDaoImpl<E> implements ReadOnlyDao<E> {
 
             return getResultList(statement);
         } catch (SQLException e) {
+            LOGGER.error(e);
             throw new DatabaseRuntimeException("Error performing findAllByParam", e);
         }
     }
 
-    protected <P> List<E> findAllByTwoParams(P parameterA, P parameterB, String findAllByParamQuery, StatementParameterSetter<P> paramSetter) {
+    <P> List<E> findAllByTwoParams(P parameterA, P parameterB, String findAllByParamQuery, StatementParameterSetter<P> paramSetter) {
         try (DataSourceConnection connection = connector.getConnection();
              PreparedStatement statement = connection.getOriginal().prepareStatement(findAllByParamQuery)) {
 
@@ -112,11 +121,12 @@ abstract class AbstractReadOnlyDaoImpl<E> implements ReadOnlyDao<E> {
 
             return getResultList(statement);
         } catch (SQLException e) {
+            LOGGER.error(e);
             throw new DatabaseRuntimeException("Error performing findAllByTwoParams", e);
         }
     }
 
-    protected List<E> getResultList(PreparedStatement statement) throws SQLException {
+    List<E> getResultList(PreparedStatement statement) throws SQLException {
         try (ResultSet resultSet = statement.executeQuery()) {
             List<E> entities = new ArrayList<>();
             while (resultSet.next()) {
@@ -127,7 +137,7 @@ abstract class AbstractReadOnlyDaoImpl<E> implements ReadOnlyDao<E> {
         }
     }
 
-    protected Optional<E> getResultOptional(PreparedStatement statement) throws SQLException {
+    private Optional<E> getResultOptional(PreparedStatement statement) throws SQLException {
         try (ResultSet resultSet = statement.executeQuery()) {
             if (resultSet.next()) {
                 return Optional.of(mapResultSetToEntity(resultSet));
@@ -136,7 +146,7 @@ abstract class AbstractReadOnlyDaoImpl<E> implements ReadOnlyDao<E> {
         return Optional.empty();
     }
 
-    protected Optional<Long> getResultLong(PreparedStatement statement) throws SQLException {
+    private Optional<Long> getResultLong(PreparedStatement statement) throws SQLException {
         try (ResultSet resultSet = statement.executeQuery()) {
             if (resultSet.next()) {
                 return Optional.of(resultSet.getLong(1));

@@ -147,7 +147,7 @@ public final class ApplicationInjector {
         commands.put("/app/client/leave-feedback", new LeaveFeedbackCommand(FEEDBACK_SERVICE, ORDER_SERVICE));
 
         commands.put("/app/worker/timetable", new ShowWorkerTimetableCommand(TIMESLOT_SERVICE));
-        commands.put("/app/worker/feedback", new ShowWorkerFeedbackByPagesCommand());
+        commands.put("/app/worker/feedback", new ShowWorkerFeedbackByPagesCommand(FEEDBACK_SERVICE));
 
         commands.put("/app/admin/clients", new ShowClientsByPagesCommand(USER_SERVICE));
         commands.put("/app/admin/workers", new ShowWorkersByPagesCommand(USER_SERVICE));

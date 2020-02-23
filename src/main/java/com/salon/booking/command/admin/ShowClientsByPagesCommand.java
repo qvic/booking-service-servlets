@@ -25,10 +25,7 @@ public class ShowClientsByPagesCommand implements GetCommand {
 
     @Override
     public void processGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String pageNumber = request.getParameter("page");
-        String itemsPerPage = request.getParameter("limit");
-        PageProperties pageProperties = PageProperties.buildByParameters(pageNumber, itemsPerPage, DEFAULT_USERS_PER_PAGE);
-
+        PageProperties pageProperties = getPageProperties(DEFAULT_USERS_PER_PAGE, request);
         Page<User> page = userService.findAllClients(pageProperties);
         request.setAttribute("page", page);
 

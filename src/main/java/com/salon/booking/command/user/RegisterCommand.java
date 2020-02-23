@@ -12,6 +12,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+import static com.salon.booking.utility.RequestUtility.getFullUrl;
+
 public class RegisterCommand implements GetAndPostCommand {
 
     private static final String REGISTER_PAGE_PATH = PageUtility.getViewPathByName("sign-up");
@@ -46,7 +48,7 @@ public class RegisterCommand implements GetAndPostCommand {
     private void registerOrForwardWithMessage(User user, HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         try {
             authService.register(user);
-            response.sendRedirect(ON_SUCCESS_REDIRECT);
+            redirect(ON_SUCCESS_REDIRECT, request, response);
 
         } catch (ValidationException e) {
             forwardWithMessage(REGISTER_PAGE_PATH, e.getLocalizationKey(), request, response);

@@ -7,7 +7,7 @@
             <div class="list-group-item list-group-item-action flex-column align-items-start">
                 <div class="d-flex w-100 mb-2 justify-content-between">
                     <h5>
-                        <c:out value="${item.date}"/>
+                        <c:out value="${cf:formatLocalDateTime(item.date ,'dd.MM.yyyy HH:mm')}"/>
                     </h5>
                 </div>
                 <div class="mb-1">

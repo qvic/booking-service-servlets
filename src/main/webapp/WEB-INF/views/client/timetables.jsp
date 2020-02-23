@@ -7,7 +7,7 @@
         <div class="list-group">
             <c:forEach items="${requestScope.timetables}" var="timetable">
                 <p class="mt-3 mb-1">
-                    <c:out value="${timetable.date}"/>
+                        ${cf:formatLocalDate(timetable.date ,'dd.MM.yyyy')}
                 </p>
                 <div class="list-group">
                     <c:if test="${fn:length(timetable.rows) == 0}">
@@ -18,14 +18,14 @@
 
                     <c:forEach items="${timetable.rows}" var="row">
                         <input name="timeslot-id" type="radio"
-                               class="d-none" id="timeslot-<c:out value="${row.id}"/>"
-                               value="<c:out value="${row.id}"/>">
+                               class="d-none" id="timeslot-${row.id}"
+                               value="${row.id}">
 
-                        <label for="timeslot-<c:out value="${row.id}"/>"
+                        <label for="timeslot-${row.id}"
                                class="radio-label form-check-label list-group-item list-group-item-action flex-column align-items-start">
-                            <h5 class="mb-1">
-                                <c:out value="${row.fromTime}"/> (<c:out value="${row.duration.toMinutes()}"/> min)
-                            </h5>
+                            <h4 class="mb-1">
+                                ${row.fromTime} (${row.duration.toMinutes()}"/> min)
+                            </h4>
                             <p class="text-success">
                                 Available
                             </p>

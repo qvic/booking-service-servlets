@@ -1,7 +1,7 @@
 <%@ include file="../includes/header.jsp" %>
 
 <div class="container my-5">
-    <h3 class="mb-5 text-center"><fmt:message key="label.admin.timetable"/></h3>
+    <h3 class="mb-5 text-center"><fmt:message key="label.worker.timetable"/></h3>
 
     <hr>
 

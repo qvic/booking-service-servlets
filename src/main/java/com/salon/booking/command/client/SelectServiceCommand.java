@@ -1,9 +1,9 @@
 package com.salon.booking.command.client;
 
-import com.salon.booking.utility.RequestUtility;
 import com.salon.booking.command.GetAndPostCommand;
 import com.salon.booking.domain.Service;
 import com.salon.booking.service.OrderService;
+import com.salon.booking.utility.RequestUtility;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -36,7 +36,7 @@ public class SelectServiceCommand implements GetAndPostCommand {
         request.getSession().setAttribute("serviceId", serviceId);
         clearCart(request);
 
-        response.sendRedirect(REDIRECT_AFTER_SUBMIT);
+        redirect(REDIRECT_AFTER_SUBMIT, request, response);
     }
 
     private void clearCart(HttpServletRequest request) {

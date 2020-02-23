@@ -27,14 +27,9 @@ public class ShowAdminTimetableCommand implements GetCommand {
 
     @Override
     public void processGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        LocalDate from = parseLocalDateOrDefault(
-                request.getParameter("from-date"),
-                LocalDate.now());
-
+        LocalDate from = parseLocalDateOrDefault(request.getParameter("from-date"), LocalDate.now());
         LocalDate toDefault = from.plus(DEFAULT_TIMETABLE_PERIOD);
-        LocalDate to = parseLocalDateOrDefault(
-                request.getParameter("to-date"),
-                toDefault);
+        LocalDate to = parseLocalDateOrDefault(request.getParameter("to-date"), toDefault);
 
         List<Timetable> timetables = timeslotService.findAllBetween(from, to);
         request.setAttribute("timetables", timetables);

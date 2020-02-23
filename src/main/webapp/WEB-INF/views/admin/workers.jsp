@@ -1,7 +1,7 @@
 <%@ include file="../includes/header.jsp" %>
 
 <div class="container mt-5">
-    <h3 class="mb-5 text-center"><fmt:message key="label.admin.workers"/></h3>
+    <h3 class="mb-5 text-center"><fmt:message key="label.admin.list_workers"/></h3>
     <div class="list-group">
         <c:forEach items="${requestScope.page.items}" var="item">
             <div class="form-check-label list-group-item list-group-item-action flex-column align-items-start">

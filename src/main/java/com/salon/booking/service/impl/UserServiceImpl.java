@@ -66,11 +66,7 @@ public class UserServiceImpl implements UserService {
                             .build())
                     .orElseThrow(NoSuchUserException::new);
 
-            if (!orderDao.findAllByClientId(clientId).isEmpty()) { // todo separate method
-                throw new ValidationException("This client already made orders!");
-            }
-
-            userDao.save(updatedUser);
+            userDao.update(updatedUser);
 
             transactionManager.commitTransaction();
         } catch (DatabaseRuntimeException e) {

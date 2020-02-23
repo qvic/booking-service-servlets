@@ -8,6 +8,8 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
+import static com.salon.booking.utility.RequestUtility.getFullUrl;
+
 public class LogoutCommand implements GetCommand {
 
     private static final String ON_SUCCESS_REDIRECT = "/";
@@ -15,7 +17,7 @@ public class LogoutCommand implements GetCommand {
     @Override
     public void processGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         invalidateSession(request);
-        response.sendRedirect(ON_SUCCESS_REDIRECT);
+        redirect(ON_SUCCESS_REDIRECT, request, response);
     }
 
     private void invalidateSession(HttpServletRequest request) {

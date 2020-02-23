@@ -13,6 +13,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
 
+import static com.salon.booking.utility.PageUtility.*;
+
 public class LeaveFeedbackCommand implements GetAndPostCommand {
 
     private final FeedbackService feedbackService;
@@ -27,7 +29,8 @@ public class LeaveFeedbackCommand implements GetAndPostCommand {
     public void processGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         List<Order> orders = orderService.findLastFinishedOrders();
         request.setAttribute("orders", orders);
-        forward(PageUtility.getViewPathByName("client/leave-feedback"), request, response);
+
+        forward(getViewPathByName("client/leave-feedback"), request, response);
     }
 
     @Override

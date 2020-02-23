@@ -3,9 +3,9 @@ package com.salon.booking.command.user;
 import com.salon.booking.command.GetAndPostCommand;
 import com.salon.booking.domain.User;
 import com.salon.booking.domain.UserLoginForm;
+import com.salon.booking.service.AuthService;
 import com.salon.booking.service.exception.ValidationException;
 import com.salon.booking.utility.PageUtility;
-import com.salon.booking.service.AuthService;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -31,25 +31,25 @@ public class LoginCommand implements GetAndPostCommand {
                 request.getParameter("email"),
                 request.getParameter("password"));
 
-        Optional<User> user;
+        Optional<User> loggedInUser;
         try {
-            user = authService.login(loginForm);
+            loggedInUser = authService.login(loginForm);
         } catch (ValidationException e) {
             forwardWithMessage(LOGIN_PAGE_PATH, e.getLocalizationKey(), request, response);
             return;
         }
 
-        if (!user.isPresent()) {
+        if (!loggedInUser.isPresent()) {
             forwardWithMessage(LOGIN_PAGE_PATH, "validation.check_credentials", request, response);
             return;
         }
 
         HttpSession session = createNewSession(request);
-        session.setAttribute("user", user.get());
+        session.setAttribute("user", loggedInUser.get());
 
         String redirectPage = Optional.ofNullable(request.getParameter("from"))
                 .orElse(ON_SUCCESS_REDIRECT);
-        response.sendRedirect(redirectPage);
+        redirect(redirectPage, request, response);
     }
 
     @Override

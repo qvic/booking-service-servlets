@@ -2,6 +2,7 @@ package com.salon.booking.command.client;
 
 import com.salon.booking.command.GetCommand;
 import com.salon.booking.domain.Order;
+import com.salon.booking.domain.Role;
 import com.salon.booking.domain.User;
 import com.salon.booking.service.OrderService;
 
@@ -23,8 +24,9 @@ public class ShowOrdersCommand implements GetCommand {
 
     @Override
     public void processGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        User user = getUserFromSession(request);
-        List<Order> orders = orderService.findAllByClientId(user.getId());
+        User client = getUserWithRoleFromSession(request, Role.CLIENT);
+
+        List<Order> orders = orderService.findAllByClientId(client.getId());
         request.setAttribute("orders", orders);
 
         forward(getViewPathByName("client/orders"), request, response);

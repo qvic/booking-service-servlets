@@ -12,6 +12,10 @@ public final class RequestUtility {
 
     }
 
+    public static String getFullUrl(String url, HttpServletRequest request) {
+        return request.getContextPath() + url;
+    }
+
     public static int getRequiredIntParameter(String name, HttpServletRequest request) {
         return ParseUtility.parseIntOrThrow(request.getParameter(name),
                 () -> new InvalidRequestParameterException(name + " is a required parameter"));
@@ -26,6 +30,10 @@ public final class RequestUtility {
         return parameter;
     }
 
+    public static Optional<Integer> getIntSessionAttribute(String name, HttpServletRequest request) {
+        return getSessionAttribute(name, request, Integer.class);
+    }
+
     private static <T> Optional<T> getSessionAttribute(String name, HttpServletRequest request, Class<T> tClass) {
         HttpSession session = request.getSession(false);
         if (session == null) {
@@ -35,10 +43,6 @@ public final class RequestUtility {
         T attribute = tClass.cast(session.getAttribute(name));
 
         return Optional.ofNullable(attribute);
-    }
-
-    public static Optional<Integer> getIntSessionAttribute(String name, HttpServletRequest request) {
-        return getSessionAttribute(name, request, Integer.class);
     }
 
     public static void removeSessionAttribute(String name, HttpServletRequest request) {

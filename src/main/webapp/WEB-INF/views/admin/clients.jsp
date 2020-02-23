@@ -1,7 +1,7 @@
 <%@ include file="../includes/header.jsp" %>
 
 <div class="container mt-5">
-    <h3 class="mb-5 text-center"><fmt:message key="label.admin.clients"/></h3>
+    <h3 class="mb-5 text-center"><fmt:message key="label.admin.list_clients"/></h3>
 
     <form method="post" action="<c:url value="/app/admin/promote-client"/>">
         <div class="list-group">

@@ -9,6 +9,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -34,7 +35,7 @@ public class SelectTimeslotCommand implements GetAndPostCommand {
             return;
         }
 
-        List<Timetable> timetables = timeslotService.findTimetablesForOrderWith(serviceId.get(), workerId.get());
+        List<Timetable> timetables = timeslotService.findTimetablesForOrderWith(serviceId.get(), workerId.get(), LocalDate.now());
         request.setAttribute("timetables", timetables);
 
         forward(getViewPathByName("client/timetables"), request, response);
@@ -45,6 +46,6 @@ public class SelectTimeslotCommand implements GetAndPostCommand {
         int timeslotId = RequestUtility.getRequiredIntParameter("timeslot-id", request);
         request.getSession().setAttribute("timeslotId", timeslotId);
 
-        response.sendRedirect(REDIRECT_AFTER_SUBMIT);
+        redirect(REDIRECT_AFTER_SUBMIT, request, response);
     }
 }

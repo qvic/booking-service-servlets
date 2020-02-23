@@ -2,13 +2,12 @@ package com.salon.booking.command.client;
 
 import com.salon.booking.command.GetAndPostCommand;
 import com.salon.booking.domain.Order;
+import com.salon.booking.domain.Role;
 import com.salon.booking.domain.Service;
-import com.salon.booking.domain.Timeslot;
 import com.salon.booking.domain.User;
 import com.salon.booking.service.OrderService;
 import com.salon.booking.service.TimeslotService;
 import com.salon.booking.service.UserService;
-import com.salon.booking.utility.RequestUtility;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -18,7 +17,7 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 
 import static com.salon.booking.utility.PageUtility.getViewPathByName;
-import static com.salon.booking.utility.RequestUtility.*;
+import static com.salon.booking.utility.RequestUtility.getIntSessionAttribute;
 
 public class CreateOrderCommand implements GetAndPostCommand {
 
@@ -68,11 +67,11 @@ public class CreateOrderCommand implements GetAndPostCommand {
             return;
         }
 
-        User client = getUserFromSession(request);
+        User client = getUserWithRoleFromSession(request, Role.CLIENT);
         Order order = buildNewOrder(client, workerId.get(), serviceId.get());
         orderService.saveOrderUpdatingTimeslots(timeslotId.get(), order);
 
-        response.sendRedirect(REDIRECT_AFTER_SUBMIT);
+        redirect(REDIRECT_AFTER_SUBMIT, request, response);
     }
 
     private Order buildNewOrder(User client, Integer workerId, Integer serviceId) {

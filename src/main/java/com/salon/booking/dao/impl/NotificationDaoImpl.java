@@ -9,12 +9,15 @@ import com.salon.booking.entity.UserEntity;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 
 public class NotificationDaoImpl extends AbstractCrudDaoImpl<NotificationEntity> implements NotificationDao {
 
     private static final String FIND_BY_ID_QUERY = "SELECT * FROM notification WHERE id = ?";
     private static final String FIND_ALL_QUERY = "SELECT * FROM notification";
     private static final String COUNT_QUERY = "SELECT count(*) FROM notification";
+    private static final String FIND_ALL_UNREAD = "SELECT * FROM notification WHERE user_id = ? AND read = false";
+    private static final String COUNT_UNREAD = "SELECT count(*) FROM notification WHERE user_id = ? AND read = false";
 
     private static final String INSERT_QUERY = "INSERT INTO notification (user_id, type, text) VALUES (?, ?, ?) RETURNING id";
     private static final String UPDATE_QUERY = "UPDATE notification SET user_id = ?, type = ?, text = ? WHERE id = ?";
@@ -61,5 +64,15 @@ public class NotificationDaoImpl extends AbstractCrudDaoImpl<NotificationEntity>
                         .build())
                 .setType(type)
                 .build();
+    }
+
+    @Override
+    public List<NotificationEntity> findAllUnread(Integer userId) {
+        return findAllByParam(userId, FIND_ALL_UNREAD, INT_SETTER);
+    }
+
+    @Override
+    public long countUnread(Integer userId) {
+        return countByParam(userId, COUNT_UNREAD, INT_SETTER);
     }
 }

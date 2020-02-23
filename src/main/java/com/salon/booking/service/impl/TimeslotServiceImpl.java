@@ -60,10 +60,9 @@ public class TimeslotServiceImpl implements TimeslotService {
      * with timeslots where order with such service id and worker id can be placed
      */
     @Override
-    public List<Timetable> findTimetablesForOrderWith(Integer serviceId, Integer workerId) {
-        LocalDate from = LocalDate.now();
-        LocalDate to = from.plus(DEFAULT_TIMETABLE_PERIOD);
-        List<Timetable> timetablesBetween = findAllBetween(from, to);
+    public List<Timetable> findTimetablesForOrderWith(Integer serviceId, Integer workerId, LocalDate currentDate) {
+        LocalDate to = currentDate.plus(DEFAULT_TIMETABLE_PERIOD);
+        List<Timetable> timetablesBetween = findAllBetween(currentDate, to);
 
         Service service = Service.builder()
                 .setId(serviceId)
@@ -79,7 +78,9 @@ public class TimeslotServiceImpl implements TimeslotService {
             List<Timeslot> viewTimeslots = new ArrayList<>();
             for (Timeslot timeslot : timetable.getRows()) {
 
-                List<Timeslot> freeTimeslots = findFirstAcceptableTimeslotsForOrder(timeslot.getId(), timetable.getRows(), service, worker);
+                List<Timeslot> freeTimeslots = findFirstAcceptableTimeslotsForOrder(
+                        timeslot.getId(), timetable.getRows(), service, worker);
+
                 if (!freeTimeslots.isEmpty()) {
                     Timeslot viewTimeslot = Timeslot.builder(timeslot)
                             .setDuration(getTotalDuration(freeTimeslots))
@@ -96,10 +97,9 @@ public class TimeslotServiceImpl implements TimeslotService {
     }
 
     private Duration getTotalDuration(List<Timeslot> timeslots) {
-        return Duration.ofMinutes(
-                timeslots.stream()
-                        .mapToLong(t -> t.getDuration().toMinutes())
-                        .sum());
+        return Duration.ofMinutes(timeslots.stream()
+                .mapToLong(t -> t.getDuration().toMinutes())
+                .sum());
     }
 
     /**
@@ -120,8 +120,7 @@ public class TimeslotServiceImpl implements TimeslotService {
         while (date.isBefore(toExclusive)) {
             List<TimeslotEntity> timeslotEntities = groupedTimeslots.getOrDefault(date, Collections.emptyList());
 
-            List<Timeslot> rows = timeslotEntities
-                    .stream()
+            List<Timeslot> rows = timeslotEntities.stream()
                     .map(this::buildTimeslot)
                     .collect(Collectors.toList());
 
@@ -131,6 +130,27 @@ public class TimeslotServiceImpl implements TimeslotService {
         }
 
         return timetables;
+    }
+
+    @Override
+    public List<Timetable> findAllBetweenForWorker(Integer workerId, LocalDate fromInclusive, LocalDate toExclusive) {
+        return findAllBetween(fromInclusive, toExclusive).stream()
+                .map(timetable -> getTimetableFilteredByWorker(workerId, timetable))
+                .collect(Collectors.toList());
+    }
+
+    private Timetable getTimetableFilteredByWorker(Integer workerId, Timetable timetable) {
+        return new Timetable(timetable.getDate(), timetable.getRows().stream()
+                .map(timeslot -> getTimeslotFilteredByWorker(workerId, timeslot))
+                .collect(Collectors.toList()));
+    }
+
+    private Timeslot getTimeslotFilteredByWorker(Integer workerId, Timeslot timeslot) {
+        return Timeslot.builder(timeslot)
+                .setOrders(timeslot.getOrders().stream()
+                        .filter(order -> workerId.equals(order.getWorker().getId()))
+                        .collect(Collectors.toList()))
+                .build();
     }
 
     private Timeslot buildTimeslot(TimeslotEntity timeslotEntity) {
@@ -202,10 +222,10 @@ public class TimeslotServiceImpl implements TimeslotService {
 
         for (Timeslot timeslot : timeslotsAfterSelectedId) {
 
-            boolean isValidTimeslot = isConsecutiveTimeslot(previousTimeslot, timeslot) &&
-                    areServiceAndWorkerAvailable(timeslot, service.getId(), worker.getId());
-
             if (currentFreeDuration.compareTo(serviceDuration) < 0) {
+                boolean isValidTimeslot = isConsecutiveTimeslot(previousTimeslot, timeslot) &&
+                        areServiceAndWorkerAvailable(timeslot, service.getId(), worker.getId());
+
                 if (isValidTimeslot) {
                     freeTimeslots.add(timeslot);
                     currentFreeDuration = currentFreeDuration.plus(timeslot.getDuration());

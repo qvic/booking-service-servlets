@@ -26,6 +26,7 @@ public class NotificationMapper implements Mapper<NotificationEntity, Notificati
         return NotificationEntity.builder()
                 .setId(notification.getId())
                 .setText(notification.getText())
+                .setRead(false)
                 .setType(notificationTypeMapper.mapDomainToEntity(notification.getType()))
                 .setUser(userMapper.mapDomainToEntity(notification.getUser()))
                 .build();

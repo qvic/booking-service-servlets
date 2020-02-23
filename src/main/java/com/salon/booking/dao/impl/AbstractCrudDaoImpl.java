@@ -4,6 +4,8 @@ import com.salon.booking.dao.CrudDao;
 import com.salon.booking.dao.impl.connector.DataSourceConnection;
 import com.salon.booking.dao.impl.connector.DataSourceConnector;
 import com.salon.booking.dao.exception.DatabaseRuntimeException;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -12,9 +14,11 @@ import java.sql.Statement;
 
 abstract class AbstractCrudDaoImpl<E> extends AbstractReadOnlyDaoImpl<E> implements CrudDao<E> {
 
+    private static final Logger LOGGER = LogManager.getLogger(AbstractCrudDaoImpl.class);
+
     private CrudQuerySet queries;
 
-    protected AbstractCrudDaoImpl(DataSourceConnector connector, CrudQuerySet queries) {
+    AbstractCrudDaoImpl(DataSourceConnector connector, CrudQuerySet queries) {
         super(connector, queries);
         this.queries = queries;
     }
@@ -29,6 +33,7 @@ abstract class AbstractCrudDaoImpl<E> extends AbstractReadOnlyDaoImpl<E> impleme
             int affectedRows = statement.executeUpdate();
             throwIfNotAffected(affectedRows);
         } catch (SQLException e) {
+            LOGGER.error(e);
             throw new DatabaseRuntimeException("Error performing update", e);
         }
     }
@@ -43,6 +48,7 @@ abstract class AbstractCrudDaoImpl<E> extends AbstractReadOnlyDaoImpl<E> impleme
             int affectedRows = statement.executeUpdate();
             throwIfNotAffected(affectedRows);
         } catch (SQLException e) {
+            LOGGER.error(e);
             throw new DatabaseRuntimeException("Error performing deleteById", e);
         }
     }
@@ -61,16 +67,19 @@ abstract class AbstractCrudDaoImpl<E> extends AbstractReadOnlyDaoImpl<E> impleme
                 if (generatedKeys.next()) {
                     return applyGeneratedKeysToEntity(entity, generatedKeys);
                 } else {
+                    LOGGER.error("No id obtained");
                     throw new DatabaseRuntimeException("Error performing save, no id obtained");
                 }
             }
         } catch (SQLException e) {
+            LOGGER.error(e);
             throw new DatabaseRuntimeException("Error performing save", e);
         }
     }
 
-    protected void throwIfNotAffected(int affectedRows) {
+    void throwIfNotAffected(int affectedRows) {
         if (affectedRows == 0) {
+            LOGGER.error("No rows affected");
             throw new DatabaseRuntimeException("No rows affected");
         }
     }

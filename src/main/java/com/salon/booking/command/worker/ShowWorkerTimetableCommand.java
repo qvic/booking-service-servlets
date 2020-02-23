@@ -1,7 +1,9 @@
 package com.salon.booking.command.worker;
 
 import com.salon.booking.command.GetCommand;
+import com.salon.booking.domain.Role;
 import com.salon.booking.domain.Timetable;
+import com.salon.booking.domain.User;
 import com.salon.booking.service.TimeslotService;
 
 import javax.servlet.ServletException;
@@ -27,17 +29,14 @@ public class ShowWorkerTimetableCommand implements GetCommand {
 
     @Override
     public void processGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        LocalDate from = parseLocalDateOrDefault(
-                request.getParameter("from_date"),
-                LocalDate.now());
-
+        LocalDate from = parseLocalDateOrDefault(request.getParameter("from-date"), LocalDate.now());
         LocalDate toDefault = from.plus(DEFAULT_TIMETABLE_PERIOD);
-        LocalDate to = parseLocalDateOrDefault(
-                request.getParameter("to_date"),
-                toDefault);
+        LocalDate to = parseLocalDateOrDefault(request.getParameter("to-date"), toDefault);
 
-        List<Timetable> timetables = timeslotService.findAllBetween(from, to);
+        User worker = getUserWithRoleFromSession(request, Role.WORKER);
+        List<Timetable> timetables = timeslotService.findAllBetweenForWorker(worker.getId(), from, to);
         request.setAttribute("timetables", timetables);
-        forward(getViewPathByName("worker-timetables"), request, response);
+
+        forward(getViewPathByName("worker/timetables"), request, response);
     }
 }

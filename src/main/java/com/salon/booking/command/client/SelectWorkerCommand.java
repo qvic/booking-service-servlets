@@ -27,10 +27,7 @@ public class SelectWorkerCommand implements GetAndPostCommand {
 
     @Override
     public void processGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String pageNumber = request.getParameter("page");
-        String itemsPerPage = request.getParameter("limit");
-
-        PageProperties pageProperties = PageProperties.buildByParameters(pageNumber, itemsPerPage, DEFAULT_WORKERS_PER_PAGE);
+        PageProperties pageProperties = getPageProperties(DEFAULT_WORKERS_PER_PAGE, request);
         Page<User> workersPage = userService.findAllWorkers(pageProperties);
         request.setAttribute("page", workersPage);
 
@@ -43,7 +40,7 @@ public class SelectWorkerCommand implements GetAndPostCommand {
         request.getSession().setAttribute("workerId", workerId);
         clearCart(request);
 
-        response.sendRedirect(REDIRECT_AFTER_SUBMIT);
+        redirect(REDIRECT_AFTER_SUBMIT, request, response);
     }
 
     private void clearCart(HttpServletRequest request) {

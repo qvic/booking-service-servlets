@@ -25,10 +25,7 @@ public class ShowUnapprovedFeedbackByPagesCommand implements GetCommand {
 
     @Override
     public void processGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String pageNumber = request.getParameter("page");
-        String itemsPerPage = request.getParameter("limit");
-        PageProperties pageProperties = PageProperties.buildByParameters(pageNumber, itemsPerPage, DEFAULT_FEEDBACK_PER_PAGE);
-
+        PageProperties pageProperties = getPageProperties(DEFAULT_FEEDBACK_PER_PAGE, request);
         Page<Feedback> feedbackPage = feedbackService.findAllByStatus(FeedbackStatus.CREATED, pageProperties);
         request.setAttribute("page", feedbackPage);
 

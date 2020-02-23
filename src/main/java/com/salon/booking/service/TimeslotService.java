@@ -13,7 +13,9 @@ public interface TimeslotService {
 
     List<Timetable> findAllBetween(LocalDate fromInclusive, LocalDate toExclusive);
 
-    List<Timetable> findTimetablesForOrderWith(Integer serviceId, Integer workerId);
+    List<Timetable> findAllBetweenForWorker(Integer workerId, LocalDate fromInclusive, LocalDate toExclusive);
+
+    List<Timetable> findTimetablesForOrderWith(Integer serviceId, Integer workerId, LocalDate currentDate);
 
     List<Timeslot> findTimeslotsForOrderWith(Integer selectedTimeslotId, Service service, User worker);
 
