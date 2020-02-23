@@ -1,16 +1,19 @@
 <%@ include file="../includes/header.jsp" %>
 
 <div class="container my-5">
-    <h3 class="mb-5 text-center">Feedback</h3>
+    <h3 class="mb-5 text-center"><fmt:message key="label.client.feedback"/></h3>
     <div class="list-group">
-        <c:forEach items="${requestScope.page.items}" var="item">
+        <c:forEach items="${requestScope.page.items}" var="feedback">
             <div class="list-group-item list-group-item-action flex-column align-items-start">
                 <h5 class="mb-1">
-                    <span class="text-muted">To worker</span> <c:out value="${item.worker.name}"/>
+                    <span class="text-muted"><fmt:message key="label.order"/></span> #${feedback.order.id}
                 </h5>
-                <p class="mb-1">
-                    <c:out value="${item.text}"/>
-                </p>
+                <h5 class="mb-1">
+                    <span class="text-muted"><fmt:message key="label.to_worker"/></span> <c:out
+                        value="${feedback.order.worker.name}"/> (<c:out value="${feedback.order.worker.email}"/>)
+                </h5>
+                <p class="text-muted mb-3">${feedback.status}</p>
+                <p class="mb-1"><c:out value="${feedback.text}"/></p>
             </div>
         </c:forEach>
     </div>

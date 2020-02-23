@@ -1,20 +1,16 @@
 package com.salon.booking.mapper;
 
 import com.salon.booking.domain.Notification;
-import com.salon.booking.domain.NotificationType;
-import com.salon.booking.domain.User;
+import com.salon.booking.domain.Order;
 import com.salon.booking.entity.NotificationEntity;
-import com.salon.booking.entity.NotificationTypeEntity;
-import com.salon.booking.entity.UserEntity;
+import com.salon.booking.entity.OrderEntity;
 
 public class NotificationMapper implements Mapper<NotificationEntity, Notification> {
 
-    private final Mapper<UserEntity, User> userMapper;
-    private final Mapper<NotificationTypeEntity, NotificationType> notificationTypeMapper;
+    private final Mapper<OrderEntity, Order> orderMapper;
 
-    public NotificationMapper(Mapper<UserEntity, User> userMapper, Mapper<NotificationTypeEntity, NotificationType> notificationTypeMapper) {
-        this.userMapper = userMapper;
-        this.notificationTypeMapper = notificationTypeMapper;
+    public NotificationMapper(Mapper<OrderEntity, Order> orderMapper) {
+        this.orderMapper = orderMapper;
     }
 
     @Override
@@ -23,13 +19,9 @@ public class NotificationMapper implements Mapper<NotificationEntity, Notificati
             return null;
         }
 
-        return NotificationEntity.builder()
-                .setId(notification.getId())
-                .setText(notification.getText())
-                .setRead(false)
-                .setType(notificationTypeMapper.mapDomainToEntity(notification.getType()))
-                .setUser(userMapper.mapDomainToEntity(notification.getUser()))
-                .build();
+        return new NotificationEntity(notification.getId(),
+                orderMapper.mapDomainToEntity(notification.getOrder()),
+                notification.getRead());
     }
 
     @Override
@@ -38,11 +30,8 @@ public class NotificationMapper implements Mapper<NotificationEntity, Notificati
             return null;
         }
 
-        return Notification.builder()
-                .setId(notification.getId())
-                .setText(notification.getText())
-                .setType(notificationTypeMapper.mapEntityToDomain(notification.getType()))
-                .setUser(userMapper.mapEntityToDomain(notification.getUser()))
-                .build();
+        return new Notification(notification.getId(),
+                orderMapper.mapEntityToDomain(notification.getOrder()),
+                notification.getRead());
     }
 }

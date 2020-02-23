@@ -14,12 +14,12 @@ import java.io.IOException;
 
 import static com.salon.booking.utility.PageUtility.getViewPathByName;
 
-public class ShowUnapprovedFeedbackByPagesCommand implements GetCommand {
+public class ShowUnapprovedFeedbackCommand implements GetCommand {
 
     private static final int DEFAULT_FEEDBACK_PER_PAGE = 20;
     private final FeedbackService feedbackService;
 
-    public ShowUnapprovedFeedbackByPagesCommand(FeedbackService feedbackService) {
+    public ShowUnapprovedFeedbackCommand(FeedbackService feedbackService) {
         this.feedbackService = feedbackService;
     }
 

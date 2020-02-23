@@ -5,17 +5,18 @@
 
     <form method="post" action="<c:url value="/app/admin/approve-feedback"/>">
         <div class="list-group">
-            <c:forEach items="${requestScope.page.items}" var="item">
+            <c:forEach items="${requestScope.page.items}" var="feedback">
                 <input name="feedback-id" class="d-none" type="radio"
-                       id="feedback-<c:out value="${item.id}"/>"
-                       value="<c:out value="${item.id}"/>">
+                       id="feedback-<c:out value="${feedback.id}"/>"
+                       value="<c:out value="${feedback.id}"/>">
 
-                <label for="feedback-<c:out value="${item.id}"/>"
+                <label for="feedback-<c:out value="${feedback.id}"/>"
                        class="radio-label form-check-label list-group-item list-group-item-action flex-column align-items-start">
                     <h5 class="mb-1">
-                        <span class="text-muted">To worker</span> <c:out value="${item.worker.name}"/> (<c:out value="${item.worker.email}"/>)
+                        <span class="text-muted"><fmt:message key="label.order"/></span> #${feedback.order.id}
+                        <span class="text-muted"><fmt:message key="label.to_worker"/></span> <c:out value="${feedback.order.worker.name}"/> (<c:out value="${feedback.order.worker.email}"/>)
                     </h5>
-                    <p class="mb-1"><c:out value="${item.text}"/></p>
+                    <p class="mb-1"><c:out value="${feedback.text}"/></p>
                 </label>
             </c:forEach>
             <button class="w-25 mx-auto my-5 btn btn-primary btn-lg btn-block" type="submit">Next</button>

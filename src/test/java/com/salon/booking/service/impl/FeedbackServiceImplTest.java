@@ -7,6 +7,7 @@ import com.salon.booking.domain.page.Page;
 import com.salon.booking.domain.page.PageProperties;
 import com.salon.booking.entity.FeedbackEntity;
 import com.salon.booking.entity.FeedbackStatusEntity;
+import com.salon.booking.entity.OrderEntity;
 import com.salon.booking.entity.UserEntity;
 import com.salon.booking.mapper.Mapper;
 import com.salon.booking.service.OrderService;
@@ -55,18 +56,21 @@ public class FeedbackServiceImplTest {
         FeedbackEntity feedbackEntity = FeedbackEntity.builder()
                 .setId(1)
                 .setText("test")
-                .setWorker(UserEntity.builder()
+                .setOrder(OrderEntity.builder()
                         .setId(23)
                         .build())
                 .build();
 
-        Feedback feedback = new Feedback(1, "test", null);
+        Feedback feedback = Feedback.builder()
+                .setId(1)
+                .setText("test")
+                .build();
 
         PageProperties properties = new PageProperties(0, 1);
         Page<FeedbackEntity> feedbackEntityPage = new Page<>(Collections.singletonList(feedbackEntity),
                 properties, 1);
 
-        when(feedbackDao.findAllByWorkerId(eq(23), eq(properties))).thenReturn(feedbackEntityPage);
+        when(feedbackDao.findAllApprovedWithWorkerId(eq(23), eq(properties))).thenReturn(feedbackEntityPage);
         when(feedbackMapper.mapEntityToDomain(eq(feedbackEntity))).thenReturn(feedback);
 
         Page<Feedback> allByWorkerId = feedbackService.findAllByWorkerId(23, properties);
@@ -82,7 +86,10 @@ public class FeedbackServiceImplTest {
                 .setStatus(FeedbackStatusEntity.CREATED)
                 .build();
 
-        Feedback feedback = new Feedback(1, "test", null);
+        Feedback feedback = Feedback.builder()
+                .setId(1)
+                .setText("test")
+                .build();
 
         PageProperties properties = new PageProperties(0, 1);
         Page<FeedbackEntity> feedbackEntityPage = new Page<>(Collections.singletonList(feedbackEntity),

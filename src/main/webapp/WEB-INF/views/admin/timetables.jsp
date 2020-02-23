@@ -36,12 +36,12 @@
                         <h4 class="my-2">
                                 ${row.fromTime} to ${row.fromTime.plus(row.duration)}
                         </h4>
-                        <c:forEach items="${row.orders}" var="order">
+                        <c:forEach items="${row.orders}" var="feedback">
                             <div class="mb-2">
-                                <h5>Order #${order.id}</h5>
-                                <p class="mb-0">Worker: ${order.worker.name} (${order.worker.email})</p>
-                                <p class="mb-0">Client: ${order.client.name} (${order.client.email})</p>
-                                <p class="mb-1">Service: ${order.service.name} ($${order.service.price})</p>
+                                <h5>Order #${feedback.id}</h5>
+                                <p class="mb-0">Worker: ${feedback.worker.name} (${feedback.worker.email})</p>
+                                <p class="mb-0">Client: ${feedback.client.name} (${feedback.client.email})</p>
+                                <p class="mb-1">Service: ${feedback.service.name} ($${feedback.service.price})</p>
                             </div>
                         </c:forEach>
                     </div>

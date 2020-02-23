@@ -112,12 +112,13 @@ abstract class AbstractReadOnlyDaoImpl<E> implements ReadOnlyDao<E> {
         }
     }
 
-    <P> List<E> findAllByTwoParams(P parameterA, P parameterB, String findAllByParamQuery, StatementParameterSetter<P> paramSetter) {
+    <A, B> List<E> findAllByTwoParams(A parameterA, B parameterB, String findAllByParamQuery,
+                                      StatementParameterSetter<A> aSetter, StatementParameterSetter<B> bSetter) {
         try (DataSourceConnection connection = connector.getConnection();
              PreparedStatement statement = connection.getOriginal().prepareStatement(findAllByParamQuery)) {
 
-            paramSetter.accept(statement, parameterA, 1);
-            paramSetter.accept(statement, parameterB, 2);
+            aSetter.accept(statement, parameterA, 1);
+            bSetter.accept(statement, parameterB, 2);
 
             return getResultList(statement);
         } catch (SQLException e) {

@@ -4,6 +4,7 @@ import com.salon.booking.command.GetAndPostCommand;
 import com.salon.booking.domain.User;
 import com.salon.booking.domain.UserLoginForm;
 import com.salon.booking.service.AuthService;
+import com.salon.booking.service.NotificationService;
 import com.salon.booking.service.exception.ValidationException;
 import com.salon.booking.utility.PageUtility;
 
@@ -12,17 +13,23 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.Period;
 import java.util.Optional;
 
 public class LoginCommand implements GetAndPostCommand {
+
+    private static final Period NOTIFICATION_THRESHOLD = Period.ofDays(3);
 
     private static final String LOGIN_PAGE_PATH = PageUtility.getViewPathByName("login");
     private static final String ON_SUCCESS_REDIRECT = "/";
 
     private final AuthService authService;
+    private final NotificationService notificationService;
 
-    public LoginCommand(AuthService authService) {
+    public LoginCommand(AuthService authService, NotificationService notificationService) {
         this.authService = authService;
+        this.notificationService = notificationService;
     }
 
     @Override
@@ -47,6 +54,8 @@ public class LoginCommand implements GetAndPostCommand {
         HttpSession session = createNewSession(request);
         session.setAttribute("user", loggedInUser.get());
 
+        updateNotifications(loggedInUser.get().getId(), session);
+
         String redirectPage = Optional.ofNullable(request.getParameter("from"))
                 .orElse(ON_SUCCESS_REDIRECT);
         redirect(redirectPage, request, response);
@@ -57,11 +66,22 @@ public class LoginCommand implements GetAndPostCommand {
         forward(LOGIN_PAGE_PATH, request, response);
     }
 
+    private void updateNotifications(Integer userId, HttpSession session) {
+        long unreadNotifications = notificationService.updateNotificationsReturningCount(
+                userId, getMinimalOrderEndTimeToSeeNotification());
+
+        session.setAttribute("notificationsCounter", unreadNotifications);
+    }
+
     private HttpSession createNewSession(HttpServletRequest request) {
         HttpSession session = request.getSession(false);
         if (session != null) {
             session.invalidate();
         }
         return request.getSession(true);
+    }
+
+    private LocalDateTime getMinimalOrderEndTimeToSeeNotification() {
+        return LocalDateTime.now().minus(NOTIFICATION_THRESHOLD);
     }
 }

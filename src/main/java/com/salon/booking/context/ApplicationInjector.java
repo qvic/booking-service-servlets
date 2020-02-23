@@ -5,7 +5,7 @@ import com.salon.booking.command.HomeCommand;
 import com.salon.booking.command.admin.ApproveFeedbackCommand;
 import com.salon.booking.command.admin.PromoteClientToWorkerCommand;
 import com.salon.booking.command.admin.ShowAdminTimetableCommand;
-import com.salon.booking.command.admin.ShowUnapprovedFeedbackByPagesCommand;
+import com.salon.booking.command.admin.ShowUnapprovedFeedbackCommand;
 import com.salon.booking.command.admin.ShowClientsByPagesCommand;
 import com.salon.booking.command.admin.ShowWorkersByPagesCommand;
 import com.salon.booking.command.client.CreateOrderCommand;
@@ -13,7 +13,8 @@ import com.salon.booking.command.client.LeaveFeedbackCommand;
 import com.salon.booking.command.client.SelectServiceCommand;
 import com.salon.booking.command.client.SelectTimeslotCommand;
 import com.salon.booking.command.client.SelectWorkerCommand;
-import com.salon.booking.command.client.ShowClientFeedbackByPagesCommand;
+import com.salon.booking.command.client.ShowFeedbackCommand;
+import com.salon.booking.command.client.ShowNotificationsCommand;
 import com.salon.booking.command.client.ShowOrdersCommand;
 import com.salon.booking.command.user.LoginCommand;
 import com.salon.booking.command.user.LogoutCommand;
@@ -21,11 +22,13 @@ import com.salon.booking.command.user.RegisterCommand;
 import com.salon.booking.command.worker.ShowWorkerFeedbackByPagesCommand;
 import com.salon.booking.command.worker.ShowWorkerTimetableCommand;
 import com.salon.booking.dao.FeedbackDao;
+import com.salon.booking.dao.NotificationDao;
 import com.salon.booking.dao.OrderDao;
 import com.salon.booking.dao.ServiceDao;
 import com.salon.booking.dao.TimeslotDao;
 import com.salon.booking.dao.UserDao;
 import com.salon.booking.dao.impl.FeedbackDaoImpl;
+import com.salon.booking.dao.impl.NotificationDaoImpl;
 import com.salon.booking.dao.impl.OrderDaoImpl;
 import com.salon.booking.dao.impl.ServiceDaoImpl;
 import com.salon.booking.dao.impl.TimeslotDaoImpl;
@@ -34,6 +37,7 @@ import com.salon.booking.dao.impl.connector.DataSourceTransactionManager;
 import com.salon.booking.dao.impl.connector.HikariDataSourceConnector;
 import com.salon.booking.domain.Feedback;
 import com.salon.booking.domain.FeedbackStatus;
+import com.salon.booking.domain.Notification;
 import com.salon.booking.domain.Order;
 import com.salon.booking.domain.Role;
 import com.salon.booking.domain.Service;
@@ -42,6 +46,7 @@ import com.salon.booking.domain.User;
 import com.salon.booking.domain.UserLoginForm;
 import com.salon.booking.entity.FeedbackEntity;
 import com.salon.booking.entity.FeedbackStatusEntity;
+import com.salon.booking.entity.NotificationEntity;
 import com.salon.booking.entity.OrderEntity;
 import com.salon.booking.entity.RoleEntity;
 import com.salon.booking.entity.ServiceEntity;
@@ -50,17 +55,20 @@ import com.salon.booking.entity.UserEntity;
 import com.salon.booking.mapper.FeedbackMapper;
 import com.salon.booking.mapper.FeedbackStatusMapper;
 import com.salon.booking.mapper.Mapper;
+import com.salon.booking.mapper.NotificationMapper;
 import com.salon.booking.mapper.OrderMapper;
 import com.salon.booking.mapper.RoleMapper;
 import com.salon.booking.mapper.ServiceMapper;
 import com.salon.booking.mapper.TimeslotMapper;
 import com.salon.booking.mapper.UserMapper;
 import com.salon.booking.service.FeedbackService;
+import com.salon.booking.service.NotificationService;
 import com.salon.booking.service.OrderService;
 import com.salon.booking.service.TimeslotService;
 import com.salon.booking.service.UserService;
 import com.salon.booking.service.encoder.PasswordEncoder;
 import com.salon.booking.service.impl.FeedbackServiceImpl;
+import com.salon.booking.service.impl.NotificationServiceImpl;
 import com.salon.booking.service.impl.OrderServiceImpl;
 import com.salon.booking.service.impl.TimeslotServiceImpl;
 import com.salon.booking.service.impl.AuthServiceImpl;
@@ -98,14 +106,16 @@ public final class ApplicationInjector {
     private static final OrderDao ORDER_DAO = new OrderDaoImpl(DATABASE_CONNECTOR);
     private static final ServiceDao SERVICE_DAO = new ServiceDaoImpl(DATABASE_CONNECTOR);
     private static final FeedbackDao FEEDBACK_DAO = new FeedbackDaoImpl(DATABASE_CONNECTOR);
+    private static final NotificationDao NOTIFICATION_DAO = new NotificationDaoImpl(DATABASE_CONNECTOR);
 
     private static final Mapper<RoleEntity, Role> ROLE_MAPPER = new RoleMapper();
     private static final Mapper<UserEntity, User> USER_MAPPER = new UserMapper(ROLE_MAPPER);
     private static final Mapper<ServiceEntity, Service> SERVICE_MAPPER = new ServiceMapper();
     private static final Mapper<OrderEntity, Order> ORDER_MAPPER = new OrderMapper(USER_MAPPER, SERVICE_MAPPER);
     private static final Mapper<TimeslotEntity, Timeslot> TIMESLOT_MAPPER = new TimeslotMapper(ORDER_MAPPER);
-    private static final Mapper<FeedbackEntity, Feedback> FEEDBACK_MAPPER = new FeedbackMapper(USER_MAPPER);
     private static final Mapper<FeedbackStatusEntity, FeedbackStatus> FEEDBACK_STATUS_MAPPER = new FeedbackStatusMapper();
+    private static final Mapper<FeedbackEntity, Feedback> FEEDBACK_MAPPER = new FeedbackMapper(ORDER_MAPPER, FEEDBACK_STATUS_MAPPER);
+    private static final Mapper<NotificationEntity, Notification> NOTIFICATION_MAPPER = new NotificationMapper(ORDER_MAPPER);
 
     private static final AuthService AUTH_SERVICE = new AuthServiceImpl(USER_DAO, USER_VALIDATOR,
             USER_LOGIN_FORM_VALIDATOR, PASSWORD_ENCRYPTOR, USER_MAPPER);
@@ -121,6 +131,8 @@ public final class ApplicationInjector {
     private static final FeedbackService FEEDBACK_SERVICE = new FeedbackServiceImpl(FEEDBACK_DAO, ORDER_SERVICE, FEEDBACK_MAPPER,
             FEEDBACK_STATUS_MAPPER, FEEDBACK_TEXT_VALIDATOR);
 
+    private static final NotificationService NOTIFICATION_SERVICE = new NotificationServiceImpl(ORDER_SERVICE, NOTIFICATION_DAO, NOTIFICATION_MAPPER);
+
     private static final Map<String, Command> ROUTE_TO_COMMAND = initializeCommands();
 
     private ApplicationInjector() {
@@ -134,7 +146,7 @@ public final class ApplicationInjector {
         Map<String, Command> commands = new HashMap<>();
 
         commands.put("/", new HomeCommand());
-        commands.put("/app/login", new LoginCommand(AUTH_SERVICE));
+        commands.put("/app/login", new LoginCommand(AUTH_SERVICE, NOTIFICATION_SERVICE));
         commands.put("/app/logout", new LogoutCommand());
         commands.put("/app/signup", new RegisterCommand(AUTH_SERVICE));
 
@@ -143,8 +155,9 @@ public final class ApplicationInjector {
         commands.put("/app/client/order-worker", new SelectWorkerCommand(USER_SERVICE));
         commands.put("/app/client/create-order", new CreateOrderCommand(ORDER_SERVICE, TIMESLOT_SERVICE, USER_SERVICE));
         commands.put("/app/client/orders", new ShowOrdersCommand(ORDER_SERVICE));
-        commands.put("/app/client/feedback", new ShowClientFeedbackByPagesCommand(FEEDBACK_SERVICE));
+        commands.put("/app/client/feedback", new ShowFeedbackCommand(FEEDBACK_SERVICE));
         commands.put("/app/client/leave-feedback", new LeaveFeedbackCommand(FEEDBACK_SERVICE, ORDER_SERVICE));
+        commands.put("/app/client/notifications", new ShowNotificationsCommand(NOTIFICATION_SERVICE));
 
         commands.put("/app/worker/timetable", new ShowWorkerTimetableCommand(TIMESLOT_SERVICE));
         commands.put("/app/worker/feedback", new ShowWorkerFeedbackByPagesCommand(FEEDBACK_SERVICE));
@@ -152,7 +165,7 @@ public final class ApplicationInjector {
         commands.put("/app/admin/clients", new ShowClientsByPagesCommand(USER_SERVICE));
         commands.put("/app/admin/workers", new ShowWorkersByPagesCommand(USER_SERVICE));
         commands.put("/app/admin/timetable", new ShowAdminTimetableCommand(TIMESLOT_SERVICE));
-        commands.put("/app/admin/feedback", new ShowUnapprovedFeedbackByPagesCommand(FEEDBACK_SERVICE));
+        commands.put("/app/admin/feedback", new ShowUnapprovedFeedbackCommand(FEEDBACK_SERVICE));
         commands.put("/app/admin/approve-feedback", new ApproveFeedbackCommand(FEEDBACK_SERVICE));
         commands.put("/app/admin/promote-client", new PromoteClientToWorkerCommand(USER_SERVICE));
 

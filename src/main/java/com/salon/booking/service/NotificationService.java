@@ -2,15 +2,14 @@ package com.salon.booking.service;
 
 import com.salon.booking.domain.Notification;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface NotificationService {
 
-    List<Notification> findAllUnread(Integer userId);
+    List<Notification> findAllUnreadAndMarkAllAsRead(Integer userId);
 
-    long countUnread(Integer userId);
+    List<Notification> findAllRead(Integer userId);
 
-    void markAsRead(Integer notificationId);
-
-    void save(Notification notification);
+    long updateNotificationsReturningCount(Integer userId, LocalDateTime currentTime);
 }

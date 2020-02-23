@@ -94,7 +94,7 @@ public class TimeslotDaoImpl extends AbstractCrudDaoImpl<TimeslotEntity> impleme
 
     @Override
     public List<TimeslotEntity> findAllBetweenDatesSorted(LocalDate from, LocalDate to) {
-        return findAllByTwoParams(from, to, FIND_ALL_BETWEEN_DATES, LOCAL_DATE_SETTER);
+        return findAllByTwoParams(from, to, FIND_ALL_BETWEEN_DATES, LOCAL_DATE_SETTER, LOCAL_DATE_SETTER);
     }
 
     @Override

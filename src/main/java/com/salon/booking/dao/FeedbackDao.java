@@ -7,7 +7,9 @@ import com.salon.booking.entity.FeedbackStatusEntity;
 
 public interface FeedbackDao extends PageableCrudDao<FeedbackEntity> {
 
-    Page<FeedbackEntity> findAllByWorkerId(Integer workerId, PageProperties properties);
+    Page<FeedbackEntity> findAllApprovedWithWorkerId(Integer workerId, PageProperties properties);
+
+    Page<FeedbackEntity> findAllByClientId(Integer clientId, PageProperties properties);
 
     Page<FeedbackEntity> findAllByStatus(FeedbackStatusEntity status, PageProperties properties);
 

@@ -5,21 +5,21 @@
 
     <form method="post">
         <div class="list-group">
-            <c:forEach items="${requestScope.services}" var="item">
+            <c:forEach items="${requestScope.services}" var="feedback">
                 <c:choose>
-                    <c:when test="${item.available}">
+                    <c:when test="${feedback.available}">
                         <input name="service-id" class="d-none" type="radio" required
-                               id="service-<c:out value="${item.id}"/>"
-                               value="<c:out value="${item.id}"/>">
+                               id="service-<c:out value="${feedback.id}"/>"
+                               value="<c:out value="${feedback.id}"/>">
 
-                        <label for="service-<c:out value="${item.id}"/>"
+                        <label for="service-<c:out value="${feedback.id}"/>"
                                class="radio-label form-check-label list-group-item list-group-item-action flex-column align-items-start">
                             <div class="d-flex w-100 justify-content-between">
                                 <h5 class="mb-1">
-                                    <c:out value="${item.name}"/>
+                                    <c:out value="${feedback.name}"/>
                                 </h5>
                                 <p>
-                                    $<c:out value="${item.price}"/>
+                                    $<c:out value="${feedback.price}"/>
                                 </p>
                             </div>
                         </label>
@@ -28,10 +28,10 @@
                         <div class="disabled list-group-item flex-column align-items-start">
                             <div class="d-flex w-100 justify-content-between">
                                 <h5 class="mb-1">
-                                    <c:out value="${item.name}"/>
+                                    <c:out value="${feedback.name}"/>
                                 </h5>
                                 <p>
-                                    $<c:out value="${item.price}"/>
+                                    $<c:out value="${feedback.price}"/>
                                 </p>
                             </div>
                         </div>

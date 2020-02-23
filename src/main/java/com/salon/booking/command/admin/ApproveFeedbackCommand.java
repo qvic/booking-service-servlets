@@ -23,6 +23,6 @@ public class ApproveFeedbackCommand implements PostCommand {
         int feedbackId = getRequiredIntParameter("feedback-id", request);
         feedbackService.approveFeedbackById(feedbackId);
 
-        response.sendRedirect("/app/admin/feedback");
+        redirect("/app/admin/feedback", request, response);
     }
 }

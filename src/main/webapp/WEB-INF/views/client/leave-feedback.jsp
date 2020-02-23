@@ -1,38 +1,51 @@
 <%@ include file="../includes/header.jsp" %>
 
 <div class="container my-5">
-    <h3 class="mb-5 text-center">Select order to leave feedback</h3>
+    <h3 class="mb-5 text-center"><fmt:message key="label.client.select_order_to_leave_feedback"/></h3>
 
     <form method="post">
         <div class="list-group">
-            <c:forEach items="${requestScope.page.items}" var="item">
-                <input name="worker-id" class="d-none" type="radio"
-                       id="worker-<c:out value="${item.id}"/>"
-                       value="<c:out value="${item.id}"/>">
+            <c:forEach items="${requestScope.orders}" var="feedback">
+                <c:choose>
+                    <c:when test="${requestScope.selectedOrderId ne null and feedback.id == requestScope.selectedOrderId}">
+                        <input name="order-id" class="d-none" type="radio"
+                               required
+                               checked
+                               id="order-${feedback.id}"
+                               value="${feedback.id}">
+                    </c:when>
+                    <c:otherwise>
+                        <input name="order-id" class="d-none" type="radio"
+                               required
+                               id="order-${feedback.id}"
+                               value="${feedback.id}">
+                    </c:otherwise>
+                </c:choose>
 
-                <label for="worker-<c:out value="${item.id}"/>"
+                <label for="order-${feedback.id}"
                        class="radio-label form-check-label list-group-item list-group-item-action flex-column align-items-start">
                     <div class="d-flex w-100 mb-2 justify-content-between">
                         <h5>
-                            <c:out value="${item.date}"/>
+                            <c:out value="${cf:formatLocalDateTime(feedback.date ,'dd.MM.yyyy HH:mm')}"/>
                         </h5>
                     </div>
                     <div class="mb-1">
-                        <h5>Service</h5>
-                        <p><c:out value="${item.service.name}"/> - $<c:out value="${item.service.price}"/></p>
+                        <h5><fmt:message key="label.service"/></h5>
+                        <p><c:out value="${feedback.service.name}"/> ($<c:out value="${feedback.service.price}"/>)</p>
                     </div>
                     <div class="mb-1">
-                        <h5>Worker</h5>
-                        <p><c:out value="${item.worker.name}"/> - <c:out value="${item.worker.email}"/></p>
+                        <h5><fmt:message key="label.worker"/></h5>
+                        <p><c:out value="${feedback.worker.name}"/> (<c:out value="${feedback.worker.email}"/>)</p>
                     </div>
                 </label>
             </c:forEach>
         </div>
-        <label>
-            Feedback text:
-            <input type="text" name="text">
-        </label>
-        <button class="w-25 mx-auto my-5 btn btn-primary btn-lg btn-block" type="submit">Submit</button>
+        <hr>
+        <label for="feedbackText"><fmt:message key="label.client.feedback_text"/></label>
+        <textarea name="text" class="form-control" id="feedbackText" rows="3"></textarea>
+
+        <button class="w-25 mx-auto my-5 btn btn-primary btn-lg btn-block" type="submit"><fmt:message
+                key="label.submit"/></button>
     </form>
 </div>
 

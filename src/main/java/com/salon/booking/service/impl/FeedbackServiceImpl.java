@@ -8,13 +8,15 @@ import com.salon.booking.domain.page.Page;
 import com.salon.booking.domain.page.PageProperties;
 import com.salon.booking.entity.FeedbackEntity;
 import com.salon.booking.entity.FeedbackStatusEntity;
-import com.salon.booking.entity.UserEntity;
+import com.salon.booking.entity.OrderEntity;
 import com.salon.booking.mapper.Mapper;
 import com.salon.booking.service.FeedbackService;
 import com.salon.booking.service.OrderService;
 import com.salon.booking.service.validator.Validator;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 public class FeedbackServiceImpl implements FeedbackService {
 
@@ -34,8 +36,26 @@ public class FeedbackServiceImpl implements FeedbackService {
 
     @Override
     public Page<Feedback> findAllByWorkerId(Integer workerId, PageProperties properties) {
-        return feedbackDao.findAllByWorkerId(workerId, properties)
-                .map(feedbackMapper::mapEntityToDomain);
+        return feedbackDao.findAllApprovedWithWorkerId(workerId, properties)
+                .map(this::buildFeedbackWithOrder);
+    }
+
+    @Override
+    public Page<Feedback> findAllByClientId(Integer clientId, PageProperties properties) {
+        return feedbackDao.findAllByClientId(clientId, properties)
+                .map(this::buildFeedbackWithOrder);
+    }
+
+    private Feedback buildFeedbackWithOrder(FeedbackEntity feedbackEntity) {
+        Feedback feedback = feedbackMapper.mapEntityToDomain(feedbackEntity);
+
+        Integer orderId = feedbackEntity.getOrder().getId();
+        Order order = orderService.findById(orderId)
+                .orElseThrow(NoSuchElementException::new);
+
+        return Feedback.builder(feedback)
+                .setOrder(order)
+                .build();
     }
 
     @Override
@@ -50,25 +70,29 @@ public class FeedbackServiceImpl implements FeedbackService {
     }
 
     @Override
-    public void saveFeedback(Integer workerId, String text) {
+    public void saveFeedback(Integer clientId, Integer orderId, String text, LocalDateTime minOrderEndTime) {
         feedbackTextValidator.validate(text);
 
-        List<Order> finishedOrders = orderService.findLastFinishedOrders();
-        boolean canLeaveFeedback = finishedOrders.stream()
-                .anyMatch(o -> workerId.equals(o.getWorker().getId()));
+        boolean canLeaveFeedback = canLeaveFeedbackAbout(orderId, clientId, minOrderEndTime);
 
         if (canLeaveFeedback) {
-            UserEntity worker = UserEntity.builder()
-                    .setId(workerId)
+            OrderEntity order = OrderEntity.builder()
+                    .setId(orderId)
                     .build();
             FeedbackEntity feedback = FeedbackEntity.builder()
-                    .setWorker(worker)
+                    .setOrder(order)
                     .setText(text)
                     .setStatus(FeedbackStatusEntity.CREATED)
                     .build();
 
             feedbackDao.save(feedback);
         }
+    }
+
+    private boolean canLeaveFeedbackAbout(Integer orderId, Integer clientId, LocalDateTime minTime) {
+        List<Order> finishedOrders = orderService.findFinishedOrdersAfter(minTime, clientId);
+        return finishedOrders.stream()
+                .anyMatch(o -> orderId.equals(o.getId()));
     }
 
 }

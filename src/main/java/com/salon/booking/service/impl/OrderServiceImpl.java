@@ -18,16 +18,14 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.time.LocalDateTime;
-import java.time.Period;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class OrderServiceImpl implements OrderService {
 
     private static final Logger LOGGER = LogManager.getLogger(OrderServiceImpl.class);
-
-    private static final Period FEEDBACK_THRESHOLD = Period.ofDays(7);
 
     private final TimeslotService timeslotService;
 
@@ -55,21 +53,9 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public List<Order> findAllByClientId(Integer clientId) {
         return orderDao.findAllByClientId(clientId).stream()
-                .map(this::buildWithServiceAndWorker)
+                .map(this::fillOrderEntity)
                 .map(orderMapper::mapEntityToDomain)
                 .collect(Collectors.toList());
-    }
-
-    private OrderEntity buildWithServiceAndWorker(OrderEntity orderEntity) {
-        ServiceEntity serviceById = serviceDao.findById(orderEntity.getService().getId())
-                .orElseThrow(() -> new RuntimeException("Service id mapped to OrderEntity is not present in data source"));
-        UserEntity workerById = userDao.findById(orderEntity.getWorker().getId())
-                .orElseThrow(() -> new RuntimeException("Worker id mapped to OrderEntity is not present in data source"));
-
-        return OrderEntity.builder(orderEntity)
-                .setService(serviceById)
-                .setWorker(workerById)
-                .build();
     }
 
     @Override
@@ -101,8 +87,9 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public List<Order> findLastFinishedOrders() {
-        return orderDao.findAllFinishedAfter(LocalDateTime.now().minus(FEEDBACK_THRESHOLD)).stream()
+    public List<Order> findFinishedOrdersAfter(LocalDateTime dateTime, Integer clientId) {
+        return orderDao.findAllFinishedAfter(dateTime, clientId).stream()
+                .map(this::fillOrderEntity)
                 .map(orderMapper::mapEntityToDomain)
                 .collect(Collectors.toList());
     }
@@ -120,6 +107,29 @@ public class OrderServiceImpl implements OrderService {
         return serviceDao.findById(id)
                 .map(serviceMapper::mapEntityToDomain);
     }
+
+    @Override
+    public Optional<Order> findById(Integer id) {
+        return orderDao.findById(id)
+                .map(this::fillOrderEntity)
+                .map(orderMapper::mapEntityToDomain);
+    }
+
+    private OrderEntity fillOrderEntity(OrderEntity orderEntity) {
+        ServiceEntity service = serviceDao.findById(orderEntity.getService().getId())
+                .orElseThrow(NoSuchElementException::new);
+        UserEntity worker = userDao.findById(orderEntity.getWorker().getId())
+                .orElseThrow(NoSuchElementException::new);
+        UserEntity client = userDao.findById(orderEntity.getClient().getId())
+                .orElseThrow(NoSuchElementException::new);
+
+        return OrderEntity.builder(orderEntity)
+                .setService(service)
+                .setWorker(worker)
+                .setClient(client)
+                .build();
+    }
+
 
     private void assignOrderToTimeslots(List<Timeslot> timeslots, Integer orderId) {
         timeslots.forEach(timeslot -> timeslotService.saveOrderTimeslot(timeslot.getId(), orderId));

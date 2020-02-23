@@ -8,7 +8,7 @@ import com.salon.booking.domain.page.Page;
 import com.salon.booking.domain.page.PageProperties;
 import com.salon.booking.entity.FeedbackEntity;
 import com.salon.booking.entity.FeedbackStatusEntity;
-import com.salon.booking.entity.UserEntity;
+import com.salon.booking.entity.OrderEntity;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -16,17 +16,19 @@ import java.sql.SQLException;
 
 public class FeedbackDaoImpl extends AbstractPageableCrudDaoImpl<FeedbackEntity> implements FeedbackDao {
 
-    private static final String FIND_BY_ID_QUERY = "SELECT f.*, u.name AS worker_name FROM feedback f INNER JOIN \"user\" u ON f.worker_id = u.id WHERE f.id = ?";
-    private static final String FIND_ALL_QUERY = "SELECT f.*, u.name AS worker_name FROM feedback f INNER JOIN \"user\" u ON f.worker_id = u.id";
-    private static final String FIND_ALL_PAGED_QUERY = "SELECT f.*, u.name AS worker_name FROM feedback f INNER JOIN \"user\" u ON f.worker_id = u.id OFFSET ? LIMIT ?";
-    private static final String FIND_ALL_BY_WORKER_QUERY = "SELECT f.*, u.name AS worker_name FROM feedback f INNER JOIN \"user\" u ON f.worker_id = u.id WHERE f.worker_id = ? OFFSET ? LIMIT ?";
-    private static final String FIND_ALL_BY_STATUS_QUERY = "SELECT f.*, u.name AS worker_name FROM feedback f INNER JOIN \"user\" u ON f.worker_id = u.id WHERE f.status = ? OFFSET ? LIMIT ?";
+    private static final String FIND_BY_ID_QUERY = "SELECT f.* FROM feedback f WHERE f.id = ?";
+    private static final String FIND_ALL_QUERY = "SELECT f.* FROM feedback f";
+    private static final String FIND_ALL_PAGED_QUERY = "SELECT f.* FROM feedback f OFFSET ? LIMIT ?";
+    private static final String FIND_ALL_APPROVED_WITH_WORKER_QUERY = "SELECT f.* FROM feedback f INNER JOIN \"order\" o on f.order_id = o.id WHERE f.status = 'APPROVED' AND o.worker_id = ? OFFSET ? LIMIT ?";
+    private static final String FIND_ALL_BY_CLIENT_QUERY = "SELECT f.* FROM feedback f INNER JOIN \"order\" o on f.order_id = o.id WHERE o.client_id = ? OFFSET ? LIMIT ?";
+    private static final String FIND_ALL_BY_STATUS_QUERY = "SELECT f.* FROM feedback f WHERE f.status = ? OFFSET ? LIMIT ?";
     private static final String COUNT_QUERY = "SELECT count(*) FROM feedback f";
-    private static final String COUNT_BY_WORKER_QUERY = "SELECT count(*) FROM feedback f WHERE f.worker_id = ?";
+    private static final String COUNT_APPROVED_WITH_WORKER_QUERY = "SELECT count(*) FROM feedback f INNER JOIN \"order\" o ON f.order_id = o.id WHERE f.status = 'APPROVED' AND o.worker_id = ?";
+    private static final String COUNT_BY_CLIENT_QUERY = "SELECT count(*) FROM feedback f INNER JOIN \"order\" o ON f.order_id = o.id WHERE f.status = 'APPROVED' AND o.client_id = ?";
     private static final String COUNT_BY_STATUS_QUERY = "SELECT count(*) FROM feedback f WHERE f.status = ?";
 
-    private static final String SAVE_QUERY = "INSERT INTO feedback (text, worker_id, status) VALUES (?, ?, ?) RETURNING id";
-    private static final String UPDATE_QUERY = "UPDATE feedback SET text = ?, worker_id = ?, status = ? WHERE id = ?";
+    private static final String SAVE_QUERY = "INSERT INTO feedback (text, status, order_id) VALUES (?, ?, ?) RETURNING id";
+    private static final String UPDATE_QUERY = "UPDATE feedback SET text = ?, status = ?, order_id = ? WHERE id = ?";
     private static final String UPDATE_FEEDBACK_STATUS_QUERY = "UPDATE feedback SET status = ? WHERE id = ?";
     private static final String DELETE_QUERY = "DELETE FROM feedback WHERE id = ?";
 
@@ -37,8 +39,13 @@ public class FeedbackDaoImpl extends AbstractPageableCrudDaoImpl<FeedbackEntity>
     }
 
     @Override
-    public Page<FeedbackEntity> findAllByWorkerId(Integer workerId, PageProperties properties) {
-        return findPageByParam(workerId, FIND_ALL_BY_WORKER_QUERY, COUNT_BY_WORKER_QUERY, INT_SETTER, properties);
+    public Page<FeedbackEntity> findAllApprovedWithWorkerId(Integer workerId, PageProperties properties) {
+        return findPageByParam(workerId, FIND_ALL_APPROVED_WITH_WORKER_QUERY, COUNT_APPROVED_WITH_WORKER_QUERY, INT_SETTER, properties);
+    }
+
+    @Override
+    public Page<FeedbackEntity> findAllByClientId(Integer clientId, PageProperties properties) {
+        return findPageByParam(clientId, FIND_ALL_BY_CLIENT_QUERY, COUNT_BY_CLIENT_QUERY, INT_SETTER, properties);
     }
 
     @Override
@@ -66,9 +73,8 @@ public class FeedbackDaoImpl extends AbstractPageableCrudDaoImpl<FeedbackEntity>
         return FeedbackEntity.builder()
                 .setId(resultSet.getInt("id"))
                 .setText(resultSet.getString("text"))
-                .setWorker(UserEntity.builder()
-                        .setId(resultSet.getInt("worker_id"))
-                        .setName(resultSet.getString("worker_name"))
+                .setOrder(OrderEntity.builder()
+                        .setId(resultSet.getInt("order_id"))
                         .build())
                 .setStatus(mapStatus(resultSet))
                 .build();
@@ -99,7 +105,7 @@ public class FeedbackDaoImpl extends AbstractPageableCrudDaoImpl<FeedbackEntity>
 
     private void populateNonIdFields(FeedbackEntity entity, PreparedStatement statement) throws SQLException {
         statement.setString(1, entity.getText());
-        statement.setInt(2, entity.getWorker().getId());
-        statement.setString(3, entity.getStatus().name());
+        statement.setString(2, entity.getStatus().name());
+        statement.setInt(3, entity.getOrder().getId());
     }
 }

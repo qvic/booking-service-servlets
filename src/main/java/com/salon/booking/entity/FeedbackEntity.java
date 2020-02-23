@@ -7,13 +7,13 @@ public class FeedbackEntity {
     private final Integer id;
     private final String text;
     private final FeedbackStatusEntity status;
-    private final UserEntity worker;
+    private final OrderEntity order;
 
     private FeedbackEntity(Builder builder) {
         id = builder.id;
         text = builder.text;
         status = builder.status;
-        worker = builder.worker;
+        order = builder.order;
     }
 
     public static Builder builder() {
@@ -25,12 +25,12 @@ public class FeedbackEntity {
         builder.id = copy.getId();
         builder.text = copy.getText();
         builder.status = copy.getStatus();
-        builder.worker = copy.getWorker();
+        builder.order = copy.getOrder();
         return builder;
     }
 
-    public UserEntity getWorker() {
-        return worker;
+    public OrderEntity getOrder() {
+        return order;
     }
 
     public Integer getId() {
@@ -51,35 +51,31 @@ public class FeedbackEntity {
                 "id=" + id +
                 ", text='" + text + '\'' +
                 ", status=" + status +
-                ", worker=" + worker +
+                ", order=" + order +
                 '}';
     }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        FeedbackEntity feedback = (FeedbackEntity) o;
-        return Objects.equals(id, feedback.id) &&
-                Objects.equals(text, feedback.text) &&
-                status == feedback.status &&
-                Objects.equals(worker, feedback.worker);
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        FeedbackEntity that = (FeedbackEntity) o;
+        return Objects.equals(id, that.id) &&
+                Objects.equals(text, that.text) &&
+                status == that.status &&
+                Objects.equals(order, that.order);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, text, status, worker);
+        return Objects.hash(id, text, status, order);
     }
 
     public static final class Builder {
         private Integer id;
         private String text;
         private FeedbackStatusEntity status;
-        private UserEntity worker;
+        private OrderEntity order;
 
         private Builder() {
         }
@@ -99,8 +95,8 @@ public class FeedbackEntity {
             return this;
         }
 
-        public Builder setWorker(UserEntity worker) {
-            this.worker = worker;
+        public Builder setOrder(OrderEntity order) {
+            this.order = order;
             return this;
         }
 

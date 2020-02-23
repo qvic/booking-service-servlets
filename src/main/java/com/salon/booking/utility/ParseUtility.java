@@ -2,6 +2,7 @@ package com.salon.booking.utility;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
+import java.util.OptionalInt;
 import java.util.function.Supplier;
 
 public final class ParseUtility {
@@ -34,7 +35,19 @@ public final class ParseUtility {
         }
     }
 
-    public static int parseIntOrThrow(String value, Supplier<? extends RuntimeException> exceptionSupplier) {
+    public static OptionalInt parseInt(String number) {
+        if (number == null) {
+            return OptionalInt.empty();
+        }
+
+        try {
+            return OptionalInt.of(Integer.parseInt(number));
+        } catch (NumberFormatException e) {
+            return OptionalInt.empty();
+        }
+    }
+
+    static int parseIntOrThrow(String value, Supplier<? extends RuntimeException> exceptionSupplier) {
         if (value == null) {
             throw exceptionSupplier.get();
         }

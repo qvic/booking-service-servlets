@@ -63,6 +63,18 @@
                                     <a class="nav-link" href="<c:url value="/app/client/feedback"/>"><fmt:message
                                             key="label.client.feedback"/></a>
                                 </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="<c:url value="/app/client/leave-feedback"/>"><fmt:message
+                                            key="label.client.leave_feedback"/></a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="<c:url value="/app/client/notifications"/>"><fmt:message
+                                            key="label.client.notifications"/>
+                                        <c:if test="${(sessionScope.notificationsCounter ne null) and (sessionScope.notificationsCounter != 0)}">
+                                            <span class="badge badge-pill badge-danger">${sessionScope.notificationsCounter}</span>
+                                        </c:if>
+                                    </a>
+                                </li>
                             </c:when>
                             <c:when test="${sessionScope.user.isWorker()}">
                                 <li class="nav-item">

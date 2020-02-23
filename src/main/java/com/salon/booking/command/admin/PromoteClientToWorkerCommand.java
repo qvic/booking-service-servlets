@@ -21,7 +21,7 @@ public class PromoteClientToWorkerCommand implements PostCommand {
     public void processPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         int userId = RequestUtility.getRequiredIntParameter("client-id", request);
         userService.promoteToWorker(userId);
-        
-        response.sendRedirect("/app/admin/clients");
+
+        redirect("/app/admin/clients", request, response);
     }
 }

@@ -4,12 +4,16 @@ import com.salon.booking.dao.NotificationDao;
 import com.salon.booking.domain.Notification;
 import com.salon.booking.domain.Order;
 import com.salon.booking.entity.NotificationEntity;
+import com.salon.booking.entity.OrderEntity;
 import com.salon.booking.mapper.Mapper;
 import com.salon.booking.service.NotificationService;
 import com.salon.booking.service.OrderService;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class NotificationServiceImpl implements NotificationService {
@@ -25,29 +29,55 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     @Override
-    public List<Notification> findAllUnread(Integer userId) {
-        return notificationDao.findAllUnread(userId).stream()
-                .map(notificationMapper::mapEntityToDomain)
+    public List<Notification> findAllUnreadAndMarkAllAsRead(Integer userId) {
+        List<Notification> notifications = notificationDao.findAllUnread(userId).stream()
+                .map(this::buildNotificationWithOrder)
+                .collect(Collectors.toList());
+
+        notificationDao.updateAllAsRead();
+
+        return notifications;
+    }
+
+    @Override
+    public List<Notification> findAllRead(Integer userId) {
+        return notificationDao.findAllRead(userId).stream()
+                .map(this::buildNotificationWithOrder)
                 .collect(Collectors.toList());
     }
 
-    @Override
-    public long countUnread(Integer userId) {
-        return notificationDao.countUnread(userId);
-    }
+    private Notification buildNotificationWithOrder(NotificationEntity notificationEntity) {
+        Notification notification = notificationMapper.mapEntityToDomain(notificationEntity);
 
-    @Override
-    public void markAsRead(Integer notificationId) {
-        NotificationEntity notification = notificationDao.findById(notificationId)
+        Integer orderId = notificationEntity.getOrder().getId();
+        Order order = orderService.findById(orderId)
                 .orElseThrow(NoSuchElementException::new);
 
-        notificationDao.update(NotificationEntity.builder(notification)
-                .setRead(true)
-                .build());
+        return new Notification(notification.getId(), order, notification.getRead());
     }
 
     @Override
-    public void save(Notification notification) {
-        notificationDao.save(notificationMapper.mapDomainToEntity(notification));
+    public long updateNotificationsReturningCount(Integer userId, LocalDateTime minOrderEndTime) {
+        List<Order> lastFinishedOrders = orderService.findFinishedOrdersAfter(minOrderEndTime, userId);
+
+        long unreadNotifications = 0;
+        for (Order order : lastFinishedOrders) {
+            Optional<NotificationEntity> notification = notificationDao.findByOrderId(order.getId());
+
+            if (notification.isPresent()) {
+                if (Objects.equals(notification.get().getRead(), false)) {
+                    unreadNotifications++;
+                }
+            } else {
+                Integer orderId = order.getId();
+                notificationDao.save(buildNewNotification(orderId));
+                unreadNotifications++;
+            }
+        }
+        return unreadNotifications;
+    }
+
+    private NotificationEntity buildNewNotification(Integer orderId) {
+        return new NotificationEntity(null, OrderEntity.builder().setId(orderId).build(), false);
     }
 }

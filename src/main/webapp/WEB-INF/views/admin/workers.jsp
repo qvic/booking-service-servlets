@@ -3,12 +3,12 @@
 <div class="container mt-5">
     <h3 class="mb-5 text-center"><fmt:message key="label.admin.list_workers"/></h3>
     <div class="list-group">
-        <c:forEach items="${requestScope.page.items}" var="item">
+        <c:forEach items="${requestScope.page.items}" var="feedback">
             <div class="form-check-label list-group-item list-group-item-action flex-column align-items-start">
                 <h5 class="mb-1">
-                    <c:out value="${item.name}"/>
+                    <c:out value="${feedback.name}"/>
                 </h5>
-                <p class="mb-1"><c:out value="${item.email}"/></p>
+                <p class="mb-1"><c:out value="${feedback.email}"/></p>
             </div>
         </c:forEach>
     </div>

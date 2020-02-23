@@ -5,6 +5,7 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
 import java.time.LocalDate;
+import java.util.OptionalInt;
 
 import static org.junit.Assert.*;
 
@@ -69,5 +70,17 @@ public class ParseUtilityTest {
     public void parseIntOrThrowShouldThrowWhenValueIsIncorrect() {
         expectedException.expect(RuntimeException.class);
         ParseUtility.parseIntOrThrow("a123", RuntimeException::new);
+    }
+
+    @Test
+    public void parseIntShouldReturnEmptyOptionalWhenValueIsIncorrect() {
+        assertFalse(ParseUtility.parseInt("abc").isPresent());
+    }
+
+    @Test
+    public void parseIntShouldReturnCorrectValue() {
+        OptionalInt optionalInt = ParseUtility.parseInt("123");
+        assertTrue(optionalInt.isPresent());
+        assertEquals(123, optionalInt.getAsInt());
     }
 }

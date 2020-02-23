@@ -5,15 +5,15 @@
 
     <form method="post">
         <div class="list-group">
-            <c:forEach items="${requestScope.page.items}" var="item">
+            <c:forEach items="${requestScope.page.items}" var="feedback">
                 <input name="worker-id" class="d-none" type="radio" required
-                       id="worker-<c:out value="${item.id}"/>"
-                       value="<c:out value="${item.id}"/>">
+                       id="worker-<c:out value="${feedback.id}"/>"
+                       value="<c:out value="${feedback.id}"/>">
 
-                <label for="worker-<c:out value="${item.id}"/>"
+                <label for="worker-<c:out value="${feedback.id}"/>"
                        class="radio-label form-check-label list-group-item list-group-item-action flex-column align-items-start">
                     <h5 class="mb-1">
-                        <c:out value="${item.name}"/>
+                        <c:out value="${feedback.name}"/>
                     </h5>
                 </label>
             </c:forEach>
