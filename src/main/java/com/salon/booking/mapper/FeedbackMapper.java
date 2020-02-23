@@ -21,6 +21,7 @@ public class FeedbackMapper implements Mapper<FeedbackEntity, Feedback> {
         }
 
         return FeedbackEntity.builder()
+                .setId(feedback.getId())
                 .setText(feedback.getText())
                 .setStatus(FeedbackStatusEntity.CREATED)
                 .setWorker(userMapper.mapDomainToEntity(feedback.getWorker()))

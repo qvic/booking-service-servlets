@@ -67,6 +67,7 @@ public class NotificationMapperTest {
                 .setId(1)
                 .setText("text")
                 .setType(NotificationTypeEntity.LEAVE_FEEDBACK)
+                .setRead(false)
                 .setUser(userEntity)
                 .build();
 

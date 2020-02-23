@@ -1,5 +1,7 @@
 package com.salon.booking.entity;
 
+import java.util.Objects;
+
 public class NotificationEntity {
 
     private final Integer id;
@@ -34,6 +36,34 @@ public class NotificationEntity {
 
     public NotificationTypeEntity getType() {
         return type;
+    }
+
+    @Override
+    public String toString() {
+        return "NotificationEntity{" +
+                "id=" + id +
+                ", text='" + text + '\'' +
+                ", user=" + user +
+                ", read=" + read +
+                ", type=" + type +
+                '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        NotificationEntity that = (NotificationEntity) o;
+        return Objects.equals(id, that.id) &&
+                Objects.equals(text, that.text) &&
+                Objects.equals(user, that.user) &&
+                Objects.equals(read, that.read) &&
+                type == that.type;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, text, user, read, type);
     }
 
     public static Builder builder(NotificationEntity copy) {

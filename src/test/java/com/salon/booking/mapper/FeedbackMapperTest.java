@@ -5,7 +5,6 @@ import com.salon.booking.domain.User;
 import com.salon.booking.entity.FeedbackEntity;
 import com.salon.booking.entity.FeedbackStatusEntity;
 import com.salon.booking.entity.UserEntity;
-import junit.framework.TestCase;
 import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -48,6 +47,7 @@ public class FeedbackMapperTest {
         Feedback feedback = new Feedback(1, "text", user);
 
         FeedbackEntity expectedFeedbackEntity = FeedbackEntity.builder()
+                .setId(1)
                 .setStatus(FeedbackStatusEntity.CREATED)
                 .setText("text")
                 .setWorker(userEntity)
@@ -69,6 +69,7 @@ public class FeedbackMapperTest {
         when(userMapper.mapEntityToDomain(eq(userEntity))).thenReturn(user);
 
         FeedbackEntity feedbackEntity = FeedbackEntity.builder()
+                .setId(1)
                 .setStatus(FeedbackStatusEntity.CREATED)
                 .setText("text")
                 .setWorker(userEntity)
@@ -76,7 +77,7 @@ public class FeedbackMapperTest {
 
         Feedback expectedFeedback = new Feedback(1, "text", user);
 
-        TestCase.assertEquals(expectedFeedback, feedbackMapper.mapEntityToDomain(feedbackEntity));
+        assertEquals(expectedFeedback, feedbackMapper.mapEntityToDomain(feedbackEntity));
     }
 
     @Test

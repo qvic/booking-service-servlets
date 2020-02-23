@@ -14,9 +14,9 @@ INSERT INTO public."user" (id, name, email, password, role) VALUES (20, 'Client 
 
 INSERT INTO public.duration (id, minutes) VALUES (1, 30);
 
-INSERT INTO public.feedback (id, text, order_id, status) VALUES (8, 'What?', 21, 'CREATED');
-INSERT INTO public.feedback (id, text, order_id, status) VALUES (7, 'Good.', 21, 'APPROVED');
-INSERT INTO public.feedback (id, text, order_id, status) VALUES (6, 'Very nice!', 21, 'APPROVED');
+INSERT INTO public.feedback (id, text, worker_id, status) VALUES (8, 'What?', 21, 'CREATED');
+INSERT INTO public.feedback (id, text, worker_id, status) VALUES (7, 'Good.', 21, 'APPROVED');
+INSERT INTO public.feedback (id, text, worker_id, status) VALUES (6, 'Very nice!', 21, 'APPROVED');
 
 INSERT INTO public.service (id, name, duration_minutes, price) VALUES (12, 'Manicure', 20, 100);
 INSERT INTO public.service (id, name, duration_minutes, price) VALUES (11, 'SPA', 50, 500);
