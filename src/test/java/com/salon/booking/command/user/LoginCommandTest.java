@@ -4,6 +4,7 @@ import com.salon.booking.command.AbstractCommandTest;
 import com.salon.booking.domain.User;
 import com.salon.booking.domain.UserLoginForm;
 import com.salon.booking.service.AuthService;
+import com.salon.booking.service.NotificationService;
 import com.salon.booking.utility.PageUtility;
 import org.junit.After;
 import org.junit.Test;
@@ -17,6 +18,7 @@ import java.io.IOException;
 import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
@@ -41,6 +43,9 @@ public class LoginCommandTest extends AbstractCommandTest {
     private static final String LOGIN_PAGE_PATH = PageUtility.getViewPathByName("login");
 
     @Mock
+    private NotificationService notificationService;
+
+    @Mock
     private AuthService authService;
 
     @InjectMocks
@@ -48,7 +53,7 @@ public class LoginCommandTest extends AbstractCommandTest {
 
     @After
     public void resetMocks() {
-        reset(authService);
+        reset(authService, notificationService);
     }
 
     @Test
@@ -60,10 +65,12 @@ public class LoginCommandTest extends AbstractCommandTest {
         when(request.getSession(eq(false))).thenReturn(null);
         when(request.getSession(eq(true))).thenReturn(session);
 
+        when(notificationService.updateNotificationsReturningCount(any(), any())).thenReturn(2L);
         when(authService.login(eq(loginForm))).thenReturn(Optional.of(USER));
 
         loginCommand.processPost(request, response);
 
+        verify(session).setAttribute(eq("notificationsCounter"), eq(2L));
         verify(session).setAttribute(eq("user"), eq(USER));
         verify(response).sendRedirect(any());
     }

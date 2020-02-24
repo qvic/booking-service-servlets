@@ -14,6 +14,7 @@ import com.salon.booking.entity.UserEntity;
 import com.salon.booking.mapper.Mapper;
 import com.salon.booking.service.OrderService;
 import com.salon.booking.service.TimeslotService;
+import com.salon.booking.service.exception.NoSuchItemException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -98,7 +99,6 @@ public class OrderServiceImpl implements OrderService {
     public List<Service> findAllServices() {
         return serviceDao.findAll().stream()
                 .map(serviceMapper::mapEntityToDomain)
-                .map(service -> Service.builder(service).setAvailable(true).build())
                 .collect(Collectors.toList());
     }
 
@@ -117,11 +117,11 @@ public class OrderServiceImpl implements OrderService {
 
     private OrderEntity fillOrderEntity(OrderEntity orderEntity) {
         ServiceEntity service = serviceDao.findById(orderEntity.getService().getId())
-                .orElseThrow(NoSuchElementException::new);
+                .orElseThrow(NoSuchItemException::new);
         UserEntity worker = userDao.findById(orderEntity.getWorker().getId())
-                .orElseThrow(NoSuchElementException::new);
+                .orElseThrow(NoSuchItemException::new);
         UserEntity client = userDao.findById(orderEntity.getClient().getId())
-                .orElseThrow(NoSuchElementException::new);
+                .orElseThrow(NoSuchItemException::new);
 
         return OrderEntity.builder(orderEntity)
                 .setService(service)

@@ -14,7 +14,6 @@ public class Timeslot {
     private final Duration duration;
     private final LocalDate date;
     private final List<Order> orders;
-    private final Boolean available;
 
     private Timeslot(Builder builder) {
         id = builder.id;
@@ -22,11 +21,6 @@ public class Timeslot {
         duration = builder.duration;
         date = builder.date;
         orders = builder.orders;
-        available = builder.available;
-    }
-
-    public Boolean getAvailable() {
-        return available;
     }
 
     public List<Order> getOrders() {
@@ -57,7 +51,6 @@ public class Timeslot {
                 ", duration=" + duration +
                 ", date=" + date +
                 ", orders=" + orders +
-                ", available=" + available +
                 '}';
     }
 
@@ -70,13 +63,12 @@ public class Timeslot {
                 Objects.equals(fromTime, timeslot.fromTime) &&
                 Objects.equals(duration, timeslot.duration) &&
                 Objects.equals(date, timeslot.date) &&
-                Objects.equals(orders, timeslot.orders) &&
-                Objects.equals(available, timeslot.available);
+                Objects.equals(orders, timeslot.orders);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, fromTime, duration, date, orders, available);
+        return Objects.hash(id, fromTime, duration, date, orders);
     }
 
     public static Builder builder() {
@@ -90,7 +82,6 @@ public class Timeslot {
         builder.duration = copy.getDuration();
         builder.date = copy.getDate();
         builder.orders = copy.getOrders();
-        builder.available = copy.getAvailable();
         return builder;
     }
 
@@ -101,7 +92,6 @@ public class Timeslot {
         private Duration duration;
         private LocalDate date;
         private List<Order> orders = new ArrayList<>();
-        private Boolean available;
 
         private Builder() {
         }
@@ -128,11 +118,6 @@ public class Timeslot {
 
         public Builder setOrders(List<Order> orders) {
             this.orders = orders;
-            return this;
-        }
-
-        public Builder setAvailable(Boolean available) {
-            this.available = available;
             return this;
         }
 

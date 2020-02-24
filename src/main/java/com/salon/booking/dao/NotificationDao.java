@@ -13,5 +13,5 @@ public interface NotificationDao extends CrudDao<NotificationEntity> {
 
     List<NotificationEntity> findAllRead(Integer userId);
 
-    void updateAllAsRead();
+    void updateAllAsRead(Integer userId);
 }

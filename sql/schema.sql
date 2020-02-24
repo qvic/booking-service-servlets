@@ -1,4 +1,4 @@
-create table "user"
+create table if not exists "user"
 (
     id       serial       not null
         constraint user_pk
@@ -9,22 +9,10 @@ create table "user"
     role     varchar(10)  not null
 );
 
-create unique index user_email_uindex
+create unique index if not exists user_email_uindex
     on "user" (email);
 
-create table feedback
-(
-    id        serial        not null
-        constraint review_pk
-            primary key,
-    text      varchar(5000) not null,
-    worker_id integer       not null
-        constraint review_user_id_fk
-            references "user",
-    status    varchar(10)   not null
-);
-
-create table service
+create table if not exists service
 (
     id               serial       not null
         constraint service_type_pk
@@ -34,7 +22,7 @@ create table service
     price            integer      not null
 );
 
-create table "order"
+create table if not exists "order"
 (
     id         serial    not null
         constraint appointment_pk
@@ -51,7 +39,19 @@ create table "order"
             references service
 );
 
-create table duration
+create table if not exists feedback
+(
+    id       serial        not null
+        constraint review_pk
+            primary key,
+    text     varchar(5000) not null,
+    status   varchar(10)   not null,
+    order_id integer       not null
+        constraint feedback_order_id_fk
+            references "order"
+);
+
+create table if not exists duration
 (
     id      serial  not null
         constraint duration_pk
@@ -59,7 +59,7 @@ create table duration
     minutes integer not null
 );
 
-create table timeslot
+create table if not exists timeslot
 (
     id          serial  not null
         constraint timeslot_pk
@@ -71,19 +71,18 @@ create table timeslot
             references duration
 );
 
-create table notification
+create table if not exists notification
 (
-    id      serial       not null
+    id       serial  not null
         constraint notification_pk
             primary key,
-    user_id integer      not null
-        constraint notification_user_id_fk
-            references "user",
-    type    varchar(20)  not null,
-    text    varchar(500) not null
+    order_id integer not null
+        constraint notification_order_id_fk
+            references "order",
+    read     boolean not null
 );
 
-create table order_timeslot
+create table if not exists order_timeslot
 (
     id          serial  not null
         constraint order_timeslot_pk
@@ -95,3 +94,4 @@ create table order_timeslot
         constraint order_timeslot_timeslot_id_fk
             references timeslot
 );
+

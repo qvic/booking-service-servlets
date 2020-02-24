@@ -24,7 +24,7 @@
                         <label for="timeslot-${row.id}"
                                class="radio-label form-check-label list-group-item list-group-item-action flex-column align-items-start">
                             <h4 class="mb-1">
-                                ${row.fromTime} (${row.duration.toMinutes()}"/> min)
+                                ${row.fromTime} (${row.duration.toMinutes()} min)
                             </h4>
                             <p class="text-success">
                                 Available

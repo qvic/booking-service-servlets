@@ -14,16 +14,16 @@ INSERT INTO public."user" (id, name, email, password, role) VALUES (20, 'Client 
 
 INSERT INTO public.duration (id, minutes) VALUES (1, 30);
 
-INSERT INTO public.feedback (id, text, worker_id, status) VALUES (8, 'What?', 21, 'CREATED');
-INSERT INTO public.feedback (id, text, worker_id, status) VALUES (7, 'Good.', 21, 'APPROVED');
-INSERT INTO public.feedback (id, text, worker_id, status) VALUES (6, 'Very nice!', 21, 'APPROVED');
-
 INSERT INTO public.service (id, name, duration_minutes, price) VALUES (12, 'Manicure', 20, 100);
 INSERT INTO public.service (id, name, duration_minutes, price) VALUES (11, 'SPA', 50, 500);
 
 INSERT INTO public."order" (id, date, worker_id, client_id, service_id) VALUES (16, '2020-02-05 15:21:06.000000', 21, 20, 12);
 INSERT INTO public."order" (id, date, worker_id, client_id, service_id) VALUES (17, '2020-02-05 15:21:06.000000', 21, 20, 12);
 INSERT INTO public."order" (id, date, worker_id, client_id, service_id) VALUES (15, '2020-02-05 15:21:06.000000', 21, 20, 11);
+
+INSERT INTO public.feedback (id, text, order_id, status) VALUES (8, 'What?', 16, 'CREATED');
+INSERT INTO public.feedback (id, text, order_id, status) VALUES (7, 'Good.', 16, 'APPROVED');
+INSERT INTO public.feedback (id, text, order_id, status) VALUES (6, 'Very nice!', 16, 'APPROVED');
 
 INSERT INTO public.timeslot (id, from_time, date, duration_id) VALUES (8, '08:30:00', '2020-02-17', 1);
 INSERT INTO public.timeslot (id, from_time, date, duration_id) VALUES (7, '08:00:00', '2020-02-18', 1);

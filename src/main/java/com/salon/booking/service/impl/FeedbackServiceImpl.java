@@ -12,11 +12,11 @@ import com.salon.booking.entity.OrderEntity;
 import com.salon.booking.mapper.Mapper;
 import com.salon.booking.service.FeedbackService;
 import com.salon.booking.service.OrderService;
+import com.salon.booking.service.exception.NoSuchItemException;
 import com.salon.booking.service.validator.Validator;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.NoSuchElementException;
 
 public class FeedbackServiceImpl implements FeedbackService {
 
@@ -51,7 +51,7 @@ public class FeedbackServiceImpl implements FeedbackService {
 
         Integer orderId = feedbackEntity.getOrder().getId();
         Order order = orderService.findById(orderId)
-                .orElseThrow(NoSuchElementException::new);
+                .orElseThrow(NoSuchItemException::new);
 
         return Feedback.builder(feedback)
                 .setOrder(order)

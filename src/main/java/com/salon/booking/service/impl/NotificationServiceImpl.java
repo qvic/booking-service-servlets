@@ -8,6 +8,7 @@ import com.salon.booking.entity.OrderEntity;
 import com.salon.booking.mapper.Mapper;
 import com.salon.booking.service.NotificationService;
 import com.salon.booking.service.OrderService;
+import com.salon.booking.service.exception.NoSuchItemException;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -34,7 +35,7 @@ public class NotificationServiceImpl implements NotificationService {
                 .map(this::buildNotificationWithOrder)
                 .collect(Collectors.toList());
 
-        notificationDao.updateAllAsRead();
+        notificationDao.updateAllAsRead(userId);
 
         return notifications;
     }
@@ -51,7 +52,7 @@ public class NotificationServiceImpl implements NotificationService {
 
         Integer orderId = notificationEntity.getOrder().getId();
         Order order = orderService.findById(orderId)
-                .orElseThrow(NoSuchElementException::new);
+                .orElseThrow(NoSuchItemException::new);
 
         return new Notification(notification.getId(), order, notification.getRead());
     }
@@ -65,7 +66,7 @@ public class NotificationServiceImpl implements NotificationService {
             Optional<NotificationEntity> notification = notificationDao.findByOrderId(order.getId());
 
             if (notification.isPresent()) {
-                if (Objects.equals(notification.get().getRead(), false)) {
+                if (notification.get().getRead().equals(false)) {
                     unreadNotifications++;
                 }
             } else {
@@ -78,6 +79,11 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     private NotificationEntity buildNewNotification(Integer orderId) {
-        return new NotificationEntity(null, OrderEntity.builder().setId(orderId).build(), false);
+        return new NotificationEntity(
+                null,
+                OrderEntity.builder()
+                        .setId(orderId)
+                        .build(),
+                false);
     }
 }

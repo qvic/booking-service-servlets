@@ -24,7 +24,7 @@ public class NotificationDaoImpl extends AbstractCrudDaoImpl<NotificationEntity>
 
     private static final String INSERT_QUERY = "INSERT INTO notification (order_id, read) VALUES (?, ?) RETURNING id";
     private static final String UPDATE_QUERY = "UPDATE notification SET order_id = ?, read = ? WHERE id = ?";
-    private static final String UPDATE_ALL_AS_READ_QUERY = "UPDATE notification SET read = true";
+    private static final String UPDATE_ALL_AS_READ_QUERY = "UPDATE notification n SET read = true FROM \"order\" o WHERE n.order_id = o.id AND o.client_id = ?";
     private static final String DELETE_QUERY = "DELETE FROM notification WHERE id = ?";
 
     public NotificationDaoImpl(DataSourceConnector connector) {
@@ -80,9 +80,10 @@ public class NotificationDaoImpl extends AbstractCrudDaoImpl<NotificationEntity>
     }
 
     @Override
-    public void updateAllAsRead() {
+    public void updateAllAsRead(Integer userId) {
         try (DataSourceConnection connection = connector.getConnection();
              PreparedStatement statement = connection.getOriginal().prepareStatement(UPDATE_ALL_AS_READ_QUERY)) {
+            statement.setInt(1, userId);
             int affectedRows = statement.executeUpdate();
             throwIfNotAffected(affectedRows);
         } catch (SQLException e) {

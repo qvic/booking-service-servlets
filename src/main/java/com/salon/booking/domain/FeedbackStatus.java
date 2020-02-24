@@ -5,6 +5,7 @@ import com.salon.booking.utility.EnumUtility;
 import java.util.Optional;
 
 public enum FeedbackStatus {
+    
     APPROVED, CREATED;
 
     public static Optional<FeedbackStatus> findByName(String name) {

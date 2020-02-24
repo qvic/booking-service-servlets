@@ -9,14 +9,12 @@ public class Service {
     private final String name;
     private final Duration duration;
     private final Integer price;
-    private final Boolean available;
 
     private Service(Builder builder) {
         id = builder.id;
         name = builder.name;
         duration = builder.duration;
         price = builder.price;
-        available = builder.available;
     }
 
     public String getName() {
@@ -35,10 +33,6 @@ public class Service {
         return id;
     }
 
-    public Boolean getAvailable() {
-        return available;
-    }
-
     @Override
     public String toString() {
         return "Service{" +
@@ -46,7 +40,6 @@ public class Service {
                 ", name='" + name + '\'' +
                 ", duration=" + duration +
                 ", price=" + price +
-                ", available=" + available +
                 '}';
     }
 
@@ -58,13 +51,12 @@ public class Service {
         return Objects.equals(id, service.id) &&
                 Objects.equals(name, service.name) &&
                 Objects.equals(duration, service.duration) &&
-                Objects.equals(price, service.price) &&
-                Objects.equals(available, service.available);
+                Objects.equals(price, service.price);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, duration, price, available);
+        return Objects.hash(id, name, duration, price);
     }
 
     public static Builder builder() {
@@ -77,7 +69,6 @@ public class Service {
         builder.name = copy.getName();
         builder.duration = copy.getDuration();
         builder.price = copy.getPrice();
-        builder.available = copy.getAvailable();
         return builder;
     }
 
@@ -86,7 +77,6 @@ public class Service {
         private String name;
         private Duration duration;
         private Integer price;
-        private Boolean available;
 
         private Builder() {
         }
@@ -108,11 +98,6 @@ public class Service {
 
         public Builder setPrice(Integer price) {
             this.price = price;
-            return this;
-        }
-
-        public Builder setAvailable(Boolean available) {
-            this.available = available;
             return this;
         }
 
