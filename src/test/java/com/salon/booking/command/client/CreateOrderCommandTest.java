@@ -6,15 +6,16 @@ import com.salon.booking.domain.Role;
 import com.salon.booking.domain.Service;
 import com.salon.booking.domain.Timeslot;
 import com.salon.booking.domain.User;
-import com.salon.booking.entity.OrderEntity;
 import com.salon.booking.service.OrderService;
 import com.salon.booking.service.TimeService;
 import com.salon.booking.service.TimeslotService;
 import com.salon.booking.service.UserService;
+import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import javax.servlet.ServletException;
@@ -23,15 +24,12 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 
 import static com.salon.booking.utility.PageUtility.getViewPathByName;
-import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class CreateOrderCommandTest extends AbstractCommandTest {
-
-    private static final String REDIRECT_AFTER_SUBMIT = "/app/client/orders";
 
     @Mock
     private OrderService orderService;
@@ -47,6 +45,11 @@ public class CreateOrderCommandTest extends AbstractCommandTest {
 
     @InjectMocks
     private CreateOrderCommand command;
+
+    @After
+    public void resetMocks() {
+        Mockito.reset(orderService, timeService, timeslotService, userService);
+    }
 
     @Test
     public void processGetShouldForwardToCreateOrderPage() throws ServletException, IOException {

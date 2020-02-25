@@ -13,11 +13,12 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 import static com.salon.booking.utility.PageUtility.getViewPathByName;
+import static com.salon.booking.utility.RequestUtility.getFullUrl;
+import static com.salon.booking.utility.RequestUtility.getRequiredIntParameter;
 
 public class SelectWorkerCommand implements GetAndPostCommand {
 
     private static final long DEFAULT_WORKERS_PER_PAGE = 5;
-    private static final String REDIRECT_AFTER_SUBMIT = "/app/client/order-timeslot";
 
     private final UserService userService;
 
@@ -36,11 +37,11 @@ public class SelectWorkerCommand implements GetAndPostCommand {
 
     @Override
     public void processPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        int workerId = RequestUtility.getRequiredIntParameter("worker-id", request);
+        int workerId = getRequiredIntParameter("worker-id", request);
         request.getSession().setAttribute("workerId", workerId);
         clearCart(request);
 
-        redirect(REDIRECT_AFTER_SUBMIT, request, response);
+        redirect(getFullUrl("/app/client/order-timeslot", request), request, response);
     }
 
     private void clearCart(HttpServletRequest request) {

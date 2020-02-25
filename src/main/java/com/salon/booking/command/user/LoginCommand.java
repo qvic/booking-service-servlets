@@ -5,6 +5,7 @@ import com.salon.booking.domain.User;
 import com.salon.booking.domain.UserLoginForm;
 import com.salon.booking.service.AuthService;
 import com.salon.booking.service.NotificationService;
+import com.salon.booking.service.TimeService;
 import com.salon.booking.service.exception.ValidationException;
 import com.salon.booking.utility.PageUtility;
 
@@ -26,10 +27,12 @@ public class LoginCommand implements GetAndPostCommand {
 
     private final AuthService authService;
     private final NotificationService notificationService;
+    private final TimeService timeService;
 
-    public LoginCommand(AuthService authService, NotificationService notificationService) {
+    public LoginCommand(AuthService authService, NotificationService notificationService, TimeService timeService) {
         this.authService = authService;
         this.notificationService = notificationService;
+        this.timeService = timeService;
     }
 
     @Override
@@ -67,7 +70,7 @@ public class LoginCommand implements GetAndPostCommand {
     }
 
     private void updateNotifications(Integer userId, HttpSession session) {
-        long unreadNotifications = notificationService.updateNotificationsReturningCount(
+        int unreadNotifications = notificationService.updateNotificationsReturningCount(
                 userId, getMinimalOrderEndTimeToSeeNotification());
 
         session.setAttribute("notificationsCounter", unreadNotifications);
@@ -82,6 +85,6 @@ public class LoginCommand implements GetAndPostCommand {
     }
 
     private LocalDateTime getMinimalOrderEndTimeToSeeNotification() {
-        return LocalDateTime.now().minus(NOTIFICATION_THRESHOLD);
+        return timeService.getCurrentDateTime().minus(NOTIFICATION_THRESHOLD);
     }
 }

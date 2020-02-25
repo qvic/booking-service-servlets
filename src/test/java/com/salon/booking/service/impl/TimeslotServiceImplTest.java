@@ -396,43 +396,6 @@ public class TimeslotServiceImplTest {
         );
     }
 
-    private static List<Order> initOrders() {
-        return Arrays.asList(
-                Order.builder()
-                        .setService(Service.builder()
-                                .setId(1)
-                                .build())
-                        .setWorker(User.builder()
-                                .setId(1)
-                                .build())
-                        .build(),
-                Order.builder()
-                        .setService(Service.builder()
-                                .setId(1)
-                                .build())
-                        .setWorker(User.builder()
-                                .setId(2)
-                                .build())
-                        .build(),
-                Order.builder()
-                        .setService(Service.builder()
-                                .setId(1)
-                                .build())
-                        .setWorker(User.builder()
-                                .setId(1)
-                                .build())
-                        .build(),
-                Order.builder()
-                        .setService(Service.builder()
-                                .setId(3)
-                                .build())
-                        .setWorker(User.builder()
-                                .setId(2)
-                                .build())
-                        .build()
-        );
-    }
-
     private static List<TimeslotEntity> initTimeslotEntitiesByDay() {
         DurationEntity duration = new DurationEntity(1, 30);
 

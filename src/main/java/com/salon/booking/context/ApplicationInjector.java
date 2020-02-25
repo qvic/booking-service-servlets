@@ -150,17 +150,17 @@ public final class ApplicationInjector {
         Map<String, Command> commands = new HashMap<>();
 
         commands.put("/", new HomeCommand());
-        commands.put("/app/login", new LoginCommand(AUTH_SERVICE, NOTIFICATION_SERVICE));
+        commands.put("/app/login", new LoginCommand(AUTH_SERVICE, NOTIFICATION_SERVICE, TIME_SERVICE));
         commands.put("/app/logout", new LogoutCommand());
         commands.put("/app/signup", new RegisterCommand(AUTH_SERVICE));
 
-        commands.put("/app/client/order-timeslot", new SelectTimeslotCommand(TIMESLOT_SERVICE));
+        commands.put("/app/client/order-timeslot", new SelectTimeslotCommand(TIMESLOT_SERVICE, TIME_SERVICE));
         commands.put("/app/client/order-service", new SelectServiceCommand(ORDER_SERVICE));
         commands.put("/app/client/order-worker", new SelectWorkerCommand(USER_SERVICE));
         commands.put("/app/client/create-order", new CreateOrderCommand(ORDER_SERVICE, TIMESLOT_SERVICE, USER_SERVICE, TIME_SERVICE));
         commands.put("/app/client/orders", new ShowOrdersCommand(ORDER_SERVICE));
         commands.put("/app/client/feedback", new ShowFeedbackCommand(FEEDBACK_SERVICE));
-        commands.put("/app/client/leave-feedback", new LeaveFeedbackCommand(FEEDBACK_SERVICE, ORDER_SERVICE));
+        commands.put("/app/client/leave-feedback", new LeaveFeedbackCommand(FEEDBACK_SERVICE, ORDER_SERVICE, TIME_SERVICE));
         commands.put("/app/client/notifications", new ShowNotificationsCommand(NOTIFICATION_SERVICE));
 
         commands.put("/app/worker/timetable", new ShowWorkerTimetableCommand(TIMESLOT_SERVICE, TIME_SERVICE));

@@ -12,8 +12,6 @@ import com.salon.booking.service.exception.NoSuchItemException;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -58,10 +56,10 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     @Override
-    public long updateNotificationsReturningCount(Integer userId, LocalDateTime minOrderEndTime) {
+    public int updateNotificationsReturningCount(Integer userId, LocalDateTime minOrderEndTime) {
         List<Order> lastFinishedOrders = orderService.findFinishedOrdersAfter(minOrderEndTime, userId);
 
-        long unreadNotifications = 0;
+        int unreadNotifications = 0;
         for (Order order : lastFinishedOrders) {
             Optional<NotificationEntity> notification = notificationDao.findByOrderId(order.getId());
 

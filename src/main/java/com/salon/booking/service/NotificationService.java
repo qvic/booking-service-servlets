@@ -11,5 +11,5 @@ public interface NotificationService {
 
     List<Notification> findAllRead(Integer userId);
 
-    long updateNotificationsReturningCount(Integer userId, LocalDateTime currentTime);
+    int updateNotificationsReturningCount(Integer userId, LocalDateTime currentTime);
 }

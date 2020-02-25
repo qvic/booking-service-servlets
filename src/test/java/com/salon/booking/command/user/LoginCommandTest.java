@@ -5,6 +5,7 @@ import com.salon.booking.domain.User;
 import com.salon.booking.domain.UserLoginForm;
 import com.salon.booking.service.AuthService;
 import com.salon.booking.service.NotificationService;
+import com.salon.booking.service.TimeService;
 import com.salon.booking.utility.PageUtility;
 import org.junit.After;
 import org.junit.Test;
@@ -15,6 +16,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import javax.servlet.ServletException;
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -48,6 +50,9 @@ public class LoginCommandTest extends AbstractCommandTest {
     @Mock
     private AuthService authService;
 
+    @Mock
+    private TimeService timeService;
+
     @InjectMocks
     private LoginCommand loginCommand;
 
@@ -65,12 +70,13 @@ public class LoginCommandTest extends AbstractCommandTest {
         when(request.getSession(eq(false))).thenReturn(null);
         when(request.getSession(eq(true))).thenReturn(session);
 
-        when(notificationService.updateNotificationsReturningCount(any(), any())).thenReturn(2L);
+        when(notificationService.updateNotificationsReturningCount(any(), any())).thenReturn(2);
         when(authService.login(eq(loginForm))).thenReturn(Optional.of(USER));
+        when(timeService.getCurrentDateTime()).thenReturn(LocalDateTime.now());
 
         loginCommand.processPost(request, response);
 
-        verify(session).setAttribute(eq("notificationsCounter"), eq(2L));
+        verify(session).setAttribute(eq("notificationsCounter"), eq(2));
         verify(session).setAttribute(eq("user"), eq(USER));
         verify(response).sendRedirect(any());
     }
@@ -84,10 +90,13 @@ public class LoginCommandTest extends AbstractCommandTest {
         when(request.getSession(eq(false))).thenReturn(session);
         when(request.getSession(eq(true))).thenReturn(session);
 
+        when(notificationService.updateNotificationsReturningCount(any(), any())).thenReturn(2);
         when(authService.login(eq(loginForm))).thenReturn(Optional.of(USER));
+        when(timeService.getCurrentDateTime()).thenReturn(LocalDateTime.now());
 
         loginCommand.processPost(request, response);
 
+        verify(session).setAttribute(eq("notificationsCounter"), eq(2));
         verify(session).invalidate();
         verify(session).setAttribute(eq("user"), eq(USER));
         verify(response).sendRedirect(any());

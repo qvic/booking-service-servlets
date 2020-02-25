@@ -6,6 +6,7 @@ import com.salon.booking.domain.Role;
 import com.salon.booking.domain.User;
 import com.salon.booking.service.FeedbackService;
 import com.salon.booking.service.OrderService;
+import com.salon.booking.service.TimeService;
 import com.salon.booking.utility.ParseUtility;
 
 import javax.servlet.ServletException;
@@ -17,6 +18,7 @@ import java.time.Period;
 import java.util.List;
 
 import static com.salon.booking.utility.PageUtility.getViewPathByName;
+import static com.salon.booking.utility.RequestUtility.getFullUrl;
 import static com.salon.booking.utility.RequestUtility.getRequiredIntParameter;
 import static com.salon.booking.utility.RequestUtility.getRequiredStringParameter;
 
@@ -26,10 +28,12 @@ public class LeaveFeedbackCommand implements GetAndPostCommand {
 
     private final FeedbackService feedbackService;
     private final OrderService orderService;
+    private final TimeService timeService;
 
-    public LeaveFeedbackCommand(FeedbackService feedbackService, OrderService orderService) {
+    public LeaveFeedbackCommand(FeedbackService feedbackService, OrderService orderService, TimeService timeService) {
         this.feedbackService = feedbackService;
         this.orderService = orderService;
+        this.timeService = timeService;
     }
 
     @Override
@@ -53,10 +57,10 @@ public class LeaveFeedbackCommand implements GetAndPostCommand {
 
         feedbackService.saveFeedback(user.getId(), orderId, text, getMinimalOrderEndTimeToLeaveFeedback());
 
-        redirect("/app/client/feedback", request, response);
+        redirect(getFullUrl("/app/client/feedback", request), request, response);
     }
 
     private LocalDateTime getMinimalOrderEndTimeToLeaveFeedback() {
-        return LocalDateTime.now().minus(FEEDBACK_THRESHOLD);
+        return timeService.getCurrentDateTime().minus(FEEDBACK_THRESHOLD);
     }
 }

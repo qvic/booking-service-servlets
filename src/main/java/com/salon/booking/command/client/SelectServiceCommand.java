@@ -12,10 +12,10 @@ import java.io.IOException;
 import java.util.List;
 
 import static com.salon.booking.utility.PageUtility.getViewPathByName;
+import static com.salon.booking.utility.RequestUtility.getFullUrl;
 
 public class SelectServiceCommand implements GetAndPostCommand {
 
-    private static final String REDIRECT_AFTER_SUBMIT = "/app/client/order-worker";
     private final OrderService orderService;
 
     public SelectServiceCommand(OrderService orderService) {
@@ -36,7 +36,7 @@ public class SelectServiceCommand implements GetAndPostCommand {
         request.getSession().setAttribute("serviceId", serviceId);
         clearCart(request);
 
-        redirect(REDIRECT_AFTER_SUBMIT, request, response);
+        redirect(getFullUrl("/app/client/order-worker", request), request, response);
     }
 
     private void clearCart(HttpServletRequest request) {
