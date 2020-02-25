@@ -519,7 +519,7 @@ public class TimeslotServiceImplTest {
     }
 
     private static List<Timetable> initTimetables() {
-        Order order = Order.builder().build();
+        Order order = Order.builder().setId(0).build();
         Duration duration = Duration.ofMinutes(30);
 
         return Arrays.asList(

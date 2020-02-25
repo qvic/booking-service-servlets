@@ -5,19 +5,23 @@
         <h3 class="pb-3 text-center"><fmt:message key="label.sign_up"/></h3>
 
         <label for="inputEmail" class="sr-only"></label>
-        <input name="email" type="text" id="inputEmail" class="form-control" placeholder="Your email" required
-               autofocus>
+        <input name="email" type="text" id="inputEmail" class="form-control"
+               placeholder="<fmt:message key="label.email"/>"
+               required autofocus>
 
         <label for="inputName" class="sr-only"></label>
-        <input name="name" type="text" id="inputName" class="mt-1 form-control" placeholder="Your name" required
-               minlength="5" maxlength="200">
+        <input name="name" type="text" id="inputName" class="mt-1 form-control"
+               placeholder="<fmt:message key="label.name"/>"
+               required minlength="5" maxlength="200">
 
         <label for="input-password" class="sr-only"></label>
-        <input name="password" type="password" id="input-password" class="mt-1 form-control" placeholder="Password"
+        <input name="password" type="password" id="input-password" class="mt-1 form-control"
+               placeholder="<fmt:message key="label.password"/>"
                required pattern="(?=.*\w)(?=.*\d)[\w\d]{5,200}">
 
         <label for="repeat-password" class="sr-only"></label>
-        <input type="password" id="repeat-password" class="mt-1 form-control" placeholder="Repeat password"
+        <input type="password" id="repeat-password" class="mt-1 form-control"
+               placeholder="<fmt:message key="label.repeat_password"/>"
                required>
 
         <button id="submit-button" class="mt-3 btn btn-lg btn-primary btn-block" type="submit"><fmt:message

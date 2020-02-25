@@ -16,7 +16,7 @@ import static com.salon.booking.utility.PageUtility.getViewPathByName;
 
 public class ShowUnapprovedFeedbackCommand implements GetCommand {
 
-    private static final int DEFAULT_FEEDBACK_PER_PAGE = 20;
+    private static final int DEFAULT_FEEDBACK_PER_PAGE = 5;
     private final FeedbackService feedbackService;
 
     public ShowUnapprovedFeedbackCommand(FeedbackService feedbackService) {

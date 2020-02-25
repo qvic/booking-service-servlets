@@ -12,7 +12,7 @@
                 <div class="list-group">
                     <c:if test="${fn:length(timetable.rows) == 0}">
                         <div class="list-group-item text-secondary">
-                            No available places
+                            <fmt:message key="label.client.no_available_places"/>
                         </div>
                     </c:if>
 
@@ -24,10 +24,10 @@
                         <label for="timeslot-${row.id}"
                                class="radio-label form-check-label list-group-item list-group-item-action flex-column align-items-start">
                             <h4 class="mb-1">
-                                ${row.fromTime} (${row.duration.toMinutes()} min)
+                                    ${row.fromTime} (${row.duration.toMinutes()} min)
                             </h4>
                             <p class="text-success">
-                                Available
+                                <fmt:message key="label.client.available"/>
                             </p>
                         </label>
                     </c:forEach>

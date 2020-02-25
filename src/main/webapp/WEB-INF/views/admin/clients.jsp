@@ -5,17 +5,17 @@
 
     <form method="post" action="<c:url value="/app/admin/promote-client"/>">
         <div class="list-group">
-            <c:forEach items="${requestScope.page.items}" var="feedback">
+            <c:forEach items="${requestScope.page.items}" var="client">
                 <input name="client-id" class="d-none" type="radio"
-                       id="client-<c:out value="${feedback.id}"/>"
-                       value="<c:out value="${feedback.id}"/>">
+                       id="client-<c:out value="${client.id}"/>"
+                       value="<c:out value="${client.id}"/>">
 
-                <label for="client-<c:out value="${feedback.id}"/>"
+                <label for="client-<c:out value="${client.id}"/>"
                        class="radio-label form-check-label list-group-item list-group-item-action flex-column align-items-start">
                     <h5 class="mb-1">
-                        <c:out value="${feedback.name}"/>
+                        <c:out value="${client.name}"/>
                     </h5>
-                    <p class="mb-1"><c:out value="${feedback.email}"/></p>
+                    <p class="mb-1"><c:out value="${client.email}"/></p>
                 </label>
             </c:forEach>
             <button class="w-25 mx-auto my-5 btn btn-primary btn-lg btn-block" type="submit">Next</button>

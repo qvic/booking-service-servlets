@@ -5,14 +5,14 @@
         <h1 class="my-5 display-1">
             <c:choose>
                 <c:when test="${sessionScope.user ne null}">
-                    Hello, <c:out value="${sessionScope.user.name}"/>!
+                    <fmt:message key="label.hello"/>, <c:out value="${sessionScope.user.name}"/>!
                 </c:when>
                 <c:otherwise>
-                    Hello!
+                    <fmt:message key="label.hello"/>!
                 </c:otherwise>
             </c:choose>
         </h1>
-        <h1 class="my-4 display-5 text-secondary">This is a booking service for our Beauty Salon</h1>
+        <h1 class="my-4 display-5 text-secondary"><fmt:message key="label.description"/></h1>
     </div>
 </div>
 

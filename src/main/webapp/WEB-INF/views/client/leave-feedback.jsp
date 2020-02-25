@@ -5,37 +5,37 @@
 
     <form method="post">
         <div class="list-group">
-            <c:forEach items="${requestScope.orders}" var="feedback">
+            <c:forEach items="${requestScope.orders}" var="order">
                 <c:choose>
-                    <c:when test="${requestScope.selectedOrderId ne null and feedback.id == requestScope.selectedOrderId}">
+                    <c:when test="${requestScope.selectedOrderId ne null and order.id == requestScope.selectedOrderId}">
                         <input name="order-id" class="d-none" type="radio"
                                required
                                checked
-                               id="order-${feedback.id}"
-                               value="${feedback.id}">
+                               id="order-${order.id}"
+                               value="${order.id}">
                     </c:when>
                     <c:otherwise>
                         <input name="order-id" class="d-none" type="radio"
                                required
-                               id="order-${feedback.id}"
-                               value="${feedback.id}">
+                               id="order-${order.id}"
+                               value="${order.id}">
                     </c:otherwise>
                 </c:choose>
 
-                <label for="order-${feedback.id}"
+                <label for="order-${order.id}"
                        class="radio-label form-check-label list-group-item list-group-item-action flex-column align-items-start">
                     <div class="d-flex w-100 mb-2 justify-content-between">
                         <h5>
-                            <c:out value="${cf:formatLocalDateTime(feedback.date ,'dd.MM.yyyy HH:mm')}"/>
+                            <c:out value="${cf:formatLocalDateTime(order.date ,'dd.MM.yyyy HH:mm')}"/>
                         </h5>
                     </div>
                     <div class="mb-1">
                         <h5><fmt:message key="label.service"/></h5>
-                        <p><c:out value="${feedback.service.name}"/> ($<c:out value="${feedback.service.price}"/>)</p>
+                        <p><c:out value="${order.service.name}"/> ($<c:out value="${order.service.price}"/>)</p>
                     </div>
                     <div class="mb-1">
                         <h5><fmt:message key="label.worker"/></h5>
-                        <p><c:out value="${feedback.worker.name}"/> (<c:out value="${feedback.worker.email}"/>)</p>
+                        <p><c:out value="${order.worker.name}"/> (<c:out value="${order.worker.email}"/>)</p>
                     </div>
                 </label>
             </c:forEach>

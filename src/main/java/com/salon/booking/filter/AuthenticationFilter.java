@@ -2,8 +2,7 @@ package com.salon.booking.filter;
 
 import com.salon.booking.command.exception.HttpForbiddenException;
 import com.salon.booking.domain.User;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import com.salon.booking.utility.RequestUtility;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -18,8 +17,6 @@ import java.util.List;
 import java.util.Optional;
 
 public class AuthenticationFilter implements Filter {
-
-    public static final Logger LOGGER = LogManager.getLogger(AuthenticationFilter.class);
 
     private static final List<String> PUBLIC_URLS = Arrays.asList(
             "/",
@@ -41,21 +38,28 @@ public class AuthenticationFilter implements Filter {
         HttpServletRequest request = (HttpServletRequest) servletRequest;
         HttpServletResponse response = (HttpServletResponse) servletResponse;
 
-        String requestURI = request.getRequestURI();
-        Optional<User> user = getUserFromSession(request);
-
-        if (isPublicResourceRequested(requestURI)) {
+        if (isPublicResourceRequested(request.getRequestURI())) {
             chain.doFilter(request, response);
         } else {
-            if (user.isPresent()) {
-                if (isPermittedRequest(user.get(), requestURI)) {
-                    chain.doFilter(request, response);
-                } else {
-                    throw new HttpForbiddenException();
-                }
-            } else {
-                response.sendRedirect(String.format(LOGIN_REDIRECT_URL, request.getRequestURI()));
-            }
+            chainOrRedirect(request, response, chain);
+        }
+    }
+
+    private static void chainOrRedirect(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
+        Optional<User> user = getUserFromSession(request);
+        if (user.isPresent()) {
+            chainIfAuthorized(user.get(), request, response, chain);
+        } else {
+            String fullUrl = RequestUtility.getFullUrl(String.format(LOGIN_REDIRECT_URL, request.getRequestURI()), request);
+            response.sendRedirect(fullUrl);
+        }
+    }
+
+    private static void chainIfAuthorized(User user, HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
+        if (isPermittedRequest(user, request.getRequestURI())) {
+            chain.doFilter(request, response);
+        } else {
+            throw new HttpForbiddenException();
         }
     }
 

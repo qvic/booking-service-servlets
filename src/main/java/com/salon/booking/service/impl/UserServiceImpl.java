@@ -1,6 +1,5 @@
 package com.salon.booking.service.impl;
 
-import com.salon.booking.dao.OrderDao;
 import com.salon.booking.dao.TransactionManager;
 import com.salon.booking.dao.UserDao;
 import com.salon.booking.dao.exception.DatabaseRuntimeException;
@@ -12,7 +11,6 @@ import com.salon.booking.entity.UserEntity;
 import com.salon.booking.mapper.Mapper;
 import com.salon.booking.service.UserService;
 import com.salon.booking.service.exception.NoSuchUserException;
-import com.salon.booking.service.exception.ValidationException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -23,13 +21,11 @@ public class UserServiceImpl implements UserService {
     private static final Logger LOGGER = LogManager.getLogger(UserServiceImpl.class);
 
     private final UserDao userDao;
-    private final OrderDao orderDao;
     private final Mapper<UserEntity, User> userMapper;
     private TransactionManager transactionManager;
 
-    public UserServiceImpl(UserDao userDao, OrderDao orderDao, Mapper<UserEntity, User> userMapper, TransactionManager transactionManager) {
+    public UserServiceImpl(UserDao userDao, Mapper<UserEntity, User> userMapper, TransactionManager transactionManager) {
         this.userDao = userDao;
-        this.orderDao = orderDao;
         this.userMapper = userMapper;
         this.transactionManager = transactionManager;
     }

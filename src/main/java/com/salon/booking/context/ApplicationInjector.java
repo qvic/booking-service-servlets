@@ -120,7 +120,7 @@ public final class ApplicationInjector {
     private static final AuthService AUTH_SERVICE = new AuthServiceImpl(USER_DAO, USER_VALIDATOR,
             USER_LOGIN_FORM_VALIDATOR, PASSWORD_ENCRYPTOR, USER_MAPPER);
 
-    private static final UserService USER_SERVICE = new UserServiceImpl(USER_DAO, ORDER_DAO, USER_MAPPER, TRANSACTION_MANAGER);
+    private static final UserService USER_SERVICE = new UserServiceImpl(USER_DAO, USER_MAPPER, TRANSACTION_MANAGER);
 
     private static final TimeslotService TIMESLOT_SERVICE = new TimeslotServiceImpl(TIMESLOT_DAO, ORDER_DAO, SERVICE_DAO,
             USER_DAO, TIMESLOT_MAPPER);

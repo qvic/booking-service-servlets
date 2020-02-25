@@ -27,21 +27,33 @@
             <div class="list-group">
                 <c:if test="${fn:length(timetable.rows) == 0}">
                     <div class="list-group-item text-secondary">
-                        No available places
+                        <fmt:message key="label.client.no_available_places"/>
                     </div>
                 </c:if>
 
                 <c:forEach items="${timetable.rows}" var="row">
                     <div class="list-group-item list-group-item-action flex-column align-items-start">
                         <h4 class="my-2">
-                                ${row.fromTime} to ${row.fromTime.plus(row.duration)}
+                                ${row.fromTime} - ${row.fromTime.plus(row.duration)}
                         </h4>
-                        <c:forEach items="${row.orders}" var="feedback">
+                        <c:forEach items="${row.orders}" var="order">
                             <div class="mb-2">
-                                <h5>Order #${feedback.id}</h5>
-                                <p class="mb-0">Worker: ${feedback.worker.name} (${feedback.worker.email})</p>
-                                <p class="mb-0">Client: ${feedback.client.name} (${feedback.client.email})</p>
-                                <p class="mb-1">Service: ${feedback.service.name} ($${feedback.service.price})</p>
+                                <h5><fmt:message key="label.order"/> #${order.id}</h5>
+                                <div class="mb-1">
+                                    <h5><fmt:message key="label.service"/></h5>
+                                    <p><c:out value="${order.service.name}"/> ($<c:out
+                                            value="${order.service.price}"/>)</p>
+                                </div>
+                                <div class="mb-1">
+                                    <h5><fmt:message key="label.worker"/></h5>
+                                    <p><c:out value="${order.worker.name}"/> (<c:out
+                                            value="${order.worker.email}"/>)</p>
+                                </div>
+                                <div class="mb-1">
+                                    <h5><fmt:message key="label.client"/></h5>
+                                    <p><c:out value="${order.client.name}"/> (<c:out
+                                            value="${order.client.email}"/>)</p>
+                                </div>
                             </div>
                         </c:forEach>
                     </div>

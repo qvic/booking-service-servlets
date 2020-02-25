@@ -64,13 +64,8 @@ public class TimeslotServiceImpl implements TimeslotService {
         LocalDate to = currentDate.plus(DEFAULT_TIMETABLE_PERIOD);
         List<Timetable> timetablesBetween = findAllBetween(currentDate, to);
 
-        Service service = Service.builder()
-                .setId(serviceId)
-                .build();
-
-        User worker = User.builder()
-                .setId(workerId)
-                .build();
+        Service service = buildServiceWithId(serviceId);
+        User worker = buildUserWithId(workerId);
 
         List<Timetable> viewTimetables = new ArrayList<>();
         for (Timetable timetable : timetablesBetween) {
@@ -94,6 +89,18 @@ public class TimeslotServiceImpl implements TimeslotService {
         }
 
         return viewTimetables;
+    }
+
+    private Service buildServiceWithId(Integer serviceId) {
+        return Service.builder()
+                .setId(serviceId)
+                .build();
+    }
+
+    private User buildUserWithId(Integer workerId) {
+        return User.builder()
+                .setId(workerId)
+                .build();
     }
 
     private Duration getTotalDuration(List<Timeslot> timeslots) {

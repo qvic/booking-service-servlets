@@ -16,6 +16,6 @@ public final class ListUtility {
                 return OptionalInt.of(i);
             }
         }
-        return OptionalInt.of(-1);
+        return OptionalInt.empty();
     }
 }

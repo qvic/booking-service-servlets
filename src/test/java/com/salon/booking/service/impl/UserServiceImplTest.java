@@ -73,7 +73,7 @@ public class UserServiceImplTest {
 
     @Before
     public void injectMocks() {
-        userService = new UserServiceImpl(userDao, orderDao, userMapper, transactionManager);
+        userService = new UserServiceImpl(userDao, userMapper, transactionManager);
     }
 
     @After

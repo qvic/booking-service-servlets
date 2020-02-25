@@ -27,21 +27,26 @@
             <div class="list-group">
                 <c:if test="${fn:length(timetable.rows) == 0}">
                     <div class="list-group-item text-secondary">
-                        No available places
+                        <fmt:message key="label.client.no_available_places"/>
                     </div>
                 </c:if>
 
                 <c:forEach items="${timetable.rows}" var="row">
                     <div class="list-group-item list-group-item-action flex-column align-items-start">
                         <h4 class="my-2">
-                                ${row.fromTime} to ${row.fromTime.plus(row.duration)}
+                                ${row.fromTime} <fmt:message key="label.to"/> ${row.fromTime.plus(row.duration)}
                         </h4>
                         <c:forEach items="${row.orders}" var="feedback">
                             <div class="mb-2">
                                 <h5>Order #${feedback.id}</h5>
-                                <p class="mb-0">Worker: ${feedback.worker.name} (${feedback.worker.email})</p>
-                                <p class="mb-0">Client: ${feedback.client.name} (${feedback.client.email})</p>
-                                <p class="mb-1">Service: ${feedback.service.name} ($${feedback.service.price})</p>
+                                <p class="mb-0"><fmt:message key="label.worker"/>:
+                                    <c:out value="${feedback.worker.name}"/> (<c:out
+                                            value="${feedback.worker.email}"/>)</p>
+                                <p class="mb-0"><fmt:message key="label.client"/>: <c:out
+                                        value="${feedback.client.name}"/>
+                                    (<c:out value="${feedback.client.email}"/>)</p>
+                                <p class="mb-1"><fmt:message key="label.service"/>: ${feedback.service.name}
+                                    ($${feedback.service.price})</p>
                             </div>
                         </c:forEach>
                     </div>

@@ -20,22 +20,9 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-public class LocaleFilterTest {
+public class LocaleFilterTest extends AbstractFilterTest {
 
-    @Mock
-    private HttpServletRequest request;
-
-    @Mock
-    private HttpServletResponse response;
-
-    @Mock
-    private HttpSession session;
-
-    @Mock
-    private FilterChain chain;
-
-    @InjectMocks
-    private LocaleFilter localeFilter;
+    private LocaleFilter localeFilter = new LocaleFilter();
 
     @Test
     public void doFilterShouldSetSessionLocaleWhenRequestHasLocaleParameter() throws IOException, ServletException {

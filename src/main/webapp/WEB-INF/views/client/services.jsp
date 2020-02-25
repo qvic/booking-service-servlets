@@ -5,19 +5,19 @@
 
     <form method="post">
         <div class="list-group">
-            <c:forEach items="${requestScope.services}" var="feedback">
+            <c:forEach items="${requestScope.services}" var="service">
                 <input name="service-id" class="d-none" type="radio" required
-                       id="service-<c:out value="${feedback.id}"/>"
-                       value="<c:out value="${feedback.id}"/>">
+                       id="service-<c:out value="${service.id}"/>"
+                       value="<c:out value="${service.id}"/>">
 
-                <label for="service-<c:out value="${feedback.id}"/>"
+                <label for="service-<c:out value="${service.id}"/>"
                        class="radio-label form-check-label list-group-item list-group-item-action flex-column align-items-start">
                     <div class="d-flex w-100 justify-content-between">
                         <h5 class="mb-1">
-                            <c:out value="${feedback.name}"/>
+                            <c:out value="${service.name}"/>
                         </h5>
                         <p>
-                            $<c:out value="${feedback.price}"/>
+                            $<c:out value="${service.price}"/>
                         </p>
                     </div>
                 </label>

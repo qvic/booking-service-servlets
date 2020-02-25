@@ -17,8 +17,8 @@ import static com.salon.booking.utility.PageUtility.getViewPathByName;
 public class SelectWorkerCommand implements GetAndPostCommand {
 
     private static final long DEFAULT_WORKERS_PER_PAGE = 5;
-
     private static final String REDIRECT_AFTER_SUBMIT = "/app/client/order-timeslot";
+
     private final UserService userService;
 
     public SelectWorkerCommand(UserService userService) {
