@@ -17,7 +17,8 @@
         <label for="input-password" class="sr-only"></label>
         <input name="password" type="password" id="input-password" class="mt-1 form-control"
                placeholder="<fmt:message key="label.password"/>"
-               required pattern="(?=.*\w)(?=.*\d)[\w\d]{5,200}">
+               required pattern="(?=.*\w)(?=.*\d)[\w\d]{5,200}"
+               title="<fmt:message key="validation.invalid_password"/>">
 
         <label for="repeat-password" class="sr-only"></label>
         <input type="password" id="repeat-password" class="mt-1 form-control"

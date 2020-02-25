@@ -84,8 +84,7 @@ public class NotificationDaoImpl extends AbstractCrudDaoImpl<NotificationEntity>
         try (DataSourceConnection connection = connector.getConnection();
              PreparedStatement statement = connection.getOriginal().prepareStatement(UPDATE_ALL_AS_READ_QUERY)) {
             statement.setInt(1, userId);
-            int affectedRows = statement.executeUpdate();
-            throwIfNotAffected(affectedRows);
+            statement.executeUpdate();
         } catch (SQLException e) {
             throw new DatabaseRuntimeException("Error performing updateAllAsRead", e);
         }

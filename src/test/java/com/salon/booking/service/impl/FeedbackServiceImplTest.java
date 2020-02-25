@@ -24,6 +24,7 @@ import java.util.Optional;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
@@ -122,11 +123,13 @@ public class FeedbackServiceImplTest {
                 .setId(1)
                 .setText("test")
                 .setStatus(FeedbackStatusEntity.CREATED)
+                .setOrder(OrderEntity.builder().build())
                 .build();
 
         Feedback feedback = Feedback.builder()
                 .setId(1)
                 .setText("test")
+                .setOrder(Order.builder().build())
                 .build();
 
         PageProperties properties = new PageProperties(0, 1);
@@ -136,6 +139,7 @@ public class FeedbackServiceImplTest {
         when(feedbackDao.findAllByStatus(eq(FeedbackStatusEntity.CREATED), eq(properties))).thenReturn(feedbackEntityPage);
         when(feedbackMapper.mapEntityToDomain(eq(feedbackEntity))).thenReturn(feedback);
         when(feedbackStatusMapper.mapDomainToEntity(eq(FeedbackStatus.CREATED))).thenReturn(FeedbackStatusEntity.CREATED);
+        when(orderService.findById(any())).thenReturn(Optional.of(Order.builder().build()));
 
         Page<Feedback> allByStatus = feedbackService.findAllByStatus(FeedbackStatus.CREATED, properties);
 

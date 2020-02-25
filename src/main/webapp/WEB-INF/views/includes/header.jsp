@@ -13,7 +13,7 @@
 <html lang="${sessionScope.locale}">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title><fmt:message key="label.app_name"/></title>
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link rel="stylesheet" href="<c:url value="/static/css/bootstrap/bootstrap.min.css"/>">
     <link rel="stylesheet" href="<c:url value="/static/css/styles.css"/>">
@@ -23,7 +23,7 @@
     <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
         <a class="navbar-brand" href="<c:url value="/"/>"><fmt:message key="label.app_name"/>
             <c:choose>
-                <c:when test="$ {sessionScope.user.isWorker()}">
+                <c:when test="${sessionScope.user.isWorker()}">
                     <span class="badge badge-success">Worker</span>
                 </c:when>
                 <c:when test="${sessionScope.user.isAdmin()}">
@@ -89,7 +89,7 @@
                             <c:when test="${sessionScope.user.isAdmin()}">
                                 <li class="nav-item">
                                     <a class="nav-link" href="<c:url value="/app/admin/clients"/>"><fmt:message
-                                            key="label.admin.list_clients"/></a>
+                                            key="label.admin.promote_client_to_worker"/></a>
                                 </li>
                                 <li class="nav-item">
                                     <a class="nav-link" href="<c:url value="/app/admin/workers"/>"><fmt:message

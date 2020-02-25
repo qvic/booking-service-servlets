@@ -61,7 +61,7 @@ public class FeedbackServiceImpl implements FeedbackService {
     @Override
     public Page<Feedback> findAllByStatus(FeedbackStatus status, PageProperties properties) {
         return feedbackDao.findAllByStatus(feedbackStatusMapper.mapDomainToEntity(status), properties)
-                .map(feedbackMapper::mapEntityToDomain);
+                .map(this::buildFeedbackWithOrder);
     }
 
     @Override

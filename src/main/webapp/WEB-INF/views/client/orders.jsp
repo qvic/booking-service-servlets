@@ -1,7 +1,7 @@
 <%@ include file="../includes/header.jsp" %>
 
 <div class="container my-5">
-    <h3 class="mb-5 text-center">Orders</h3>
+    <h3 class="mb-5 text-center"><fmt:message key="label.client.previous_orders"/></h3>
     <div class="list-group">
         <c:forEach items="${requestScope.orders}" var="order">
             <div class="list-group-item list-group-item-action flex-column align-items-start">

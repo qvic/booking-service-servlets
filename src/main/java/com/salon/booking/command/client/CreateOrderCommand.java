@@ -65,7 +65,7 @@ public class CreateOrderCommand implements GetAndPostCommand {
         Optional<Integer> workerId = getIntSessionAttribute("workerId", request);
 
         if (!timeslotId.isPresent() || !serviceId.isPresent() || !workerId.isPresent()) {
-            forwardWithMessage(getViewPathByName("client/create-order"), "message.select_all_parameters",
+            forwardWithMessage(getViewPathByName("client/create-order"), "validation.select_all_parameters",
                     request, response);
             return;
         }
