@@ -55,6 +55,10 @@ public class Page<E> {
     }
 
     private static long ceilDivision(long number, long divisor) {
+        if (divisor == 0) {
+            return 0;
+        }
+
         return (number + divisor - 1) / divisor;
     }
 }

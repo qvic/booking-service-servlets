@@ -22,7 +22,7 @@ import static org.junit.Assert.assertTrue;
 public abstract class AbstractDaoImplTest {
 
     private static final String SQL_SCHEMA_PATH = "sql/schema.sql";
-    private static final String SQL_DATA_PATH = "sql/data.sql";
+    private static final String SQL_DATA_PATH = "src/test/resources/test_data.sql";
 
     @Rule
     public SingleInstancePostgresRule pg = EmbeddedPostgresRules.singleInstance();

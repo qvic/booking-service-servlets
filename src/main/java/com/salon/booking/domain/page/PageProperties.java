@@ -8,7 +8,7 @@ public class PageProperties {
 
     private static final long DEFAULT_PAGE_NUMBER = 0;
 
-    private long pageNumber; // todo change to int
+    private long pageNumber;
     private long itemsPerPage;
 
     public PageProperties(long pageNumber, long itemsPerPage) {

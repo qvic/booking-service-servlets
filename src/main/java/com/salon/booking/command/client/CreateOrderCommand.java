@@ -6,6 +6,7 @@ import com.salon.booking.domain.Role;
 import com.salon.booking.domain.Service;
 import com.salon.booking.domain.User;
 import com.salon.booking.service.OrderService;
+import com.salon.booking.service.TimeService;
 import com.salon.booking.service.TimeslotService;
 import com.salon.booking.service.UserService;
 
@@ -26,11 +27,13 @@ public class CreateOrderCommand implements GetAndPostCommand {
     private final OrderService orderService;
     private final TimeslotService timeslotService;
     private final UserService userService;
+    private final TimeService timeService;
 
-    public CreateOrderCommand(OrderService orderService, TimeslotService timeslotService, UserService userService) {
+    public CreateOrderCommand(OrderService orderService, TimeslotService timeslotService, UserService userService, TimeService timeService) {
         this.orderService = orderService;
         this.timeslotService = timeslotService;
         this.userService = userService;
+        this.timeService = timeService;
     }
 
     @Override
@@ -84,7 +87,7 @@ public class CreateOrderCommand implements GetAndPostCommand {
                 .build();
 
         return Order.builder()
-                .setDate(LocalDateTime.now())
+                .setDate(timeService.getCurrentDateTime())
                 .setClient(client)
                 .setWorker(worker)
                 .setService(service)

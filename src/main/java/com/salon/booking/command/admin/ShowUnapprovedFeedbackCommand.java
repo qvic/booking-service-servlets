@@ -29,6 +29,6 @@ public class ShowUnapprovedFeedbackCommand implements GetCommand {
         Page<Feedback> feedbackPage = feedbackService.findAllByStatus(FeedbackStatus.CREATED, pageProperties);
         request.setAttribute("page", feedbackPage);
 
-        forward(getViewPathByName("admin/feedback-list"), request, response);
+        forward(getViewPathByName("admin/feedback"), request, response);
     }
 }

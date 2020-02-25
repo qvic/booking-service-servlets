@@ -64,12 +64,14 @@ import com.salon.booking.mapper.UserMapper;
 import com.salon.booking.service.FeedbackService;
 import com.salon.booking.service.NotificationService;
 import com.salon.booking.service.OrderService;
+import com.salon.booking.service.TimeService;
 import com.salon.booking.service.TimeslotService;
 import com.salon.booking.service.UserService;
 import com.salon.booking.service.encoder.PasswordEncoder;
 import com.salon.booking.service.impl.FeedbackServiceImpl;
 import com.salon.booking.service.impl.NotificationServiceImpl;
 import com.salon.booking.service.impl.OrderServiceImpl;
+import com.salon.booking.service.impl.TimeServiceImpl;
 import com.salon.booking.service.impl.TimeslotServiceImpl;
 import com.salon.booking.service.impl.AuthServiceImpl;
 import com.salon.booking.service.impl.UserServiceImpl;
@@ -117,6 +119,8 @@ public final class ApplicationInjector {
     private static final Mapper<FeedbackEntity, Feedback> FEEDBACK_MAPPER = new FeedbackMapper(ORDER_MAPPER, FEEDBACK_STATUS_MAPPER);
     private static final Mapper<NotificationEntity, Notification> NOTIFICATION_MAPPER = new NotificationMapper(ORDER_MAPPER);
 
+    private static final TimeService TIME_SERVICE = new TimeServiceImpl();
+
     private static final AuthService AUTH_SERVICE = new AuthServiceImpl(USER_DAO, USER_VALIDATOR,
             USER_LOGIN_FORM_VALIDATOR, PASSWORD_ENCRYPTOR, USER_MAPPER);
 
@@ -153,18 +157,18 @@ public final class ApplicationInjector {
         commands.put("/app/client/order-timeslot", new SelectTimeslotCommand(TIMESLOT_SERVICE));
         commands.put("/app/client/order-service", new SelectServiceCommand(ORDER_SERVICE));
         commands.put("/app/client/order-worker", new SelectWorkerCommand(USER_SERVICE));
-        commands.put("/app/client/create-order", new CreateOrderCommand(ORDER_SERVICE, TIMESLOT_SERVICE, USER_SERVICE));
+        commands.put("/app/client/create-order", new CreateOrderCommand(ORDER_SERVICE, TIMESLOT_SERVICE, USER_SERVICE, TIME_SERVICE));
         commands.put("/app/client/orders", new ShowOrdersCommand(ORDER_SERVICE));
         commands.put("/app/client/feedback", new ShowFeedbackCommand(FEEDBACK_SERVICE));
         commands.put("/app/client/leave-feedback", new LeaveFeedbackCommand(FEEDBACK_SERVICE, ORDER_SERVICE));
         commands.put("/app/client/notifications", new ShowNotificationsCommand(NOTIFICATION_SERVICE));
 
-        commands.put("/app/worker/timetable", new ShowWorkerTimetableCommand(TIMESLOT_SERVICE));
+        commands.put("/app/worker/timetable", new ShowWorkerTimetableCommand(TIMESLOT_SERVICE, TIME_SERVICE));
         commands.put("/app/worker/feedback", new ShowWorkerFeedbackByPagesCommand(FEEDBACK_SERVICE));
 
         commands.put("/app/admin/clients", new ShowClientsByPagesCommand(USER_SERVICE));
         commands.put("/app/admin/workers", new ShowWorkersByPagesCommand(USER_SERVICE));
-        commands.put("/app/admin/timetable", new ShowAdminTimetableCommand(TIMESLOT_SERVICE));
+        commands.put("/app/admin/timetable", new ShowAdminTimetableCommand(TIMESLOT_SERVICE, TIME_SERVICE));
         commands.put("/app/admin/feedback", new ShowUnapprovedFeedbackCommand(FEEDBACK_SERVICE));
         commands.put("/app/admin/approve-feedback", new ApproveFeedbackCommand(FEEDBACK_SERVICE));
         commands.put("/app/admin/promote-client", new PromoteClientToWorkerCommand(USER_SERVICE));

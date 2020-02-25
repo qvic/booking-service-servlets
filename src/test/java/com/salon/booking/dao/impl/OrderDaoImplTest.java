@@ -7,21 +7,18 @@ import org.junit.Test;
 
 import java.time.LocalDateTime;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
 public class OrderDaoImplTest extends AbstractDaoImplTest {
 
     private static final ServiceEntity TEST_SERVICE = ServiceEntity.builder()
-            .setId(11)
+            .setId(102)
             .build();
 
     private static final UserEntity TEST_CLIENT = UserEntity.builder()
-            .setId(20)
+            .setId(102)
             .build();
 
     private static final UserEntity TEST_WORKER = UserEntity.builder()
-            .setId(21)
+            .setId(101)
             .build();
 
     private static final LocalDateTime TEST_DATE = LocalDateTime.of(2020, 2, 2, 2, 2);

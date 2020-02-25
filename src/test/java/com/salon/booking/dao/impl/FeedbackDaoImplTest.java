@@ -9,7 +9,7 @@ import org.junit.Test;
 public class FeedbackDaoImplTest extends AbstractDaoImplTest {
 
     private static final OrderEntity TEST_ORDER = OrderEntity.builder()
-            .setId(16)
+            .setId(111)
             .build();
 
     private static final FeedbackEntity TEST_FEEDBACK = FeedbackEntity.builder()

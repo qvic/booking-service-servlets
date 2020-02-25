@@ -18,8 +18,7 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class LogoutCommandTest extends AbstractCommandTest {
 
-    @InjectMocks
-    private LogoutCommand logoutCommand;
+    private LogoutCommand logoutCommand = new LogoutCommand();
 
     @Test
     public void userShouldBeRedirectedWhenLoggedOutAndSessionIsNull() throws ServletException, IOException {

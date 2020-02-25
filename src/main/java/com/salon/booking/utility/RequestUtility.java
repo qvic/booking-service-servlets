@@ -18,13 +18,13 @@ public final class RequestUtility {
 
     public static int getRequiredIntParameter(String name, HttpServletRequest request) {
         return ParseUtility.parseIntOrThrow(request.getParameter(name),
-                () -> new InvalidRequestParameterException(name + " is a required parameter"));
+                () -> new InvalidRequestParameterException(name + " is a required int parameter"));
     }
 
     public static String getRequiredStringParameter(String name, HttpServletRequest request) {
         String parameter = request.getParameter(name);
         if (parameter == null) {
-            throw new InvalidRequestParameterException(name + " is a required parameter");
+            throw new InvalidRequestParameterException(name + " is a required string parameter");
         }
 
         return parameter;
